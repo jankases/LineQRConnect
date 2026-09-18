@@ -211,13 +211,6 @@
     .btn-clear-filter:hover { background-color: #fee2e2; color: #ef4444; border-color: #fca5a5; }
     .btn-refresh-data:hover { background-color: #e0f2fe; color: #0284c7; border-color: #38bdf8; }
 
-    .btn-ai-scan {
-      background: linear-gradient(135deg, #6366f1, #a855f7); color: white;
-      border: none; border-radius: 20px; font-weight: bold; padding: 6px 14px;
-      font-size: 12.5px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
-    }
-    .btn-ai-scan:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(168, 85, 247, 0.35); color: white; }
-
     @media (max-width: 767.98px) {
       body { overflow-y: auto; height: auto; display: block; }
       .content-wrapper { padding: 8px 0px !important; display: block; }
@@ -252,7 +245,7 @@
       body * { visibility: hidden; }
       #qrView, #qrView * { visibility: visible; }
       #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; display: block !important; }
-      #qrView .card, .consent-card, #lockAlert, .btn, button, .btn-print-screen, .nav-container-box, #newDoctorTitleBlock, #aiScanBlock { display: none !important; }
+      #qrView .card, .consent-card, #lockAlert, .btn, button, .btn-print-screen, .nav-container-box, #newDoctorTitleBlock { display: none !important; }
       #targetName { font-size: 32pt !important; color: #0066cc !important; margin-top: 20px !important; }
       #targetThName { font-size: 20pt !important; color: #555 !important; }
       .header-title-print { font-size: 26pt !important; color: #0066cc !important; }
@@ -301,11 +294,6 @@
               </div>
               
               <div class="d-flex gap-2 flex-wrap justify-content-end">
-                <input type="file" id="mainAiInput" accept="image/*" capture="environment" style="display:none;" onchange="handleMainAIScan(this)">
-                <button class="btn btn-ai-scan" type="button" onclick="document.getElementById('mainAiInput').click()">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i> สแกน (AI)
-                </button>
-                
                 <button class="btn btn-outline-secondary fw-bold shadow-sm py-1 px-2" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFiltersWrapper" style="border-radius: 8px; font-size: 12.5px;">
                   <i class="fa-solid fa-sliders me-1"></i> ตัวกรอง
                 </button>
@@ -426,14 +414,6 @@
                 กรุณากรอกข้อมูลเพื่อใช้ในการตรวจสอบ และยืนยันข้อมูลการเป็นบุคลากรทางการแพทย์ตามความเป็นจริง<br>
                 หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก
               </p>
-            </div>
-
-            <div id="aiScanBlock" class="mb-4">
-              <input type="file" id="aiImageInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAIScan(this)">
-              <button type="button" class="btn btn-ai-scan w-100 py-2 fs-6" onclick="document.getElementById('aiImageInput').click()">
-                <i class="fa-solid fa-wand-magic-sparkles me-2"></i>📸 สแกนนามบัตร/เอกสารเพิ่มเติม (Gemini AI)
-              </button>
-              <div id="aiScanStatus" class="small fw-bold mt-2 text-primary" style="display:none;"></div>
             </div>
 
             <h3 id="targetName" class="fw-bold mb-0" style="font-size: 2.2rem; color:#0066cc;"></h3>
@@ -712,33 +692,6 @@
     let histSortCol = 0; 
     let histSortAsc = false; 
 
-    function compressImage(file, callback) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const maxHeight = 1024;
-          
-          if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          callback(canvas.toDataURL('image/jpeg', 0.7));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
     function toggleClearBtn() {
       const searchBox = document.getElementById("searchBox");
       const clearBtn = document.getElementById("btnClearSearch");
@@ -795,134 +748,6 @@
       } else {
         alert("เบราว์เซอร์ของคุณไม่รองรับการสั่งงานด้วยเสียงครับ (แนะนำให้ใช้ Google Chrome หรือ Safari เวอร์ชันใหม่)");
       }
-    }
-
-    async function handleMainAIScan(input) {
-      if (!input.files || !input.files[0]) return;
-      const file = input.files[0];
-      
-      const loadingBox = document.getElementById("loading");
-      const loadingText = document.getElementById("loadingText");
-      const tableWrapper = document.getElementById("mainTableArea");
-
-      if (loadingBox && loadingText) {
-        loadingText.innerHTML = "📸 Gemini AI กำลังประมวลผลนามบัตร...";
-        loadingBox.style.display = "block";
-        tableWrapper.style.display = "none";
-      }
-
-      compressImage(file, async function(compressedBase64) {
-        try {
-          const { data: res, error } = await window.supabaseClient.functions.invoke('analyze-hcp-card', {
-            body: { imageBase64: compressedBase64 }
-          });
-
-          if (loadingBox) {
-            loadingBox.style.display = "none";
-            loadingText.innerText = "กำลังดึงข้อมูลรายชื่อแพทย์...";
-            tableWrapper.style.display = "flex";
-          }
-
-          if (res && res.success && res.data) {
-            const ai = res.data;
-            const searchName = (ai.name || "").toLowerCase().trim();
-
-            let foundEmp = employeeData.find(emp => 
-              searchName !== "" && (
-                emp.name.toLowerCase().includes(searchName) || 
-                (emp.thName && emp.thName.toLowerCase().includes(searchName))
-              )
-            );
-
-            if (foundEmp) {
-              openRegistrationForm(foundEmp);
-              if (ai.email) document.getElementById("inputEmail").value = ai.email;
-              if (ai.mobile) document.getElementById("inputMobile").value = ai.mobile.replace(/[^0-9]/g, '');
-              regenerateAutomatedQR();
-              checkEmailReminder();
-              alert("✨ พบข้อมูลหมอในระบบ! ดึงข้อมูลและเติม Contact ให้เรียบร้อยแล้วครับ");
-            } else {
-              openNewDoctorForm(ai.name || "");
-              if (ai.email) document.getElementById("inputEmail").value = ai.email;
-              if (ai.mobile) document.getElementById("inputMobile").value = ai.mobile.replace(/[^0-9]/g, '');
-              
-              if (ai.hospital) {
-                const hospSelect = document.getElementById("inputNewHospital");
-                for (let i = 0; i < hospSelect.options.length; i++) {
-                  if (hospSelect.options[i].value.toLowerCase().includes(ai.hospital.toLowerCase())) {
-                    hospSelect.selectedIndex = i;
-                    break;
-                  }
-                }
-              }
-              regenerateAutomatedQR();
-              checkEmailReminder();
-              alert("🆕 ไม่พบข้อมูลในระบบ! AI พาลัดมาหน้าสร้างแพทย์ใหม่พร้อมเติมข้อมูลให้อัตโนมัติแล้วครับ");
-            }
-          } else {
-            alert("❌ ไม่สามารถอ่านข้อมูลจากภาพได้: " + (res?.error || error?.message || "โปรดลองถ่ายใหม่อีกครั้ง"));
-          }
-        } catch (err) {
-          if (loadingBox) {
-            loadingBox.style.display = "none";
-            tableWrapper.style.display = "flex";
-          }
-          alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ AI: " + err.message);
-        }
-      });
-
-      input.value = ""; 
-    }
-
-    async function handleAIScan(input) {
-      if (!input.files || !input.files[0]) return;
-      const file = input.files[0];
-      const statusBox = document.getElementById("aiScanStatus");
-      
-      statusBox.style.display = "block";
-      statusBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>กำลังวิเคราะห์ภาพด้วย Gemini AI...';
-      
-      compressImage(file, async function(compressedBase64) {
-        try {
-          const { data: res, error } = await window.supabaseClient.functions.invoke('analyze-hcp-card', {
-            body: { imageBase64: compressedBase64 }
-          });
-          
-          statusBox.style.display = "none";
-          
-          if (res && res.success && res.data) {
-            const data = res.data;
-            
-            if (data.email) document.getElementById("inputEmail").value = data.email;
-            if (data.mobile) document.getElementById("inputMobile").value = data.mobile.replace(/[^0-9]/g, '');
-            
-            if (isNewDoctorMode) {
-              if (data.name) document.getElementById("inputNewName").value = data.name;
-              if (data.profession) {
-                const profSelect = document.getElementById("inputNewProfession");
-                for (let i = 0; i < profSelect.options.length; i++) {
-                  if (profSelect.options[i].value.toLowerCase().includes(data.profession.toLowerCase())) {
-                    profSelect.selectedIndex = i;
-                    break;
-                  }
-                }
-              }
-            }
-            
-            regenerateAutomatedQR();
-            checkEmailReminder();
-            alert("✨ AI อ่านข้อมูลสำเร็จและทำการ Auto-Fill เรียบร้อยครับ!");
-            
-          } else {
-            alert("❌ ไม่สามารถอ่านข้อมูลจากภาพได้: " + (res?.error || error?.message || "โปรดลองถ่ายใหม่อีกครั้ง"));
-          }
-        } catch(err) {
-          statusBox.style.display = "none";
-          alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ AI: " + err.message);
-        }
-      });
-
-      input.value = "";
     }
 
     function goBackToList() {
@@ -1014,11 +839,6 @@
       const box = document.getElementById(boxId);
       if(checkbox.checked) { box.classList.add('active'); } 
       else { box.classList.remove('active'); }
-    }
-
-    function toggleMobileFilters() {
-      const filters = document.querySelectorAll('.mobile-filter-collapse');
-      filters.forEach(f => f.classList.toggle('show'));
     }
 
     function validateMobileInput(input) {
@@ -1351,7 +1171,6 @@
       const currentSearchKeyword = document.getElementById("searchBox").value.trim();
       const currentHospKeyword = document.getElementById("filterHospital").value.trim();
 
-      // 🌟 บังคับความสูงและจัดกึ่งกลางกรณีไม่พบข้อมูล
       if(filteredEmpData.length === 0) {
         pageInfo.innerHTML = ""; ul.innerHTML = "";
         let noDataHtml = '<tr><td colspan="8" class="text-center text-muted" style="height: 45vh; vertical-align: middle;">';
@@ -1419,7 +1238,6 @@
       });
     }
 
-    // 🌟 ฟังก์ชันทำความสะอาดค่า Yes, No, None ก่อนแสดงในช่อง Input
     function getCleanInput(val) {
       if (!val) return "";
       const lowerVal = String(val).trim().toLowerCase();
@@ -1498,7 +1316,6 @@
       
       document.getElementById("newDoctorFields").style.display = "none";
       
-      // 🌟 ใช้ฟังก์ชัน getCleanInput เพื่อกรองคำว่า Yes, None ออกไป
       document.getElementById("inputEmail").value = getCleanInput(emp.email);
       document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
       
