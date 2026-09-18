@@ -36,7 +36,6 @@
       overflow: hidden; 
     }
 
-    /* 🌟 Top Bar ปรับปรุงเพิ่มปุ่มเปลี่ยนรหัสผ่าน */
     .top-user-bar {
       background-color: #ffffff;
       border-bottom: 1px solid #e2e8f0;
@@ -181,18 +180,18 @@
 
   <div id="networkStatusBanner"></div>
 
-  <!-- 🌟 Top Bar: แสดงอีเมล, เปลี่ยนรหัสผ่าน, และออกจากระบบ -->
+  <!-- 🌟 Top Bar: เปลี่ยนเป็นภาษาอังกฤษ -->
   <div class="top-user-bar">
     <span class="small fw-bold text-secondary me-3">
-      <i class="fa-solid fa-user-shield me-1"></i> <span id="currentUserEmail">กำลังตรวจสอบ...</span>
+      <i class="fa-solid fa-user-shield me-1"></i> <span id="currentUserEmail">Checking session...</span>
     </span>
     
     <button class="btn btn-outline-primary btn-sm rounded-pill fw-bold me-2 shadow-sm" style="font-size: 12.5px; padding: 5px 14px;" data-bs-toggle="modal" data-bs-target="#changePassModal">
-      <i class="fa-solid fa-key me-1"></i> เปลี่ยนรหัสผ่าน
+      <i class="fa-solid fa-key me-1"></i> Change Password
     </button>
 
     <button class="btn btn-outline-danger btn-sm rounded-pill fw-bold shadow-sm" style="font-size: 12.5px; padding: 5px 14px;" onclick="handleLogoutUser()">
-      <i class="fa-solid fa-right-from-bracket me-1"></i> ออกจากระบบ
+      <i class="fa-solid fa-right-from-bracket me-1"></i> Log Out
     </button>
   </div>
 
@@ -593,25 +592,25 @@
     </div>
   </div>
 
-  <!-- 🌟 Modal สำหรับเปลี่ยนรหัสผ่าน (Change Password) -->
+  <!-- 🌟 Modal สำหรับเปลี่ยนรหัสผ่าน (Change Password) ภาษาอังกฤษ -->
   <div class="modal fade" id="changePassModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
         <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-bold text-primary"><i class="fa-solid fa-key me-2"></i>เปลี่ยนรหัสผ่าน</h5>
+          <h5 class="modal-title fw-bold text-primary"><i class="fa-solid fa-key me-2"></i>Change Password</h5>
           <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
           <form id="changePassForm" onsubmit="handleChangePassword(event)">
             <div class="mb-4">
-              <label class="form-label small fw-bold text-secondary">รหัสผ่านใหม่ (ขั้นต่ำ 6 ตัวอักษร)</label>
+              <label class="form-label small fw-bold text-secondary">New Password (Minimum 6 characters)</label>
               <div class="input-group">
                 <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
                 <input type="password" id="newPasswordInput" class="form-control shadow-none border-start-0 bg-light" placeholder="••••••••" required minlength="6">
               </div>
             </div>
             <button type="submit" id="btnSubmitChangePass" class="btn btn-primary w-100 fw-bold py-2 rounded-pill shadow-sm">
-              บันทึกรหัสผ่านใหม่
+              Save New Password
             </button>
           </form>
         </div>
@@ -620,11 +619,11 @@
   </div>
 
   <script>
-    // 🌟 ฟังก์ชัน Logout พร้อมระบบเช็คข้อมูลออฟไลน์ค้างส่ง
+    // 🌟 ฟังก์ชัน Logout (แจ้งเตือนภาษาอังกฤษ)
     async function handleLogoutUser() {
       const offlineLogs = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
       if (offlineLogs.length > 0) {
-        const confirmLogout = confirm(`⚠️ แจ้งเตือนความปลอดภัย\n\nคุณมีข้อมูลการลงทะเบียนออฟไลน์ค้างส่งอยู่ในเครื่องจำนวน ${offlineLogs.length} รายการ\nหากคุณออกจากระบบตอนนี้ ข้อมูลที่ค้างอยู่จะถูกลบและสูญหายถาวร!\n\nยืนยันที่จะออกจากระบบและลบข้อมูลหรือไม่?`);
+        const confirmLogout = confirm(`⚠️ Security Warning\n\nYou have ${offlineLogs.length} offline registration log(s) pending to sync.\nIf you log out now, this pending data will be permanently deleted!\n\nAre you sure you want to log out and delete this data?`);
         if (!confirmLogout) return;
         localStorage.removeItem('offlineLogs');
       }
@@ -635,45 +634,44 @@
       window.location.href = 'login.html';
     }
 
-    // 🌟 ฟังก์ชันอัปเดตรหัสผ่านใหม่ (เรียก API Supabase)
+    // 🌟 ฟังก์ชันอัปเดตรหัสผ่านใหม่ (แจ้งเตือนภาษาอังกฤษ)
     async function handleChangePassword(e) {
       e.preventDefault();
       const newPass = document.getElementById("newPasswordInput").value.trim();
       const btn = document.getElementById("btnSubmitChangePass");
       
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> กำลังบันทึก...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Saving...';
       
       const { data, error } = await window.supabaseClient.auth.updateUser({ password: newPass });
       
       if (error) {
-        alert("❌ เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน: " + error.message);
+        alert("❌ Failed to change password: " + error.message);
         btn.disabled = false;
-        btn.innerHTML = 'บันทึกรหัสผ่านใหม่';
+        btn.innerHTML = 'Save New Password';
       } else {
-        alert("✅ เปลี่ยนรหัสผ่านใหม่สำเร็จแล้ว!");
+        alert("✅ Password changed successfully!");
         const modalEl = document.getElementById('changePassModal');
         const modal = bootstrap.Modal.getInstance(modalEl);
         modal.hide();
         document.getElementById("changePassForm").reset();
         btn.disabled = false;
-        btn.innerHTML = 'บันทึกรหัสผ่านใหม่';
+        btn.innerHTML = 'Save New Password';
       }
     }
 
-    // 🌟 ระบบ Auto-Logout หากไม่เคลื่อนไหว 30 นาที
+    // 🌟 ระบบ Auto-Logout (แจ้งเตือนภาษาอังกฤษ)
     let inactivityTimer;
     const INACTIVITY_LIMIT = 30 * 60 * 1000; 
 
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
       inactivityTimer = setTimeout(() => {
-        alert("🔒 หมดเวลาการเชื่อมต่อ (Inactive Session)\nระบบได้ทำการนำคุณออกจากระบบอัตโนมัติเพื่อความปลอดภัยของข้อมูล");
+        alert("🔒 Inactive Session Timeout\nFor your security, you have been automatically logged out due to inactivity.");
         handleLogoutUser();
       }, INACTIVITY_LIMIT);
     }
 
-    // ดักจับการเคลื่อนไหวเพื่อรีเซ็ตตัวนับเวลา
     ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt => {
       document.addEventListener(evt, resetInactivityTimer, true);
     });
@@ -685,7 +683,6 @@
         if (!data.session) {
           window.location.href = 'login.html';
         } else {
-          // 🌟 แสดงอีเมลของผู้ใช้ที่ล็อกอินอยู่บน Top Bar
           const emailDisplay = document.getElementById('currentUserEmail');
           if(emailDisplay) emailDisplay.innerText = data.session.user.email;
           
@@ -1590,7 +1587,6 @@
           confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
         
-        // 🌟 อัปเดตข้อมูลตารางแบบ Real-time
         if (finalEmployeeObj.id !== "New") {
           let targetEmp = employeeData.find(e => e.id === finalEmployeeObj.id);
           if (targetEmp) {
