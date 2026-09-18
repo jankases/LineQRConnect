@@ -24,24 +24,23 @@
   <script src="./assets/js/config.js"></script>
 
   <style>
-    /* 🌟 เปลี่ยน Layout เป็น Flexbox แอปพลิเคชัน 100% */
     body { 
       background-color: #f1f6fa; 
       font-family: 'Segoe UI', Tahoma, Arial, sans-serif; 
       margin: 0; 
       padding: 0; 
       color: #334155; 
-      height: 100dvh; /* ความสูงเต็มจอแบบ Dynamic */
+      height: 100dvh; 
       display: flex;
       flex-direction: column;
-      overflow: hidden; /* ซ่อน Scrollbar นอกสุดถาวร */
+      overflow: hidden; 
     }
     
     .content-wrapper { 
       flex: 1; 
       display: flex; 
       flex-direction: column; 
-      padding: 8px 8px; /* ขอบเล็กสุดเพื่อให้เต็มจอ */
+      padding: 8px 8px; 
       min-height: 0; 
     }
     
@@ -49,7 +48,7 @@
       flex: 1; 
       display: flex; 
       flex-direction: column; 
-      max-width: 100%; /* เต็มความกว้าง */
+      max-width: 100%; 
       width: 100%; 
       min-height: 0; 
       margin: 0; 
@@ -84,7 +83,6 @@
     
     .card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
     
-    /* 🌟 ให้ตารางยืดเติมพื้นที่ว่างอัตโนมัติ (Flex-grow) */
     .table-responsive { 
       flex: 1; 
       display: flex; 
@@ -94,7 +92,7 @@
       padding: 0; 
       border: 1px solid #e2e8f0; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
-      min-height: 0; /* จำเป็นมากสำหรับ Flexbox Scrolling */
+      min-height: 0; 
     }
     
     #employeeListTableWrapper, #historyTableWrapper {
@@ -290,7 +288,6 @@
                 <h2 class="fw-bold mb-0 text-nowrap" style="color: #06C755; font-size: 1.3rem; letter-spacing: -0.5px;">
                   <i class="fa-brands fa-line me-1"></i>LINE QR Connect
                 </h2>
-                <!-- ช่องค้นหาหลัก -->
                 <div class="input-group input-group-sm" style="max-width: 450px; width: 100%;">
                   <span class="input-group-text bg-white border-end-0 py-1"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
                   <input type="text" id="searchBox" class="form-control border-start-0 border-end-0 ps-0 shadow-none py-1" oninput="toggleClearBtn(); applyFilters()" placeholder="ค้นหาชื่อแพทย์ (TH/EN) หรือกดไมค์...">
@@ -319,7 +316,6 @@
               </div>
             </div>
           
-            <!-- Advanced Filters -->
             <div class="collapse mt-2 pt-2 border-top" id="advancedFiltersWrapper">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="fw-bold text-primary small"><i class="fa-solid fa-filter me-1"></i> ตัวกรองข้อมูลขั้นสูง</span>
@@ -327,7 +323,6 @@
               </div>
               
               <div class="row g-1">
-                <!-- ช่องค้นหา HCO พร้อมปุ่ม Clear และไมค์แยกภาษาอังกฤษ -->
                 <div class="col-md-4 col-12">
                   <label class="form-label text-secondary">🏥 HCO (โรงพยาบาล)</label>
                   <div class="input-group input-group-sm">
@@ -335,7 +330,6 @@
                     <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 px-2" type="button" id="btnClearHco" onclick="clearHcoBox()" style="border-color: #cbd5e1; display: none;" title="ล้าง">
                       <i class="fa-solid fa-xmark text-secondary"></i>
                     </button>
-                    <!-- ส่ง 'en-US' ไปเพื่อให้ฟังภาษาอังกฤษได้แม่นยำขึ้น -->
                     <button class="btn btn-outline-secondary bg-white border-start-0 px-2" type="button" id="btnMicHco" onclick="startDictation('filterHospital', 'btnMicHco', toggleClearHcoBtn, 'en-US')" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง (English)">
                       <i class="fa-solid fa-microphone text-primary"></i>
                     </button>
@@ -385,7 +379,6 @@
             <p class="text-muted mt-2" id="loadingText">กำลังดึงข้อมูลรายชื่อแพทย์...</p>
           </div>
 
-          <!-- Table Container แบบ Flex ยืดเต็มพื้นที่ล่าง -->
           <div class="table-responsive" id="mainTableArea" style="display: none;">
             <div id="employeeListTableWrapper">
               <table class="table table-striped table-hover align-middle table-register-view mb-0" style="width: 100%;">
@@ -772,13 +765,11 @@
       applyFilters();
     }
 
-    // 🌟 ระบบสั่งงานด้วยเสียงแบบกำหนดภาษาได้ (Dynamic Language)
     function startDictation(inputId, micBtnId, toggleCallback, lang = 'th-TH') {
       if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
         
-        // 🌟 ดึงค่าภาษาตามที่ปุ่มส่งมา (ถ้าไม่ส่งมาจะใช้ภาษาไทยเป็นหลัก)
         recognition.lang = lang; 
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
@@ -1428,6 +1419,16 @@
       });
     }
 
+    // 🌟 ฟังก์ชันทำความสะอาดค่า Yes, No, None ก่อนแสดงในช่อง Input
+    function getCleanInput(val) {
+      if (!val) return "";
+      const lowerVal = String(val).trim().toLowerCase();
+      if (lowerVal === "yes" || lowerVal === "no" || lowerVal === "none") {
+        return "";
+      }
+      return val;
+    }
+
     function openNewDoctorForm(typedName) {
       isNewDoctorMode = true;
       activeEmployee = null; 
@@ -1497,8 +1498,9 @@
       
       document.getElementById("newDoctorFields").style.display = "none";
       
-      document.getElementById("inputEmail").value = emp.email || "";
-      document.getElementById("inputMobile").value = emp.mobile || "";
+      // 🌟 ใช้ฟังก์ชัน getCleanInput เพื่อกรองคำว่า Yes, None ออกไป
+      document.getElementById("inputEmail").value = getCleanInput(emp.email);
+      document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
       
       document.getElementById("chkPrivacy").checked = false;
       document.getElementById("chkTerms").checked = false;
@@ -2009,7 +2011,7 @@
       tbody.innerHTML = "";
 
       if (filteredHistData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ไม่พบประวัติการลงทะเบียนตามเงื่อนไขที่เลือก</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>𓭭 ไม่พบประวัติการลงทะเบียนตามเงื่อนไขที่เลือก</td></tr>';
         pageInfo.innerText = "";
         ul.innerHTML = "";
         return;
