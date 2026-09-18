@@ -283,7 +283,6 @@
       <div id="registerView" style="display: flex;">
         <div id="listView">
           
-          <!-- Filter Card -->
           <div class="card p-2 mb-2 border-0 shadow-sm">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
               
@@ -298,7 +297,7 @@
                   <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 px-2" type="button" id="btnClearSearch" onclick="clearSearchBox()" style="border-color: #cbd5e1; display: none;" title="ล้างการค้นหา">
                     <i class="fa-solid fa-xmark text-secondary"></i>
                   </button>
-                  <button class="btn btn-outline-secondary bg-white border-start-0 px-2" type="button" id="btnMic" onclick="startDictation('searchBox', 'btnMic', toggleClearBtn)" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง">
+                  <button class="btn btn-outline-secondary bg-white border-start-0 px-2" type="button" id="btnMic" onclick="startDictation('searchBox', 'btnMic', toggleClearBtn, 'th-TH')" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง">
                     <i class="fa-solid fa-microphone text-primary"></i>
                   </button>
                 </div>
@@ -328,7 +327,7 @@
               </div>
               
               <div class="row g-1">
-                <!-- 🌟 เพิ่มปุ่ม Clear & Mic สำหรับ HCO -->
+                <!-- ช่องค้นหา HCO พร้อมปุ่ม Clear และไมค์แยกภาษาอังกฤษ -->
                 <div class="col-md-4 col-12">
                   <label class="form-label text-secondary">🏥 HCO (โรงพยาบาล)</label>
                   <div class="input-group input-group-sm">
@@ -336,7 +335,8 @@
                     <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 px-2" type="button" id="btnClearHco" onclick="clearHcoBox()" style="border-color: #cbd5e1; display: none;" title="ล้าง">
                       <i class="fa-solid fa-xmark text-secondary"></i>
                     </button>
-                    <button class="btn btn-outline-secondary bg-white border-start-0 px-2" type="button" id="btnMicHco" onclick="startDictation('filterHospital', 'btnMicHco', toggleClearHcoBtn)" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง">
+                    <!-- ส่ง 'en-US' ไปเพื่อให้ฟังภาษาอังกฤษได้แม่นยำขึ้น -->
+                    <button class="btn btn-outline-secondary bg-white border-start-0 px-2" type="button" id="btnMicHco" onclick="startDictation('filterHospital', 'btnMicHco', toggleClearHcoBtn, 'en-US')" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง (English)">
                       <i class="fa-solid fa-microphone text-primary"></i>
                     </button>
                   </div>
@@ -388,7 +388,7 @@
           <!-- Table Container แบบ Flex ยืดเต็มพื้นที่ล่าง -->
           <div class="table-responsive" id="mainTableArea" style="display: none;">
             <div id="employeeListTableWrapper">
-              <table class="table table-striped table-hover align-middle table-register-view mb-0">
+              <table class="table table-striped table-hover align-middle table-register-view mb-0" style="width: 100%;">
                 <thead class="roche-table-header">
                   <tr>
                     <th class="sortable-header" onclick="sortEmpTable('name')">HCP Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-name"></i></th>
@@ -708,7 +708,7 @@
     let currentGeneratedUrl = ""; 
 
     let empCurrentPage = 1;
-    let empRowsPerPage = 100; // ค่า Default ใหม่แสดงผล 100 รายการ
+    let empRowsPerPage = 100; 
     let empSortCol = '';
     let empSortAsc = true;
 
@@ -746,7 +746,6 @@
       reader.readAsDataURL(file);
     }
 
-    // 🌟 ระบบซ่อน/แสดงปุ่ม Clear ในช่องค้นหา
     function toggleClearBtn() {
       const searchBox = document.getElementById("searchBox");
       const clearBtn = document.getElementById("btnClearSearch");
@@ -773,12 +772,14 @@
       applyFilters();
     }
 
-    // 🌟 ระบบสั่งงานด้วยเสียงแบบ Dynamic (รองรับหลายช่อง)
-    function startDictation(inputId, micBtnId, toggleCallback) {
+    // 🌟 ระบบสั่งงานด้วยเสียงแบบกำหนดภาษาได้ (Dynamic Language)
+    function startDictation(inputId, micBtnId, toggleCallback, lang = 'th-TH') {
       if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
-        recognition.lang = 'th-TH'; // ภาษาไทยและอังกฤษอ่านได้ปกติ
+        
+        // 🌟 ดึงค่าภาษาตามที่ปุ่มส่งมา (ถ้าไม่ส่งมาจะใช้ภาษาไทยเป็นหลัก)
+        recognition.lang = lang; 
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
 
@@ -1047,7 +1048,6 @@
       }, 1000);
     }
 
-    // 🌟 ดึงข้อมูลแบบ Pagination (Loop) เพื่อให้ได้ข้อมูลครบทั้งหมดแม้เกิน 1000 รายการ
     async function loadEmployeeData() {
       if (!window.supabaseClient) return;
 
@@ -1101,7 +1101,6 @@
         
         document.getElementById("loading").style.display = "none";
         
-        // 🌟 เปลี่ยนจากการซ่อน/แสดง wrapper ปกติ เป็น flex เพื่อให้โครงสร้างไม่พัง
         document.getElementById("employeeListTableWrapper").style.display = "block";
         document.getElementById("mainTableArea").style.display = "flex";
         
@@ -1343,7 +1342,6 @@
       renderEmployeeTable();
     }
 
-    // ฟังก์ชันเช็คสถานะ
     const getStatusUI = (val) => {
       const v = String(val || "").trim().toLowerCase();
       if (v === "yes" || (v !== "none" && v !== "no" && v !== "")) {
@@ -1362,16 +1360,18 @@
       const currentSearchKeyword = document.getElementById("searchBox").value.trim();
       const currentHospKeyword = document.getElementById("filterHospital").value.trim();
 
+      // 🌟 บังคับความสูงและจัดกึ่งกลางกรณีไม่พบข้อมูล
       if(filteredEmpData.length === 0) {
         pageInfo.innerHTML = ""; ul.innerHTML = "";
-        let noDataHtml = '<tr><td colspan="8" class="text-center text-muted py-5">';
-        noDataHtml += '<i class="fa-solid fa-folder-open fs-1 mb-3 d-block" style="color: #cbd5e1;"></i>';
-        noDataHtml += '<p class="mb-2 fw-bold" style="font-size:15px;">❌ ไม่พบข้อมูลรายชื่อแพทย์ที่ค้นหาในฐานข้อมูล</p>';
+        let noDataHtml = '<tr><td colspan="8" class="text-center text-muted" style="height: 45vh; vertical-align: middle;">';
+        noDataHtml += '<div class="d-flex flex-column justify-content-center align-items-center h-100">';
+        noDataHtml += '<i class="fa-solid fa-folder-open mb-3 d-block" style="font-size: 3.5rem; color: #cbd5e1;"></i>';
+        noDataHtml += '<p class="mb-3 fw-bold" style="font-size:15px;">❌ ไม่พบข้อมูลรายชื่อแพทย์ที่ค้นหาในฐานข้อมูล</p>';
         if (currentSearchKeyword) {
           let safeKeyword = currentSearchKeyword.replace(/'/g, "\\'");
-          noDataHtml += '<button class="btn btn-success rounded-pill px-4 py-2 mt-2 fw-bold shadow-sm" style="font-size:14px; background-color: #06C755; border:none;" type="button" onclick="openNewDoctorForm(\'' + safeKeyword + '\')"><i class="fa-solid fa-plus me-1"></i> คลิกเพื่อกรอกข้อมูลแพทย์ใหม่</button>';
+          noDataHtml += '<button class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm" style="font-size:14px; background-color: #06C755; border:none;" type="button" onclick="openNewDoctorForm(\'' + safeKeyword + '\')"><i class="fa-solid fa-plus me-1"></i> คลิกเพื่อกรอกข้อมูลแพทย์ใหม่</button>';
         }
-        noDataHtml += '</td></tr>';
+        noDataHtml += '</div></td></tr>';
         tbody.innerHTML = noDataHtml;
         return;
       }
@@ -2009,7 +2009,7 @@
       tbody.innerHTML = "";
 
       if (filteredHistData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>𓭭 ไม่พบประวัติการลงทะเบียนตามเงื่อนไขที่เลือก</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ไม่พบประวัติการลงทะเบียนตามเงื่อนไขที่เลือก</td></tr>';
         pageInfo.innerText = "";
         ul.innerHTML = "";
         return;
