@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- โหลด Supabase SDK และ Config -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./assets/js/config.js"></script>
 
@@ -16,22 +15,14 @@
     body { background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
     .login-wrapper { width: 100%; max-width: 400px; padding: 15px; }
     .login-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px 30px; border: 1px solid #e2e8f0; }
-    
-    /* 🌟 เปลี่ยนสี Brand Icon เป็นสีเขียว LINE */
     .login-brand-icon { width: 60px; height: 60px; background: #06C755; color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3); }
-    
     .login-title { font-weight: 800; color: #1e293b; font-size: 24px; }
     .login-subtitle { color: #64748b; font-size: 14px; margin-bottom: 30px; }
     .login-label { font-weight: 600; color: #475569; font-size: 13px; margin-bottom: 6px; display: block; text-align: left; }
-    
     .login-input-group .input-group-text { background: transparent; border-right: none; color: #94a3b8; border-color: #cbd5e1; border-radius: 10px 0 0 10px; }
     .login-input { border-left: none; border-color: #cbd5e1; font-weight: 500; color: #334155; border-radius: 0 10px 10px 0 !important; }
     .login-input:focus { border-color: #cbd5e1; box-shadow: none; background-color: #f8fafc; }
-    
-    /* 🌟 Focus สีขอบช่องกรอกเป็นสีเขียว LINE */
     .login-input-group:focus-within .input-group-text, .login-input-group:focus-within .login-input { border-color: #06C755; }
-    
-    /* 🌟 เปลี่ยนปุ่มหลักเป็นสีเขียว LINE */
     .btn-login-submit { background: #06C755; color: white; border: none; border-radius: 10px; padding: 12px; font-weight: bold; font-size: 15px; transition: 0.2s; }
     .btn-login-submit:hover { background: #05b04b; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(6, 199, 85, 0.2); }
   </style>
@@ -72,7 +63,7 @@
       </div>
     </form>
 
-    <!-- 2. FORM: FORGOT PASSWORD (ส่งลิงก์เข้าอีเมล) -->
+    <!-- 2. FORM: FORGOT PASSWORD -->
     <form id="forgotForm" class="d-none" onsubmit="handleForgotPassword(event)">
       <div class="mb-4">
         <label class="login-label">Enter your Email</label>
@@ -81,7 +72,7 @@
           <input type="email" class="form-control login-input" id="forgotEmail" placeholder="name@roche.com" required>
         </div>
         <div class="form-text mt-2 text-start" style="font-size: 12px; color: #64748b;">
-          เราจะส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลของคุณ
+          We will send a password reset link to your email.
         </div>
       </div>
       <button type="submit" class="btn btn-warning w-100 mb-3 fw-bold text-dark border-0 rounded-3 py-2" id="btnForgotBtn">Send Reset Link</button>
@@ -92,16 +83,16 @@
       </div>
     </form>
 
-    <!-- 3. FORM: RESET PASSWORD (โชว์ตอนกดลิงก์จากอีเมลกลับมา) -->
+    <!-- 3. FORM: RESET PASSWORD -->
     <form id="resetForm" class="d-none" onsubmit="handleResetPassword(event)">
       <div class="mb-4">
         <label class="login-label">New Password</label>
         <div class="input-group login-input-group mb-2">
           <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-          <input type="password" class="form-control login-input" id="newPassword" placeholder="รหัสผ่านใหม่" minlength="6" required>
+          <input type="password" class="form-control login-input" id="newPassword" placeholder="New Password" minlength="6" required>
         </div>
         <div class="form-text text-start" style="font-size: 12px; color: #64748b;">
-          รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร
+          Password must be at least 6 characters long.
         </div>
       </div>
       <button type="submit" class="btn btn-login-submit w-100 mb-3" id="btnResetBtn">Save New Password</button>
@@ -113,13 +104,12 @@
 <script>
   const sb = window.supabaseClient;
 
-  // ตรวจสอบว่ามีลิงก์ Recovery มาจากอีเมลหรือไม่ตอนโหลดหน้า
   window.onload = () => {
     if (window.location.hash.includes("type=recovery")) {
       toggleView('reset');
     } else {
       sb.auth.getSession().then(({ data }) => {
-        if (data.session) window.location.href = 'index.html'; // ถ้ามีล็อกอินค้างอยู่ เด้งไปหน้าหลักเลย
+        if (data.session) window.location.href = 'index.html';
       });
     }
   };
@@ -141,6 +131,13 @@
       document.getElementById('forgotForm').classList.remove('d-none');
       title.innerText = "Forgot Password"; subtitle.innerText = "Request a password reset link";
       icon.innerHTML = '<i class="fa-solid fa-envelope-open-text fs-2"></i>'; icon.style.background = "#f59e0b";
+      
+      // 🌟 ดึง Email จากหน้า Login มาใส่ให้อัตโนมัติ
+      const currentEmail = document.getElementById('loginEmail').value.trim();
+      if(currentEmail) {
+        document.getElementById('forgotEmail').value = currentEmail;
+      }
+      
     } else if (view === 'reset') {
       document.getElementById('resetForm').classList.remove('d-none');
       title.innerText = "Reset Password"; subtitle.innerText = "Create your new secure password";
@@ -148,7 +145,6 @@
     }
   }
 
-  // 1. เข้าสู่ระบบ
   async function handleLogin(e) {
     e.preventDefault();
     const btn = document.getElementById('btnLoginBtn');
@@ -160,14 +156,13 @@
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
     if (error) {
-      alert("❌ รหัสผ่านไม่ถูกต้อง หรืออีเมลไม่เข้าระบบ");
+      alert("❌ Invalid email or password.");
       btn.disabled = false; btn.innerHTML = 'Log In';
     } else {
       window.location.href = 'index.html';
     }
   }
 
-  // 2. ขอลิงก์รีเซ็ตรหัสผ่าน
   async function handleForgotPassword(e) {
     e.preventDefault();
     const btn = document.getElementById('btnForgotBtn');
@@ -175,21 +170,19 @@
 
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...';
 
-    // ส่งอีเมลโดยระบุให้เด้งกลับมาหน้านี้หลังจากคลิก
     const { data, error } = await sb.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + window.location.pathname
     });
 
     if (error) {
-      alert("❌ เกิดข้อผิดพลาด: " + error.message);
+      alert("❌ Error: " + error.message);
     } else {
-      alert("✅ ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลของคุณแล้ว! กรุณาเช็กกล่องจดหมาย");
+      alert("✅ Password reset link sent! Please check your inbox.");
       toggleView('login');
     }
     btn.disabled = false; btn.innerHTML = 'Send Reset Link';
   }
 
-  // 3. บันทึกรหัสผ่านใหม่ (หลังจากกดลิงก์มาแล้วกรอกรหัสใหม่)
   async function handleResetPassword(e) {
     e.preventDefault();
     const btn = document.getElementById('btnResetBtn');
@@ -200,10 +193,10 @@
     const { data, error } = await sb.auth.updateUser({ password: newPassword });
 
     if (error) {
-      alert("❌ ไม่สามารถเปลี่ยนรหัสผ่านได้: " + error.message);
+      alert("❌ Failed to reset password: " + error.message);
       btn.disabled = false; btn.innerHTML = 'Save New Password';
     } else {
-      alert("✅ เปลี่ยนรหัสผ่านเรียบร้อย! คุณกำลังเข้าสู่ระบบ");
+      alert("✅ Password reset successfully! Logging you in...");
       window.location.href = 'index.html';
     }
   }
