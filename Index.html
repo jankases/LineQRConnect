@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LINE QR Connect</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0066cc">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+
+  <!-- 🌟 โหลด Supabase SDK และ Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/config.js"></script>
+
+  <style>
+    body { background-color: #f1f6fa; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 0; margin: 0; color: #334155; }
+    .content-wrapper { padding: 25px 20px; }
+    .main-container { max-width: 1150px; margin: 0 auto; position: relative; width: 100%; }
+    
+    #networkStatusBanner {
+      display: none; position: fixed; top: 0; left: 0; width: 100%;
+      color: white; font-weight: bold; text-align: center;
+      padding: 10px 15px; z-index: 9999; font-size: 14.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s ease;
+    }
+    
+    .nav-container-box { display: flex; justify-content: center; margin-top: 5px; margin-bottom: 25px; }
+    .nav-pills .nav-link { cursor: pointer; color: #64748b; font-weight: bold; margin: 0 6px; background: #e2e8f0; border-radius: 30px; padding: 8px 24px; transition: 0.2s; border: 1px solid transparent; }
+    .nav-pills .nav-link:hover { background: #cbd5e1; color: #0066cc; }
+    .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15); }
+    
+    .card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; }
+    .table-responsive { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table-register-view tbody tr { cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f1f5f9; }
+    .table-register-view tbody tr:hover { background-color: #f0f7ff; } 
+    
+    .table-register-view thead.roche-table-header th {
+      background-color: #0066cc !important; color: white !important; border-bottom: none !important; font-weight: 600; padding: 14px 12px; white-space: nowrap;
+    }
+    .table-logs-view thead.roche-logs-header th {
+      background-color: #0066cc !important; color: white !important; border-bottom: none !important; font-weight: 600; padding: 14px 12px; white-space: nowrap;
+    }
+
+    .sortable-header { cursor: pointer; user-select: none; transition: background-color 0.2s; }
+    .sortable-header:hover { background-color: #0052a3 !important; }
+    .sort-icon { font-size: 0.85em; opacity: 0.5; margin-left: 4px; }
+    .sortable-header.active .sort-icon { opacity: 1; color: #bae6fd; }
+    
+    .btn-roche-action { background-color: #0066cc !important; color: white !important; border: none !important; border-radius: 50px !important; padding: 6px 16px !important; font-weight: bold; font-size: 13px; transition: 0.2s; box-shadow: 0 2px 6px rgba(0, 102, 204, 0.1); white-space: nowrap; }
+    .btn-roche-action:hover { background-color: #0052a3 !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2); }
+
+    .reg-box { display: none; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); overflow: hidden; border: 1px solid #e2e8f0; padding-bottom: 20px; }
+    .badge-custom { font-size: 12px; padding: 6px 12px; border-radius: 20px; background-color: #f1f5f9; color: #475569; margin-right: 4px; margin-bottom: 4px; display: inline-block; font-weight: 600; border: 1px solid #e2e8f0; }
+    
+    .status-checked { color: #0066cc; font-weight: bold; font-size: 1.25rem; }
+    .status-unchecked { color: #cbd5e1; font-size: 1.25rem; }
+    
+    .form-control, .form-select { 
+      border-radius: 10px; border: 1px solid #cbd5e1; padding: 12px 14px; 
+      background-color: #ffffff; color: #1e293b; font-weight: 500; font-size: 16px !important; transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
+    .form-label { color: #64748b; font-weight: 600; font-size: 15px; }
+
+    .consent-box {
+      background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px;
+      padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex;
+      align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left;
+    }
+    .consent-box:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+    .consent-box.active { background-color: #eff6ff; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15); }
+    
+    .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
+    .consent-text { font-size: 16px; color: #334155; margin: 0; line-height: 1.5; flex-grow: 1; }
+
+    .pagination { justify-content: flex-end; margin-bottom: 0; }
+    .page-link { color: #0066cc; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; }
+    .page-link:hover { background-color: #f1f5f9; color: #004d99; border-color: #cbd5e1; }
+    .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(0,102,204,0.2); }
+    .page-item.disabled .page-link { color: #94a3b8; background-color: #f8fafc; border-color: #e2e8f0; }
+
+    .dropdown-multiselect { position: relative; width: 100%; }
+    .dropdown-multiselect-btn { 
+      background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; 
+      width: 100%; text-align: left; font-weight: 500; color: #1e293b; cursor: pointer; 
+      display: flex; justify-content: space-between; align-items: center; font-size: 16px;
+    }
+    .dropdown-multiselect-btn::after {
+      content: ""; display: inline-block; margin-left: 0.255em; vertical-align: 0.255em;
+      border-top: 0.3em solid; border-right: 0.3em solid transparent; border-bottom: 0; border-left: 0.3em solid transparent;
+    }
+    .dropdown-multiselect-menu {
+      position: absolute; top: 100%; left: 0; width: 100%; max-height: 240px; overflow-y: auto;
+      background: white; border: 1px solid #cbd5e1; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      z-index: 1000; padding: 8px; display: none;
+    }
+    .dropdown-multiselect-menu.show { display: block; }
+    .multiselect-item { display: flex; align-items: center; padding: 8px 10px; border-radius: 6px; font-weight: 500; color: #1e293b; }
+    .multiselect-item:hover { background-color: #f1f5f9; }
+    .multiselect-item input { margin-right: 10px; width: 22px; height: 22px; cursor: pointer; }
+    .multiselect-item label { margin: 0; cursor: pointer; width: 100%; font-size: 16px; }
+
+    .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
+
+    #qrcodeContainer { display: flex; justify-content: center; margin: 10px auto; padding: 10px; background: white; border-radius: 10px; }
+    #qrcodeContainer img { max-width: 100%; height: auto; }
+
+    .btn-clear-filter, .btn-refresh-data {
+      background-color: #f8fafc; color: #64748b; border: 1px solid #cbd5e1;
+      border-radius: 20px; padding: 4px 12px; font-size: 12.5px; font-weight: 600;
+      transition: all 0.2s ease; cursor: pointer;
+    }
+    .btn-clear-filter:hover { background-color: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+    .btn-refresh-data:hover { background-color: #e0f2fe; color: #0284c7; border-color: #38bdf8; }
+
+    .btn-ai-scan {
+      background: linear-gradient(135deg, #6366f1, #a855f7); color: white;
+      border: none; border-radius: 20px; font-weight: bold; padding: 6px 16px;
+      font-size: 13px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+    }
+    .btn-ai-scan:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(168, 85, 247, 0.35); color: white; }
+
+    @media (max-width: 767.98px) {
+      .content-wrapper { padding: 10px 0px !important; }
+      .nav-pills .nav-link { padding: 10px 8px; margin: 0 4px; font-size: 14px; border-radius: 20px; white-space: nowrap; }
+      .mobile-filter-collapse { display: none; }
+      .mobile-filter-collapse.show { display: block !important; }
+      .btn-toggle-filter { width: 100%; border-radius: 10px; border: 1px dashed #0066cc; color: #0066cc; font-weight: bold; font-size: 15px; background: rgba(0, 102, 204, 0.04); padding: 10px; margin-top: 4px; }
+      #listView { padding: 0 10px; }
+      #listView .card { padding: 15px 12px !important; margin-bottom: 12px !important; border-radius: 14px !important; }
+      #listView .card h2 { font-size: 1.4rem !important; margin-bottom: 10px !important; text-align: left !important; }
+      #listView .table-responsive { padding: 8px; border-radius: 12px; }
+      .table-register-view, .table-logs-view { width: 100%; min-width: 600px; }
+      th, td { font-size: 13.5px !important; padding: 12px 6px !important; }
+      #qrView { width: 100% !important; max-width: 100% !important; padding: 0px !important; margin: 0px !important; border: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; }
+      #qrView > .text-center { padding: 15px 15px !important; }
+      #qrView .card { width: 100% !important; max-width: 100% !important; padding: 20px 15px !important; border-radius: 0px !important; margin-bottom: 0px !important; border: none !important; border-top: 1px solid #e2e8f0 !important; border-bottom: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+      #targetName { font-size: 1.8rem !important; font-weight: bold; color: #0066cc; word-break: break-word; }
+      #qrView .btn, #btnConfirm { padding: 16px 10px !important; font-size: 16px !important; font-weight: bold; border-radius: 12px !important; display: block; width: 100%; margin-bottom: 10px; }
+    }
+    
+    .btn-print-screen {
+      background-color: #ffffff; color: #0066cc; border: 1px solid #0066cc; border-radius: 10px;
+      padding: 10px 18px; font-size: 15px; font-weight: bold; cursor: pointer;
+      transition: all 0.2s ease-in-out; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 15px;
+    }
+    .btn-print-screen:hover { background-color: #f8fafc; transform: translateY(-1px); }
+
+    @media (max-width: 767.98px) {
+      .btn-print-screen { display: block; width: 100%; text-align: center; }
+    }
+
+    @media print {
+      @page { size: A4 portrait; margin: 1.5cm; }
+      body { background-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body * { visibility: hidden; }
+      #qrView, #qrView * { visibility: visible; }
+      #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; }
+      #qrView .card, .consent-card, #lockAlert, .btn, button, .btn-print-screen, .nav-container-box, #newDoctorTitleBlock, #aiScanBlock { display: none !important; }
+      #targetName { font-size: 32pt !important; color: #0066cc !important; margin-top: 20px !important; }
+      #targetThName { font-size: 20pt !important; color: #555 !important; }
+      .header-title-print { font-size: 26pt !important; color: #0066cc !important; }
+      #qrContentBlock { display: block !important; margin-top: 40px !important; text-align: center !important; }
+      .bg-light.border.rounded { border: none !important; background: transparent !important; }
+      #qrExpiryText { font-size: 14pt !important; margin-top: 15px !important; }
+      #btnCopyLink { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="networkStatusBanner"></div>
+
+  <div class="content-wrapper">
+    <div class="container main-container">
+      
+      <div class="nav-container-box">
+        <ul class="nav nav-pills justify-content-center">
+          <li class="nav-item"><a class="nav-link active" id="tabRegister" onclick="switchTab('register')">📋 บันทึก (Register)</a></li>
+          <li class="nav-item"><a class="nav-link" id="tabHistory" onclick="switchTab('history')">📊 ประวัติ (Logs)</a></li>
+          <li class="nav-item"><a class="nav-link" id="tabBatch" onclick="switchTab('batch')">📁 สร้าง QR Sign-in (Batch)</a></li>
+        </ul>
+      </div>
+
+      <div id="registerView">
+        <div id="listView">
+          <div class="card p-4 mb-4 border-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="fw-bold mb-0" style="color: #06C755; letter-spacing: -0.5px;">
+                <i class="fa-brands fa-line me-2"></i>LINE QR Connect 
+                <span class="text-secondary fs-6 fw-normal ms-2 d-none d-md-inline align-middle">| Fast Add & Consent</span>
+              </h2>
+              
+              <div class="d-flex gap-2">
+                <!-- 🌟 ปุ่มสแกนด้วย AI จากหน้าหลัก (เรียกเปิดกล้อง iPad/iPhone ทันที) -->
+                <input type="file" id="mainAiInput" accept="image/*" capture="environment" style="display:none;" onchange="handleMainAIScan(this)">
+                <button class="btn btn-ai-scan shadow-sm" type="button" onclick="document.getElementById('mainAiInput').click()">
+                  <i class="fa-solid fa-wand-magic-sparkles me-1"></i> 📸 สแกนนามบัตร (AI)
+                </button>
+
+                <button class="btn-refresh-data shadow-sm" onclick="refreshEmployeeData()" type="button" title="ดึงข้อมูลใหม่จากฐานข้อมูล">
+                  <i class="fa-solid fa-arrows-rotate me-1" id="refreshIcon"></i> รีเฟรช
+                </button>
+                <button class="btn-clear-filter shadow-sm" onclick="clearAllFilters()" type="button" title="ล้างค่าตัวกรองทั้งหมด">
+                  <i class="fa-solid fa-broom me-1"></i> ล้างตัวกรอง
+                </button>
+              </div>
+            </div>
+            
+            <div class="row g-2">
+              <div class="col-md-3 col-12">
+                <label class="form-label small fw-bold text-secondary">🔎 ค้นหาชื่อ HCP (แพทย์)</label>
+                <input type="text" id="searchBox" class="form-control shadow-sm" oninput="applyFilters()" placeholder="พิมพ์ชื่อแพทย์ (TH/EN)...">
+              </div>
+
+              <div class="col-md-3 col-12 d-block d-md-none">
+                <button type="button" class="btn-toggle-filter" onclick="toggleMobileFilters()">⚙️ ตัวกรองเพิ่มเติม (คลิกเพื่อเปิด/ปิด)</button>
+              </div>
+              
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f1">
+                <label class="form-label small fw-bold text-secondary">🏥 HCO (โรงพยาบาล)</label>
+                <input type="text" id="filterHospital" class="form-control shadow-sm" oninput="applyFilters()" placeholder="พิมพ์ค้นหา รพ...">
+              </div>
+
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f2">
+                <label class="form-label small fw-bold text-secondary">🩺 Specialty</label>
+                <select id="filterSpecialty" class="form-select shadow-sm" onchange="applyFilters()">
+                  <option value="">-- ทั้งหมด --</option>
+                </select>
+              </div>
+
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f3">
+                <label class="form-label small fw-bold text-secondary">👤 PJP</label>
+                <select id="filterPjp" class="form-select shadow-sm" onchange="applyFilters()">
+                  <option value="">-- ทั้งหมด --</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mt-md-2 mt-0">
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f4">
+                <label class="form-label small fw-bold text-secondary">🧬 DA</label>
+                <select id="filterDa" class="form-select shadow-sm" onchange="applyFilters()"><option value="">-- ทั้งหมด --</option></select>
+              </div>
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f5">
+                <label class="form-label small fw-bold text-secondary">📊 Class Max</label>
+                <div class="dropdown-multiselect shadow-sm" id="classMultiselectContainer">
+                  <div class="dropdown-multiselect-btn" id="classMultiselectBtn" onclick="toggleMultiselectMenu()">-- ทั้งหมด --</div>
+                  <div class="dropdown-multiselect-menu" id="classMultiselectMenu"></div>
+                </div>
+              </div>
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f6">
+                <label class="form-label small fw-bold text-secondary">💬 สถานะ LINE ID</label>
+                <select id="filterLineStatus" class="form-select shadow-sm" onchange="applyFilters()">
+                  <option value="">-- ทั้งหมด --</option>
+                  <option value="allocated">มี LINE ID แล้ว</option>
+                  <option value="empty">ยังไม่มี LINE ID</option>
+                </select>
+              </div>
+              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f7">
+                <label class="form-label small fw-bold text-secondary">✉️ สถานะ Email</label>
+                <select id="filterEmailStatus" class="form-select shadow-sm" onchange="applyFilters()">
+                  <option value="">-- ทั้งหมด --</option>
+                  <option value="allocated">มี Email แล้ว</option>
+                  <option value="empty">ยังไม่มี Email</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+          
+          <div id="loading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-muted mt-2" id="loadingText">กำลังดึงข้อมูลรายชื่อแพทย์...</p>
+          </div>
+
+          <div id="employeeListTableWrapper" class="table-responsive" style="display: none;">
+            <table class="table table-striped table-hover align-middle table-register-view">
+              <thead class="roche-table-header">
+                <tr>
+                  <th class="sortable-header" onclick="sortEmpTable('name')">HCP Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-name"></i></th>
+                  <th class="sortable-header" onclick="sortEmpTable('thName')">TH Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-thName"></i></th> 
+                  <th class="sortable-header" onclick="sortEmpTable('spec')">Specialty <i class="fa-solid fa-sort sort-icon" id="icon-emp-spec"></i></th>
+                  <th class="sortable-header" onclick="sortEmpTable('hospital')">HCO <i class="fa-solid fa-sort sort-icon" id="icon-emp-hospital"></i></th>
+                  <th style="width: 80px;" class="text-center">LINE</th>
+                  <th style="width: 60px;" class="text-center">Email</th>
+                  <th style="width: 80px;" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="employeeTableBody"></tbody>
+            </table>
+            
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 border-top">
+              <div class="d-flex align-items-center mb-2 mb-md-0">
+                <label class="text-secondary small fw-bold me-2 mb-0">แสดง:</label>
+                <select id="empRowsSelect" class="form-select form-select-sm shadow-none border-light" style="width: 80px; border-radius: 8px;" onchange="changeEmpRowsPerPage()">
+                  <option value="10">10</option>
+                  <option value="15" selected>15</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                </select>
+                <span id="empPageInfo" class="text-muted small fw-bold ms-3"></span>
+              </div>
+              <ul class="pagination pagination-sm mb-0" id="empPaginationUl"></ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="qrView" class="reg-box mx-auto" style="max-width: 650px; position: relative;">
+          
+          <div class="p-4 p-sm-5 text-center">
+            
+            <div class="text-start mb-4 pb-3 border-bottom">
+              <h2 class="fw-bold mb-1 header-title-print" style="color: #0066cc; font-style: italic; font-size: 1.9rem; letter-spacing: -0.5px;">ยืนยันข้อมูล<br>บุคลากรทางการแพทย์</h2>
+              <p class="text-secondary mt-2 mb-0" style="font-size: 14.5px; font-style: italic; line-height: 1.5;">
+                กรุณากรอกข้อมูลเพื่อใช้ในการตรวจสอบ และยืนยันข้อมูลการเป็นบุคลากรทางการแพทย์ตามความเป็นจริง<br>
+                หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก
+              </p>
+            </div>
+
+            <!-- 🌟 ปุ่มสแกนด้วย Gemini AI ในหน้าฟอร์ม 🌟 -->
+            <div id="aiScanBlock" class="mb-4">
+              <input type="file" id="aiImageInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAIScan(this)">
+              <button type="button" class="btn btn-ai-scan w-100 py-2 fs-6" onclick="document.getElementById('aiImageInput').click()">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i>📸 สแกนนามบัตร/เอกสารเพิ่มเติม (Gemini AI)
+              </button>
+              <div id="aiScanStatus" class="small fw-bold mt-2 text-primary" style="display:none;"></div>
+            </div>
+
+            <h3 id="targetName" class="fw-bold mb-0" style="font-size: 2.2rem; color:#0066cc;"></h3>
+            <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.3rem;"></h4>
+            <p id="targetId" class="text-muted mb-3" style="font-size: 1.1rem;"></p>
+            <div id="targetBadges" class="mb-4 d-flex flex-wrap justify-content-center"></div>
+            
+            <div id="newDoctorTitleBlock" style="display: none; margin-bottom: 15px;">
+               <span class="badge bg-warning text-dark fw-bold mb-2">New Doctor Registration</span>
+               <p class="text-muted small mb-1">🆕 โหมดบันทึกและสร้างรหัสลงทะเบียนแพทย์ท่านใหม่</p>
+               <div class="px-2 mb-2">
+                 <label class="form-label fw-bold text-primary d-block text-start mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
+                 <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="font-size: 1.35rem; color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
+               </div>
+            </div>
+            
+            <div class="card p-4 p-md-4 mb-4 bg-white text-start" style="border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: none;">
+              
+              <div class="mb-2">
+                <h4 class="fw-bold mb-1" style="font-size:18px; color:#0066cc;"><i class="fa-solid fa-address-book me-2" style="color: #334155;"></i>ข้อมูลติดต่อ</h4>
+                <p class="text-secondary mb-3" style="font-size: 14px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+
+                <div class="mb-3 mt-4">
+                  <label class="form-label fw-bold text-dark" style="font-size: 15px;">หมายเลขโทรศัพท์</label>
+                  <input type="tel" id="inputMobile" class="form-control shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์">
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark" style="font-size: 15px;">อีเมล์ <span class="text-danger">*</span></label>
+                  <input type="email" id="inputEmail" class="form-control shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล์">
+                  
+                  <div id="emailSuggestionText" class="text-primary mt-2" style="display: none; font-size: 13.5px; font-weight: 500; line-height: 1.4;">
+                    <i class="fa-solid fa-circle-info me-1"></i> <b>ข้อแนะนำ:</b> อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE หากระบุข้อมูลในส่วนนี้ จะช่วยอำนวยความสะดวกและลดขั้นตอนการกรอกข้อมูลให้แก่แพทย์
+                  </div>
+                  <div id="emailReminderText" class="text-danger mt-2" style="display: none; font-size: 13.5px; font-weight: 600; line-height: 1.4;">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> เนื่องจากท่านได้เลือกยินยอมรับข้อมูลข่าวสาร โปรดระบุอีเมลเพื่อให้ระบบสามารถจัดส่งข้อมูลทางการแพทย์ได้อย่างสมบูรณ์
+                  </div>
+
+                </div>
+              </div>
+
+              <div id="newDoctorFields" style="display: none;">
+                <hr class="my-4" style="border-color: #cbd5e1;">
+                <h4 class="fw-bold mb-3" style="font-size:18px; color:#0066cc;">ข้อมูลอาชีพ</h4>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark" style="font-size: 15px;">อาชีพ <span class="text-danger">*</span></label>
+                  <select id="inputNewProfession" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
+                    <option value="-">-- เลือกอาชีพ --</option>
+                    <option value="Doctor">Doctor / แพทย์</option>
+                    <option value="Nurse">Nurse / พยาบาล</option>
+                    <option value="Pharmacist">Pharmacist / เภสัชกร</option>
+                    <option value="Other">Other Contact / อื่นๆ</option>
+                  </select>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark" style="font-size: 15px;">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
+                  <select id="inputNewSpec" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
+                    <option value="-">-</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark" style="font-size: 15px;">ชื่อองค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
+                  <select id="inputNewHospital" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
+                    <option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="consent-card text-start mb-4 mt-2">
+              <h6 class="fw-bold mb-3" style="font-size:18px; color: #0066cc;"><i class="fa-solid fa-gavel me-2"></i>ข้อมูลด้านกฎหมาย</h6>
+              
+              <label class="consent-box shadow-sm" id="boxPrivacy">
+                <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
+                <span class="consent-text fw-medium fst-italic">
+                  <span class="text-danger fw-bold fst-normal">*</span>ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
+                  <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold" style="color: #0066cc;" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
+                </span>
+              </label>
+
+              <label class="consent-box shadow-sm" id="boxTerms">
+                <input class="form-check-input consent-checkbox" type="checkbox" id="chkTerms" onchange="toggleConsentStyle('boxTerms', this); checkConsentState(); regenerateAutomatedQR(); checkEmailReminder();">
+                <span class="consent-text fw-medium fst-italic">
+                  ฉันยินยอมให้โรชและบริษัทในเครือประมวลผลข้อมูลส่วนบุคคลของฉันเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาดตามที่ระบุในข้อกำหนดและนโยบายของโรช 
+                  <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold" style="color: #0066cc;" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
+                </span>
+              </label>
+            </div>
+
+            <div id="lockAlert" class="alert alert-info small fw-bold mb-3" style="font-size:14.5px;">📋 กรุณาติ๊กกล่องด้านบนเพื่อยอมรับข้อกำหนดและนโยบายของโรช ก่อนแสดง QR Code ครับ</div>
+            
+            <div id="qrContentBlock" style="display: none;">
+              <div class="text-end d-md-block d-none"> 
+                <button class="btn-print-screen" onclick="window.print()"><i class="fa-solid fa-print me-2"></i> Print / Save PDF</button>
+              </div>
+
+              <div class="bg-light p-3 p-sm-4 border rounded mb-4 mt-3">
+                <div id="qrcodeContainer"></div>
+                
+                <p class="text-success fw-bold mt-3 mb-0" style="font-size:14px;">📲 สแกนรหัส QR Code เพื่อเพิ่มเพื่อน (Add LINE) Roche Thailand</p>
+                <p id="qrExpiryText" class="text-danger fw-bold mt-1 mb-0" style="font-size:13px;"></p>
+                
+                <button id="btnCopyLink" class="btn btn-outline-primary btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm" onclick="copyQrLink()">
+                  <i class="fa-solid fa-link me-1"></i> คัดลอกลิงก์ (Copy Link) ให้คุณหมอ
+                </button>
+              </div>
+              
+              <button id="btnConfirm" class="btn btn-success w-100 py-3 fw-bold mb-3 shadow-sm" style="background-color:#0066cc !important; border:none; font-size:17px;" onclick="submitRegistration()">✅ ยืนยันการออกคิวอาร์ (Save Log)</button>
+            </div>
+
+            <button class="btn btn-secondary w-100 btn-sm btn-back-main-custom py-3 fw-bold" id="btnBackMain" style="font-size: 16px;" onclick="goBackToList()">⬅️ กลับไปหน้าเลือกรายชื่อ</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="historyView" style="display: none;">
+        <div class="table-responsive">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+            <h2 class="fw-bold mb-2 mb-md-0" style="color: #0066cc; letter-spacing: -0.5px;">
+              <i class="fa-solid fa-clock-rotate-left me-2"></i>HCP Registration Logs 
+              <span class="text-secondary fs-6 fw-normal ms-2 d-none d-md-inline align-middle">| Real-time Audit Trail</span>
+            </h2>
+
+            <div class="d-flex align-items-center bg-light p-2 rounded-3 border" style="min-width: 280px;">
+              <label class="form-label small fw-bold text-secondary mb-0 me-2 text-nowrap"><i class="fa-solid fa-filter me-1"></i> ผู้บันทึก:</label>
+              <select id="filterLogRecorder" class="form-select form-select-sm shadow-none" onchange="applyLogRecorderFilter()">
+                <option value="">-- แสดงทั้งหมด (Everyone) --</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="row g-2 mb-4">
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card text-white p-2 text-center border-0 shadow-sm h-100" style="background-color: #06C755; border-radius: 12px;">
+                <div class="small fw-medium opacity-75">วันนี้</div>
+                <h3 class="fw-bold mb-0" id="statToday">0</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card text-white p-2 text-center border-0 shadow-sm h-100" style="background-color: #10b981; border-radius: 12px;">
+                <div class="small fw-medium opacity-75">เดือนนี้</div>
+                <h3 class="fw-bold mb-0" id="statMonth">0</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card text-white p-2 text-center border-0 shadow-sm h-100" style="background-color: #0ea5e9; border-radius: 12px;">
+                <div class="small fw-medium opacity-75" id="cycleLabel">Cycle นี้</div>
+                <h3 class="fw-bold mb-0" id="statCycle">0</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card text-white p-2 text-center border-0 shadow-sm h-100" style="background-color: #3b82f6; border-radius: 12px;">
+                <div class="small fw-medium opacity-75">ปีนี้</div>
+                <h3 class="fw-bold mb-0" id="statYear">0</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-primary text-white p-2 text-center border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="small fw-medium opacity-75">ทั้งหมด</div>
+                <h3 class="fw-bold mb-0" id="statTotal">0</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+              <div class="card bg-warning text-dark p-2 text-center border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="small fw-bold opacity-75">ออฟไลน์ค้างส่ง</div>
+                <h3 class="fw-bold mb-0" id="statOffline">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <table class="table table-striped table-hover align-middle table-logs-view">
+            <thead class="roche-logs-header">
+              <tr>
+                <th class="sortable-header" onclick="sortHistTable(0)">วัน-เวลาที่ลงทะเบียน <i class="fa-solid fa-sort sort-icon" id="icon-hist-0"></i></th>
+                <th class="sortable-header" onclick="sortHistTable(1)">ผู้บันทึกข้อมูล <i class="fa-solid fa-sort sort-icon" id="icon-hist-1"></i></th>
+                <th class="sortable-header" onclick="sortHistTable(2)">ชื่อแพทย์ (HCP Name) <i class="fa-solid fa-sort sort-icon" id="icon-hist-2"></i></th>
+                <th class="sortable-header" onclick="sortHistTable(3)">ชื่อองค์กร/สถานที่ทำงาน <i class="fa-solid fa-sort sort-icon" id="icon-hist-3"></i></th>
+                <th style="width: 60px;" class="text-center">Email</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr><td colspan="5" class="text-center py-4">🔄 กำลังดึงข้อมูลประวัติทั้งหมด...</td></tr>
+            </tbody>
+          </table>
+
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 border-top">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+              <label class="text-secondary small fw-bold me-2 mb-0">แสดง:</label>
+              <select id="histRowsSelect" class="form-select form-select-sm shadow-none border-light" style="width: 80px; border-radius: 8px;" onchange="changeHistRowsPerPage()">
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+              <span id="histPageInfo" class="text-muted small fw-bold ms-3"></span>
+            </div>
+            <ul class="pagination pagination-sm mb-0" id="histPaginationUl"></ul>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="batchView" style="display: none;">
+        <div class="card p-4 p-md-5 border-0 shadow-sm" style="border-radius: 16px;">
+          <h2 class="fw-bold mb-3" style="color: #0066cc;">
+            <i class="fa-solid fa-file-excel me-2"></i>สร้าง QR Code สำหรับ Sign-in Sheet
+          </h2>
+          <p class="text-secondary mb-4">
+            อัปโหลดไฟล์ตารางลงทะเบียน (Excel) ระบบจะทำการค้นหาชื่อแพทย์ในฐานข้อมูล (Partial Match) สร้าง QR Code หยอดลงในช่อง Consent และเพิ่มสถานะข้อมูลที่ขาดให้อัตโนมัติ โดยยังคงรูปแบบไฟล์เดิมไว้
+          </p>
+          
+          <div class="p-4 bg-light rounded border border-primary border-opacity-25 text-center mb-4">
+            <input type="file" id="excelFileInput" accept=".xlsx" class="form-control form-control-lg w-100 shadow-sm" style="max-width: 500px; margin: 0 auto;">
+            <button class="btn btn-success mt-4 px-5 py-2 fw-bold shadow" id="btnProcessExcel" onclick="processExcelFile()" style="font-size: 16px;">
+              <i class="fa-solid fa-wand-magic-sparkles me-2"></i>เริ่มประมวลผลและดาวน์โหลด
+            </button>
+            <div id="batchStatusLog" class="mt-3 text-primary fw-bold" style="display:none;">กำลังประมวลผล... กรุณารอสักครู่ ⏳</div>
+          </div>
+          
+          <div class="alert alert-warning small mb-4">
+            <b>💡 ข้อแนะนำการเตรียมไฟล์:</b> ระบบจะอ่านชื่อจาก <b>คอลัมน์ B</b> และวาง QR Code ที่ <b>คอลัมน์ F</b> (แถวที่มีข้อมูลเริ่มตั้งแต่บรรทัดที่ 8 เป็นต้นไป)
+          </div>
+
+          <hr style="border-color: #e2e8f0; margin: 30px 0;">
+          <div class="text-center">
+            <h5 class="fw-bold text-secondary mb-3" style="font-size: 16px;">
+              <i class="fa-solid fa-book-open me-2"></i>คู่มือการใช้งานและการอ่านสีสถานะ
+            </h5>
+            <img src="https://drive.google.com/thumbnail?id=13d6XqLIC15iXr0l8EO7MfVjZKo4QVIuv&sz=w1200" alt="Quick User Manual" class="img-fluid rounded shadow-sm" style="max-width: 100%; border: 1px solid #e2e8f0;">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 🌟 ระบบ Authentication Guard สำหรับตรวจสอบสิทธิ์เข้าใช้งาน
+    async function checkAuth() {
+      // ดึง session จาก Supabase client ที่เตรียมไว้ใน config.js
+      if (window.supabaseClient) {
+        const { data, error } = await window.supabaseClient.auth.getSession();
+        if (!data.session) {
+          // ถ้าไม่มี session ให้เด้งกลับไปหน้า Login
+          window.location.href = 'login.html';
+        } else {
+          console.log("Logged in as:", data.session.user.email);
+          // ทำการโหลดข้อมูลหลังจากตรวจสอบ Auth ผ่าน
+          loadEmployeeData(); 
+        }
+      }
+    }
+    // รันการตรวจสอบทันทีเมื่อโหลดสคริปต์
+    checkAuth();
+
+    let employeeData = [];
+    let hcpData = [];
+    let filteredEmpData = [];
+    let activeEmployee = null;
+    let isNewDoctorMode = false; 
+    let selectedClasses = []; 
+    const baseLineUrl = "https://liff.line.me/1654210606-d1qQ264p/hcp/pre-register"; 
+    let currentGeneratedUrl = ""; 
+
+    let empCurrentPage = 1;
+    let empRowsPerPage = 15; 
+    let empSortCol = '';
+    let empSortAsc = true;
+
+    let globalHistoryLogs = [];
+    let filteredHistData = [];
+    let histCurrentPage = 1;
+    let histRowsPerPage = 15; 
+    let histSortCol = 0; 
+    let histSortAsc = false; 
+
+    // 🌟 ฟังก์ชันย่อภาพฝั่ง Client สำหรับ iPad / iPhone (ช่วยให้สแกนไวขึ้น 3-5 เท่า)
+    function compressImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxHeight = 1024; // ย่อความสูงไม่เกิน 1024px
+          
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // ส่งภาพ JPEG คุณภาพ 0.7 ขนาดไฟล์เหลือ ~100-200KB
+          callback(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 🌟 ฟังก์ชันจัดการ Smart AI Image Scan จากหน้าหลัก (Main Page)
+    async function handleMainAIScan(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      
+      const loadingBox = document.getElementById("loading");
+      const loadingText = document.getElementById("loadingText");
+      const tableWrapper = document.getElementById("employeeListTableWrapper");
+
+      if (loadingBox && loadingText) {
+        loadingText.innerHTML = "📸 Gemini AI กำลังประมวลผลนามบัตร...";
+        loadingBox.style.display = "block";
+        tableWrapper.style.display = "none";
+      }
+
+      // ย่อภาพความละเอียดสูงก่อนส่งไป API Edge Function ของ Supabase
+      compressImage(file, async function(compressedBase64) {
+        try {
+          const { data: res, error } = await window.supabaseClient.functions.invoke('analyze-hcp-card', {
+            body: { imageBase64: compressedBase64 }
+          });
+
+          if (loadingBox) {
+            loadingBox.style.display = "none";
+            loadingText.innerText = "กำลังดึงข้อมูลรายชื่อแพทย์...";
+            tableWrapper.style.display = "block";
+          }
+
+          if (res && res.success && res.data) {
+            const ai = res.data;
+            const searchName = (ai.name || "").toLowerCase().trim();
+
+            let foundEmp = employeeData.find(emp => 
+              searchName !== "" && (
+                emp.name.toLowerCase().includes(searchName) || 
+                (emp.thName && emp.thName.toLowerCase().includes(searchName))
+              )
+            );
+
+            if (foundEmp) {
+              openRegistrationForm(foundEmp);
+              if (ai.email) document.getElementById("inputEmail").value = ai.email;
+              if (ai.mobile) document.getElementById("inputMobile").value = ai.mobile.replace(/[^0-9]/g, '');
+              regenerateAutomatedQR();
+              checkEmailReminder();
+              alert("✨ พบข้อมูลหมอในระบบ! ดึงข้อมูลและเติม Contact ให้เรียบร้อยแล้วครับ");
+            } else {
+              openNewDoctorForm(ai.name || "");
+              if (ai.email) document.getElementById("inputEmail").value = ai.email;
+              if (ai.mobile) document.getElementById("inputMobile").value = ai.mobile.replace(/[^0-9]/g, '');
+              
+              if (ai.hospital) {
+                const hospSelect = document.getElementById("inputNewHospital");
+                for (let i = 0; i < hospSelect.options.length; i++) {
+                  if (hospSelect.options[i].value.toLowerCase().includes(ai.hospital.toLowerCase())) {
+                    hospSelect.selectedIndex = i;
+                    break;
+                  }
+                }
+              }
+              regenerateAutomatedQR();
+              checkEmailReminder();
+              alert("🆕 ไม่พบข้อมูลในระบบ! AI พาลัดมาหน้าสร้างแพทย์ใหม่พร้อมเติมข้อมูลให้อัตโนมัติแล้วครับ");
+            }
+          } else {
+            alert("❌ ไม่สามารถอ่านข้อมูลจากภาพได้: " + (res?.error || error?.message || "โปรดลองถ่ายใหม่อีกครั้ง"));
+          }
+        } catch (err) {
+          if (loadingBox) {
+            loadingBox.style.display = "none";
+            tableWrapper.style.display = "block";
+          }
+          alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ AI: " + err.message);
+        }
+      });
+
+      input.value = ""; 
+    }
+
+    // 🌟 ฟังก์ชันจัดการ Gemini AI Image Scan ในหน้าฟอร์ม (Form Page)
+    async function handleAIScan(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const statusBox = document.getElementById("aiScanStatus");
+      
+      statusBox.style.display = "block";
+      statusBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>กำลังวิเคราะห์ภาพด้วย Gemini AI...';
+      
+      compressImage(file, async function(compressedBase64) {
+        try {
+          const { data: res, error } = await window.supabaseClient.functions.invoke('analyze-hcp-card', {
+            body: { imageBase64: compressedBase64 }
+          });
+          
+          statusBox.style.display = "none";
+          
+          if (res && res.success && res.data) {
+            const data = res.data;
+            
+            if (data.email) document.getElementById("inputEmail").value = data.email;
+            if (data.mobile) document.getElementById("inputMobile").value = data.mobile.replace(/[^0-9]/g, '');
+            
+            if (isNewDoctorMode) {
+              if (data.name) document.getElementById("inputNewName").value = data.name;
+              if (data.profession) {
+                const profSelect = document.getElementById("inputNewProfession");
+                for (let i = 0; i < profSelect.options.length; i++) {
+                  if (profSelect.options[i].value.toLowerCase().includes(data.profession.toLowerCase())) {
+                    profSelect.selectedIndex = i;
+                    break;
+                  }
+                }
+              }
+            }
+            
+            regenerateAutomatedQR();
+            checkEmailReminder();
+            alert("✨ AI อ่านข้อมูลสำเร็จและทำการ Auto-Fill เรียบร้อยครับ!");
+            
+          } else {
+            alert("❌ ไม่สามารถอ่านข้อมูลจากภาพได้: " + (res?.error || error?.message || "โปรดลองถ่ายใหม่อีกครั้ง"));
+          }
+        } catch(err) {
+          statusBox.style.display = "none";
+          alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ AI: " + err.message);
+        }
+      });
+
+      input.value = "";
+    }
+
+    function goBackToList() {
+      document.getElementById("qrView").style.display = "none";
+      document.getElementById("listView").style.display = "block";
+    }
+
+    function updateOfflineStat() {
+      let queue = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
+      let el = document.getElementById('statOffline');
+      if (el) el.innerText = queue.length;
+    }
+
+    function updateOnlineStatus() {
+      const banner = document.getElementById("networkStatusBanner");
+      if (navigator.onLine) {
+        banner.style.backgroundColor = "#10b981"; 
+        banner.innerHTML = '<i class="fa-solid fa-wifi me-2"></i>กลับมาออนไลน์แล้ว (Back Online)';
+        syncOfflineLogs();
+        setTimeout(() => { banner.style.display = "none"; }, 3000);
+      } else {
+        banner.style.display = "block";
+        banner.style.backgroundColor = "#ef4444"; 
+        banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-2"></i>คุณกำลังออฟไลน์ (Offline Mode) - แต่ยังสามารถใช้งานและสร้างคิวอาร์ได้ตามปกติ';
+      }
+    }
+
+    // 🌟 ดึงข้อมูล Sync ที่ค้างไว้ส่งเข้า Supabase
+    async function syncOfflineLogs() {
+      let queue = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
+      if (queue.length > 0 && navigator.onLine) {
+        console.log("Syncing " + queue.length + " offline logs...");
+        for (const item of queue) {
+          await submitRegistrationToBackend(item.emp, item.action + " (Offline Sync)", item.email, item.mobile);
+        }
+        localStorage.removeItem('offlineLogs');
+        updateOfflineStat();
+      }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    const sessionStartTime = new Date();
+
+    // 🌟 บันทึกประวัติใช้งาน UserLog ลง Supabase
+    async function sendUserLogToBackend() {
+      if (!navigator.onLine || !window.supabaseClient) return;
+      const sessionEndTime = new Date();
+      const durationSeconds = Math.round((sessionEndTime - sessionStartTime) / 1000);
+      
+      const ua = navigator.userAgent;
+      let deviceName = "Unknown Device";
+      if (ua.indexOf("iPhone") > -1) deviceName = "iPhone";
+      else if (ua.indexOf("iPad") > -1) deviceName = "iPad";
+      else if (ua.indexOf("Android") > -1) deviceName = "Android Device";
+      else if (ua.indexOf("Mac OS") > -1) deviceName = "Mac / MacBook";
+      else if (ua.indexOf("Windows") > -1) deviceName = "Windows PC";
+
+      const durationFormatted = Math.floor(durationSeconds / 60) + " min " + (durationSeconds % 60) + " sec";
+      const { data: sessionData } = await window.supabaseClient.auth.getSession();
+      const userEmail = sessionData?.session?.user?.email || "Anonymous";
+
+      await window.supabaseClient.from('UserLogs').insert([{
+        "Whoupaccess": userEmail,
+        "Device": deviceName,
+        "Session Duratior": durationFormatted // ชื่อฟิลด์อิงตามตารางเดิม
+      }]);
+    }
+
+    window.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'hidden') sendUserLogToBackend();
+    });
+    window.addEventListener('pagehide', function() {
+      sendUserLogToBackend();
+    });
+    setInterval(sendUserLogToBackend, 180000);
+
+    window.onload = () => { 
+      updateOnlineStatus(); 
+      updateOfflineStat();
+      // loadEmployeeData() ถูกย้ายไปเรียกหลังจาก checkAuth() สำเร็จแล้ว
+      document.addEventListener("click", (e) => {
+        const container = document.getElementById("classMultiselectContainer");
+        if (container && !container.contains(e.target)) {
+          document.getElementById("classMultiselectMenu").classList.remove("show");
+        }
+      });
+    };
+
+    function toggleConsentStyle(boxId, checkbox) {
+      const box = document.getElementById(boxId);
+      if(checkbox.checked) { box.classList.add('active'); } 
+      else { box.classList.remove('active'); }
+    }
+
+    function toggleMobileFilters() {
+      const filters = document.querySelectorAll('.mobile-filter-collapse');
+      filters.forEach(f => f.classList.toggle('show'));
+    }
+
+    function validateMobileInput(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+      regenerateAutomatedQR();
+    }
+
+    function toggleMultiselectMenu() {
+      document.getElementById("classMultiselectMenu").classList.toggle("show");
+    }
+
+    function refreshEmployeeData() {
+      const icon = document.getElementById("refreshIcon");
+      if(icon) icon.classList.add("fa-spin");
+      loadEmployeeData();
+      setTimeout(() => {
+        if(icon) icon.classList.remove("fa-spin");
+      }, 1000);
+    }
+
+    // 🌟 โหลดข้อมูลจากตาราง EmployeeList บน Supabase
+    async function loadEmployeeData() {
+      if (!window.supabaseClient) return;
+
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("employeeListTableWrapper").style.display = "none";
+      
+      const { data, error } = await window.supabaseClient.from('EmployeeList').select('*');
+      
+      if (error) {
+        console.error("Error fetching employees:", error);
+        document.getElementById("loadingText").innerText = "❌ เกิดข้อผิดพลาดในการโหลดข้อมูล: " + error.message;
+        return;
+      }
+      
+      // แมปข้อมูลให้ตรงกับ Frontend (ชื่อฟิลด์ตัวเล็ก)
+      employeeData = data.map(emp => ({
+        id: emp.hcp_mdm_id,
+        name: emp.hcp,
+        thName: emp.preferredname,
+        hospital: emp.hco,
+        pjp: emp.pjp,
+        spec: emp.specialty,
+        profession: emp.hcp_type,
+        da: emp.da,
+        cls: emp.class,
+        lineId: emp.lineid,
+        email: emp.email,
+        mobile: emp.mobile,
+        dkshid: emp.dkshid,
+        hcpuciid: emp.hcp_uci_id
+      }));
+
+      hcpData = [...employeeData];
+      
+      buildDropdowns(employeeData); 
+      applyFilters();
+      
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("employeeListTableWrapper").style.display = "block";
+    }
+
+    function buildDropdowns(data) {
+      const filterConfig = [
+        { key: "pjp", id: "filterPjp" },
+        { key: "spec", id: "filterSpecialty" },
+        { key: "da", id: "filterDa" }
+      ];
+      
+      filterConfig.forEach(cfg => {
+        const select = document.getElementById(cfg.id);
+        if (select) {
+          select.innerHTML = '<option value="">-- ทั้งหมด --</option>';
+          const rawValues = data.map(item => item[cfg.key]).filter(Boolean);
+          const uniqueValues = [...new Set(rawValues)].sort();
+          
+          uniqueValues.forEach(val => {
+            let cleanVal = String(val).trim();
+            if (cleanVal && cleanVal !== "-" && cleanVal !== "undefined" && cleanVal !== "null" && !cleanVal.includes("ไม่ระบุ")) {
+              const opt = document.createElement("option");
+              opt.value = cleanVal; opt.innerText = cleanVal;
+              select.appendChild(opt);
+            }
+          });
+        }
+      });
+
+      const classMenu = document.getElementById("classMultiselectMenu");
+      if (classMenu) {
+        classMenu.innerHTML = "";
+        const rawClasses = data.map(item => item.cls).filter(Boolean);
+        const uniqueClasses = [...new Set(rawClasses)].sort();
+
+        uniqueClasses.forEach(clsName => {
+          let cleanCls = String(clsName).trim();
+          if (cleanCls && cleanCls !== "-" && cleanCls !== "undefined" && cleanCls !== "null" && !cleanCls.includes("ไม่ระบุ")) {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "multiselect-item";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = cleanCls;
+            checkbox.id = "chk_cls_" + cleanCls;
+            checkbox.onchange = handleClassCheckboxChange;
+            const label = document.createElement("label");
+            label.htmlFor = "chk_cls_" + cleanCls;
+            label.innerText = cleanCls;
+            itemDiv.appendChild(checkbox);
+            itemDiv.appendChild(label);
+            classMenu.appendChild(itemDiv);
+          }
+        });
+      }
+
+      const inputHospitalSelect = document.getElementById("inputNewHospital");
+      if (inputHospitalSelect) {
+        inputHospitalSelect.innerHTML = '<option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option>';
+        const uniqueHospitals = [...new Set(data.map(item => item.hospital).filter(Boolean))].sort();
+        uniqueHospitals.forEach(val => {
+          let cleanVal = String(val).trim();
+          if (cleanVal && cleanVal !== "-" && cleanVal !== "undefined" && cleanVal !== "null" && !cleanVal.includes("ไม่ระบุ")) {
+            const opt = document.createElement("option");
+            opt.value = cleanVal; opt.innerText = cleanVal;
+            inputHospitalSelect.appendChild(opt);
+          }
+        });
+      }
+
+      const inputSpecSelect = document.getElementById("inputNewSpec");
+      if (inputSpecSelect) {
+        inputSpecSelect.innerHTML = '<option value="-">-</option>';
+        const uniqueSpecs = [...new Set(data.map(item => item.spec).filter(Boolean))].sort();
+        uniqueSpecs.forEach(val => {
+          let cleanVal = String(val).trim();
+          if (cleanVal && cleanVal !== "-" && cleanVal !== "undefined" && cleanVal !== "null" && !cleanVal.includes("ไม่ระบุ")) {
+            const opt = document.createElement("option");
+            opt.value = cleanVal; opt.innerText = cleanVal;
+            inputSpecSelect.appendChild(opt);
+          }
+        });
+      }
+    }
+
+    function handleClassCheckboxChange() {
+      const checkedBoxes = document.querySelectorAll("#classMultiselectMenu input[type='checkbox']:checked");
+      selectedClasses = Array.from(checkedBoxes).map(cb => cb.value);
+      
+      const btn = document.getElementById("classMultiselectBtn");
+      if (selectedClasses.length === 0) {
+        btn.innerText = "-- ทั้งหมด --";
+      } else if (selectedClasses.length <= 2) {
+        btn.innerText = selectedClasses.join(", ");
+      } else {
+        btn.innerText = "เลือกแล้ว (" + selectedClasses.length + " คลาส)";
+      }
+      applyFilters();
+    }
+
+    function clearAllFilters() {
+      document.getElementById("searchBox").value = "";
+      document.getElementById("filterHospital").value = "";
+      document.getElementById("filterSpecialty").value = "";
+      document.getElementById("filterPjp").value = "";
+      document.getElementById("filterDa").value = "";
+      document.getElementById("filterLineStatus").value = "";
+      document.getElementById("filterEmailStatus").value = "";
+      
+      selectedClasses = [];
+      const checkboxes = document.querySelectorAll("#classMultiselectMenu input[type='checkbox']");
+      checkboxes.forEach(cb => cb.checked = false);
+      
+      const classBtn = document.getElementById("classMultiselectBtn");
+      if(classBtn) classBtn.innerText = "-- ทั้งหมด --";
+      
+      applyFilters();
+    }
+
+    function highlightText(text, keyword) {
+      if (!text) return '-';
+      let safeText = String(text);
+      if (!keyword || keyword.trim() === '') return safeText;
+      let cleanKeyword = keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      let regex = new RegExp('(' + cleanKeyword + ')', 'gi');
+      return safeText.replace(regex, '<span class="highlight-text">$1</span>');
+    }
+
+    function applyFilters() {
+      const keyword = document.getElementById("searchBox").value.toLowerCase().trim();
+      const hosp = document.getElementById("filterHospital").value.toLowerCase().trim();
+      const pjp = document.getElementById("filterPjp").value;
+      const spec = document.getElementById("filterSpecialty").value;
+      const da = document.getElementById("filterDa").value;
+      
+      const lineStatus = document.getElementById("filterLineStatus").value;
+      const emailStatus = document.getElementById("filterEmailStatus").value;
+      
+      filteredEmpData = employeeData.filter(h => {
+        const matchesSearch = !keyword || 
+                              h.name.toLowerCase().includes(keyword) || 
+                              (h.thName && h.thName.toLowerCase().includes(keyword));
+        
+        const matchesHosp = !hosp || h.hospital.toLowerCase().includes(hosp);
+        const matchesPjp = !pjp || h.pjp === pjp;
+        const matchesSpec = !spec || h.spec === spec;
+        const matchesDa = !da || h.da === da;
+        
+        const matchesCls = (selectedClasses.length === 0) || selectedClasses.includes(String(h.cls).trim());
+        
+        let matchesLineCheck = true;
+        if (lineStatus === "allocated") {
+          matchesLineCheck = (h.lineId && h.lineId.trim() !== "" && h.lineId !== "-");
+        } else if (lineStatus === "empty") {
+          matchesLineCheck = (!h.lineId || h.lineId.trim() === "" || h.lineId === "-");
+        }
+
+        let matchesEmailCheck = true;
+        if (emailStatus === "allocated") {
+          matchesEmailCheck = (h.email && h.email.trim() !== "");
+        } else if (emailStatus === "empty") {
+          matchesEmailCheck = (!h.email || h.email.trim() === "");
+        }
+        
+        return matchesSearch && matchesHosp && matchesPjp && matchesSpec && matchesDa && matchesCls && matchesLineCheck && matchesEmailCheck;
+      });
+
+      empCurrentPage = 1; 
+      renderEmployeeTable(); 
+    }
+
+    function sortEmpTable(colKey) {
+      if (empSortCol === colKey) {
+        empSortAsc = !empSortAsc;
+      } else {
+        empSortCol = colKey;
+        empSortAsc = true;
+      }
+
+      document.querySelectorAll('#employeeListTableWrapper .sortable-header').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#employeeListTableWrapper .sort-icon').forEach(el => el.className = 'fa-solid fa-sort sort-icon');
+      
+      const activeHeader = document.querySelector('#icon-emp-' + colKey).parentElement;
+      activeHeader.classList.add('active');
+      document.getElementById('icon-emp-' + colKey).className = empSortAsc ? 'fa-solid fa-sort-up sort-icon' : 'fa-solid fa-sort-down sort-icon';
+
+      filteredEmpData.sort((a, b) => {
+        let valA = (a[colKey] || '').toString().toLowerCase();
+        let valB = (b[colKey] || '').toString().toLowerCase();
+        
+        if (valA < valB) return empSortAsc ? -1 : 1;
+        if (valA > valB) return empSortAsc ? 1 : -1;
+        return 0;
+      });
+
+      empCurrentPage = 1;
+      renderEmployeeTable();
+    }
+
+    function changeEmpRowsPerPage() {
+      const selectEl = document.getElementById("empRowsSelect");
+      if(selectEl) {
+        empRowsPerPage = parseInt(selectEl.value);
+        empCurrentPage = 1;
+        renderEmployeeTable();
+      }
+    }
+
+    function changeEmpPage(page) {
+      const totalPages = Math.ceil(filteredEmpData.length / empRowsPerPage);
+      if (page < 1 || page > totalPages) return;
+      empCurrentPage = page;
+      renderEmployeeTable();
+    }
+
+    function renderEmployeeTable() {
+      const tbody = document.getElementById("employeeTableBody"); 
+      const pageInfo = document.getElementById("empPageInfo");
+      const ul = document.getElementById("empPaginationUl");
+      tbody.innerHTML = "";
+      
+      const currentSearchKeyword = document.getElementById("searchBox").value.trim();
+      const currentHospKeyword = document.getElementById("filterHospital").value.trim();
+
+      if(filteredEmpData.length === 0) {
+        pageInfo.innerHTML = ""; ul.innerHTML = "";
+        let noDataHtml = '<tr><td colspan="7" class="text-center text-muted py-5">';
+        noDataHtml += '<i class="fa-solid fa-folder-open fs-1 mb-3 d-block" style="color: #cbd5e1;"></i>';
+        noDataHtml += '<p class="mb-2 fw-bold" style="font-size:15px;">❌ ไม่พบข้อมูลรายชื่อแพทย์ที่ค้นหาในฐานข้อมูล</p>';
+        if (currentSearchKeyword) {
+          let safeKeyword = currentSearchKeyword.replace(/'/g, "\\'");
+          noDataHtml += '<button class="btn btn-success rounded-pill px-4 py-2 mt-2 fw-bold shadow-sm" style="font-size:14px; background-color: #06C755; border:none;" type="button" onclick="openNewDoctorForm(\'' + safeKeyword + '\')"><i class="fa-solid fa-plus me-1"></i> คลิกเพื่อกรอกข้อมูลแพทย์ใหม่</button>';
+        }
+        noDataHtml += '</td></tr>';
+        tbody.innerHTML = noDataHtml;
+        return;
+      }
+
+      const totalItems = filteredEmpData.length;
+      const totalPages = Math.ceil(totalItems / empRowsPerPage);
+      if (empCurrentPage > totalPages) empCurrentPage = totalPages;
+      
+      const startIndex = (empCurrentPage - 1) * empRowsPerPage;
+      const endIndex = Math.min(startIndex + empRowsPerPage, totalItems);
+      const paginatedData = filteredEmpData.slice(startIndex, endIndex);
+
+      pageInfo.innerText = 'Showing ' + (startIndex + 1) + ' to ' + endIndex + ' of ' + totalItems + ' entries';
+
+      let paginationHtml = '<li class="page-item ' + (empCurrentPage === 1 ? 'disabled' : '') + '"><a class="page-link" href="#" onclick="changeEmpPage(' + (empCurrentPage - 1) + '); return false;">Prev</a></li>';
+      
+      let startP = Math.max(1, empCurrentPage - 2);
+      let endP = Math.min(totalPages, empCurrentPage + 2);
+      
+      if (startP > 1) paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="changeEmpPage(1); return false;">1</a></li>';
+      if (startP > 2) paginationHtml += '<li class="page-item disabled"><span class="page-link border-0">...</span></li>';
+      
+      for (let i = startP; i <= endP; i++) {
+        paginationHtml += '<li class="page-item ' + (i === empCurrentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="changeEmpPage(' + i + '); return false;">' + i + '</a></li>';
+      }
+
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) paginationHtml += '<li class="page-item disabled"><span class="page-link border-0">...</span></li>';
+        paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="changeEmpPage(' + totalPages + '); return false;">' + totalPages + '</a></li>';
+      }
+      paginationHtml += '<li class="page-item ' + (empCurrentPage === totalPages ? 'disabled' : '') + '"><a class="page-link" href="#" onclick="changeEmpPage(' + (empCurrentPage + 1) + '); return false;">Next</a></li>';
+      ul.innerHTML = paginationHtml;
+
+      paginatedData.forEach((emp) => {
+        let hasLineIdIcon = (emp.lineId && emp.lineId.trim() !== "" && emp.lineId !== "-") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
+        let hasEmailIcon = (emp.email && emp.email.trim() !== "") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
+
+        let displayHcpName = highlightText(emp.name, currentSearchKeyword);
+        let displayThName = highlightText(emp.thName, currentSearchKeyword);
+        let displayHospital = highlightText(emp.hospital, currentHospKeyword);
+
+        const row = document.createElement("tr");
+        row.innerHTML = '<td class="fw-bold text-dark" style="font-size:14.5px;">' + displayHcpName + '</td>' +
+                        '<td class="text-secondary">' + displayThName + '</td>' +
+                        '<td><span class="badge bg-light text-dark border" style="font-size:11.5px;"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ' + emp.spec + '</span></td>' +
+                        '<td><small class="fw-medium text-secondary"><i class="fa-solid fa-building text-muted me-1"></i> ' + displayHospital + '</small></td>' +
+                        '<td class="text-center">' + hasLineIdIcon + '</td>' +
+                        '<td class="text-center">' + hasEmailIcon + '</td>' +
+                        '<td class="text-center"><button class="btn-roche-action" type="button">Click</button></td>';
+        row.onclick = () => openRegistrationForm(emp);
+        tbody.appendChild(row);
+      });
+    }
+
+    function openNewDoctorForm(typedName) {
+      isNewDoctorMode = true;
+      activeEmployee = null; 
+
+      const btn = document.getElementById("btnConfirm");
+      if (btn) {
+        btn.disabled = false;
+        btn.style.setProperty("background-color", "#0066cc", "important");
+        btn.style.setProperty("color", "#ffffff", "important");
+        btn.innerText = "✅ ยืนยันการออกคิวอาร์ (Save Log)";
+      }
+
+      document.getElementById("targetName").style.display = "none";
+      const thNameEl = document.getElementById("targetThName");
+      if (thNameEl) thNameEl.style.display = "none";
+
+      document.getElementById("newDoctorTitleBlock").style.display = "block";
+      document.getElementById("targetId").innerText = "";
+      document.getElementById("targetBadges").innerHTML = "";
+      document.getElementById("newDoctorFields").style.display = "block";
+      
+      document.getElementById("inputNewName").value = typedName;
+      document.getElementById("inputNewHospital").value = "";
+      document.getElementById("inputNewSpec").value = "-";
+      document.getElementById("inputNewProfession").value = "-";
+      document.getElementById("inputEmail").value = "";
+      document.getElementById("inputMobile").value = "";
+      
+      document.getElementById("chkPrivacy").checked = false;
+      document.getElementById("chkTerms").checked = false;
+      document.getElementById("boxPrivacy").classList.remove('active');
+      document.getElementById("boxTerms").classList.remove('active');
+      
+      document.getElementById("listView").style.display = "none";
+      document.getElementById("qrView").style.display = "block";
+      
+      regenerateAutomatedQR();
+      checkConsentState();
+      checkEmailReminder();
+    }
+
+    function openRegistrationForm(emp) {
+      isNewDoctorMode = false;
+      activeEmployee = emp;
+
+      const btn = document.getElementById("btnConfirm");
+      if (btn) {
+        btn.disabled = false;
+        btn.style.setProperty("background-color", "#0066cc", "important");
+        btn.style.setProperty("color", "#ffffff", "important");
+        btn.innerText = "✅ ยืนยันการออกคิวอาร์ (Save Log)";
+      }
+
+      document.getElementById("targetName").style.display = "block";
+      document.getElementById("newDoctorTitleBlock").style.display = "none";
+
+      document.getElementById("targetName").innerText = emp.name;
+
+      const thNameEl = document.getElementById("targetThName");
+      if (thNameEl) {
+        thNameEl.innerText = emp.thName || "";
+        thNameEl.style.display = emp.thName ? "block" : "none";
+      }
+
+      document.getElementById("targetId").innerText = "HCO: " + emp.hospital;
+      document.getElementById("targetBadges").innerHTML = '<span class="badge rounded-pill bg-light text-secondary border px-3 py-2 shadow-sm" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> Specialty: ' + emp.spec + '</span>';
+      
+      document.getElementById("newDoctorFields").style.display = "none";
+      
+      document.getElementById("inputEmail").value = emp.email || "";
+      document.getElementById("inputMobile").value = emp.mobile || "";
+      
+      document.getElementById("chkPrivacy").checked = false;
+      document.getElementById("chkTerms").checked = false;
+      document.getElementById("boxPrivacy").classList.remove('active');
+      document.getElementById("boxTerms").classList.remove('active');
+      
+      regenerateAutomatedQR();
+      
+      document.getElementById("listView").style.display = "none";
+      document.getElementById("qrView").style.display = "block";
+      checkConsentState();
+      checkEmailReminder(); 
+    }
+
+    function regenerateAutomatedQR() {
+      let id, name, thName, hospital, spec, profession, email, mobile, dkshid, hcpuciid;
+
+      if (isNewDoctorMode) {
+        id = "New";
+        name = document.getElementById("inputNewName").value.trim() || "ไม่ระบุชื่อ";
+        thName = "-";
+        hospital = document.getElementById("inputNewHospital").value.trim();
+        spec = document.getElementById("inputNewSpec").value.trim() || "-";
+        profession = document.getElementById("inputNewProfession").value.trim() || "-";
+        email = document.getElementById("inputEmail").value.trim();
+        mobile = document.getElementById("inputMobile").value.trim();
+        dkshid = "-";
+        hcpuciid = "-";
+      } else {
+        if (!activeEmployee) return;
+        id = activeEmployee.id;
+        name = activeEmployee.name;
+        thName = activeEmployee.thName || "-";
+        hospital = activeEmployee.hospital;
+        spec = activeEmployee.spec;
+        profession = activeEmployee.profession || "-";
+        email = document.getElementById("inputEmail").value.trim();
+        mobile = document.getElementById("inputMobile").value.trim();
+        dkshid = activeEmployee.dkshid || "-";
+        hcpuciid = activeEmployee.hcpuciid || "-"; 
+      }
+      
+      const privacyStatus = document.getElementById("chkPrivacy").checked ? "Accepted" : "Declined";
+      const marketingStatus = document.getElementById("chkTerms").checked ? "Accepted" : "Declined";
+
+      const expireDate = new Date();
+      expireDate.setHours(expireDate.getHours() + 24*7);
+      
+      const expireStr = expireDate.toLocaleString('en-GB', { 
+        timeZone: 'Asia/Bangkok', 
+        day: '2-digit', month: '2-digit', year: 'numeric', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit' 
+      }).replace(',', '');
+
+      document.getElementById("qrExpiryText").innerText = '⚠️ QR Code นี้จะหมดอายุในวันที่: ' + expireStr + ' (7 วันหลังสร้าง)';
+      
+      currentGeneratedUrl = baseLineUrl + '?hcpmdmid=' + encodeURIComponent(id) + '&hcpName=' + encodeURIComponent(name) + '&thName=' + encodeURIComponent(thName) + '&hospital=' + encodeURIComponent(hospital) + '&specialty=' + encodeURIComponent(spec) + '&profession=' + encodeURIComponent(profession) + '&email=' + encodeURIComponent(email) + '&mobileNo=' + encodeURIComponent(mobile) + '&privacyPolicy=' + encodeURIComponent(privacyStatus) + '&marketingConsent=' + encodeURIComponent(marketingStatus) + '&expire=' + encodeURIComponent(expireStr) + '&dkshid=' + encodeURIComponent(dkshid) + '&hcpuciid=' + encodeURIComponent(hcpuciid);
+
+      document.getElementById("qrcodeContainer").innerHTML = ""; 
+      new QRCode(document.getElementById("qrcodeContainer"), {
+        text: currentGeneratedUrl,
+        width: 300,
+        height: 300,
+        colorDark : "#0066cc",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+      });
+
+      checkConsentState();
+    }
+
+    function copyQrLink() {
+      if (!currentGeneratedUrl) return;
+      
+      var tempInput = document.createElement("input");
+      tempInput.value = currentGeneratedUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      const btn = document.getElementById("btnCopyLink");
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> คัดลอกสำเร็จแล้ว!';
+      btn.className = "btn btn-success btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm";
+      
+      setTimeout(function() {
+        btn.innerHTML = originalText;
+        btn.className = "btn btn-outline-primary btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm";
+      }, 2000);
+    }
+
+    function checkConsentState() {
+      const isAgreed = document.getElementById("chkPrivacy").checked;
+      let isFormValid = true;
+      let alertMessage = "📋 กรุณาติ๊กกล่องด้านบนเพื่อยอมรับข้อกำหนดและนโยบายของโรช ก่อนแสดง QR Code ครับ";
+
+      if (isNewDoctorMode) {
+        const hosp = document.getElementById("inputNewHospital").value;
+        const spec = document.getElementById("inputNewSpec").value;
+        const prof = document.getElementById("inputNewProfession").value;
+
+        if (!hosp || spec === "-" || prof === "-") {
+          isFormValid = false;
+          alertMessage = "⚠️ กรุณาเลือกข้อมูล ชื่อองค์กร/สถานที่ทำงาน, ความเชี่ยวชาญ และ อาชีพ ให้ครบถ้วน รวมถึงยอมรับ Consent เพื่อเปิดแสดง QR Code";
+        }
+      }
+
+      if (isAgreed && isFormValid) {
+        document.getElementById("lockAlert").style.display = "none";
+        document.getElementById("qrContentBlock").style.display = "block";
+      } else {
+        document.getElementById("qrContentBlock").style.display = "none";
+        document.getElementById("lockAlert").style.display = "block";
+        document.getElementById("lockAlert").className = "alert alert-info small fw-bold mb-3";
+        document.getElementById("lockAlert").style.backgroundColor = "";
+        document.getElementById("lockAlert").style.color = "";
+        document.getElementById("lockAlert").innerText = alertMessage;
+      }
+    }
+
+    function checkEmailReminder() {
+      const emailVal = document.getElementById("inputEmail").value.trim();
+      const isTermsChecked = document.getElementById("chkTerms").checked;
+      const reminderText = document.getElementById("emailReminderText");
+      const suggestionText = document.getElementById("emailSuggestionText");
+      const emailInput = document.getElementById("inputEmail");
+
+      if (emailVal !== "") {
+        if(reminderText) reminderText.style.display = "none";
+        if(suggestionText) suggestionText.style.display = "none";
+        emailInput.style.borderColor = "#cbd5e1"; 
+        emailInput.style.backgroundColor = "#ffffff";
+      } else {
+        if (isTermsChecked) {
+          if(reminderText) reminderText.style.display = "block";
+          if(suggestionText) suggestionText.style.display = "none";
+          emailInput.style.borderColor = "#f59e0b"; 
+          emailInput.style.backgroundColor = "#fffbeb"; 
+        } else {
+          if(reminderText) reminderText.style.display = "none";
+          if(suggestionText) suggestionText.style.display = "block";
+          emailInput.style.borderColor = "#cbd5e1"; 
+          emailInput.style.backgroundColor = "#ffffff";
+        }
+      }
+    }
+
+    // 🌟 โค้ดส่งข้อมูลไปยัง Supabase Backend
+    async function submitRegistrationToBackend(finalEmployeeObj, actionLog, finalEmail, finalMobile) {
+      const { data: sessionData } = await window.supabaseClient.auth.getSession();
+      const adminEmail = sessionData?.session?.user?.email || "Unknown User";
+      
+      const { error: logError } = await window.supabaseClient.from('RegistrationLogs').insert([{
+        "Whoupdated": adminEmail,
+        "HCP ID": finalEmployeeObj.id,
+        "HCP Name": finalEmployeeObj.name,
+        "Hospital": finalEmployeeObj.hospital,
+        "PJP": finalEmployeeObj.pjp,
+        "Specialty": finalEmployeeObj.spec,
+        "Profession": finalEmployeeObj.profession,
+        "DA": finalEmployeeObj.da,
+        "Classification": finalEmployeeObj.cls,
+        "Line ID": actionLog,
+        "Email": finalEmail,
+        "Mobile No": finalMobile,
+        "Privacy Policy": "Accepted",
+        "Terms of Service": "Accepted"
+      }]);
+
+      if (logError) {
+        console.error("Error inserting log:", logError);
+        alert("เกิดข้อผิดพลาดในการบันทึก Log");
+        return;
+      }
+
+      if (finalEmployeeObj.id !== "New") {
+        await window.supabaseClient.from('EmployeeList')
+          .update({ 
+            lineid: actionLog, 
+            email: finalEmail, 
+            mobile: finalMobile 
+          })
+          .eq('hcp_mdm_id', finalEmployeeObj.id);
+      }
+    }
+
+    async function submitRegistration() {
+      let finalEmployeeObj = {};
+      const finalEmail = document.getElementById("inputEmail").value.trim();
+      const finalMobile = document.getElementById("inputMobile").value.trim();
+      
+      const btn = document.getElementById("btnConfirm");
+      const lockAlertBox = document.getElementById("lockAlert");
+      
+      if (isNewDoctorMode) {
+        const name = document.getElementById("inputNewName").value.trim();
+        const hospital = document.getElementById("inputNewHospital").value.trim();
+        const spec = document.getElementById("inputNewSpec").value.trim();
+        const profession = document.getElementById("inputNewProfession").value.trim();
+        
+        if (!name || !hospital || spec === "-" || profession === "-") {
+          if (lockAlertBox) {
+            lockAlertBox.style.display = "block";
+            lockAlertBox.className = "alert small fw-bold mb-3 alert-danger";
+            lockAlertBox.style.backgroundColor = "#f8d7da";
+            lockAlertBox.style.color = "#721c24";
+            
+            if (!name) lockAlertBox.innerText = "❌ จำเป็นต้องกรอก ชื่อแพทย์ ก่อนครับ!";
+            else if (!hospital) lockAlertBox.innerText = "❌ จำเป็นต้องเลือก ชื่อองค์กร/สถานที่ทำงาน ก่อนครับ!";
+            else if (spec === "-") lockAlertBox.innerText = "❌ จำเป็นต้องเลือก ความเชี่ยวชาญ ก่อนครับ!";
+            else if (profession === "-") lockAlertBox.innerText = "❌ จำเป็นต้องเลือก อาชีพ ก่อนครับ!";
+          }
+          return;
+        }
+        
+        finalEmployeeObj = {
+          id: "New", 
+          name: name,
+          hospital: hospital,
+          spec: spec,
+          profession: profession,
+          da: "-",
+          cls: "-",
+          pjp: "แพทย์คีย์สด"
+        };
+      } else {
+        if(!activeEmployee) return;
+        finalEmployeeObj = activeEmployee;
+      }
+      
+      btn.disabled = true; 
+
+      if (navigator.onLine) {
+        btn.style.setProperty("background-color", "#ffc107", "important");
+        btn.style.setProperty("color", "#212529", "important");
+        btn.innerText = "⏳ กำลังบันทึกข้อมูลประวัติ...";
+        
+        await submitRegistrationToBackend(finalEmployeeObj, "เก็บ LINE ID เรียบร้อยแล้ว", finalEmail, finalMobile);
+
+        btn.style.setProperty("background-color", "#198754", "important");
+        btn.style.setProperty("color", "#ffffff", "important");
+        btn.innerText = "🎉 บันทึกข้อมูลสำเร็จเรียบร้อย!";
+        
+        if (typeof confetti !== "undefined") {
+          confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+        
+        setTimeout(() => { goBackToList(); loadEmployeeData(); }, 1500);
+
+      } else {
+        let logData = {
+          emp: finalEmployeeObj,
+          action: "เก็บ LINE ID เรียบร้อยแล้ว",
+          email: finalEmail,
+          mobile: finalMobile
+        };
+        let queue = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
+        queue.push(logData);
+        localStorage.setItem('offlineLogs', JSON.stringify(queue));
+        updateOfflineStat();
+
+        btn.style.setProperty("background-color", "#6c757d", "important"); 
+        btn.style.setProperty("color", "#ffffff", "important");
+        btn.innerText = "💾 บันทึกออฟไลน์ลงเครื่องแล้ว!";
+        
+        setTimeout(() => { goBackToList(); }, 1200);
+      }
+    }
+
+    function switchTab(viewName) {
+      document.getElementById("registerView").style.display = "none";
+      document.getElementById("historyView").style.display = "none";
+      if(document.getElementById("batchView")) document.getElementById("batchView").style.display = "none";
+      
+      document.getElementById("tabRegister").className = "nav-link";
+      document.getElementById("tabHistory").className = "nav-link";
+      if(document.getElementById("tabBatch")) document.getElementById("tabBatch").className = "nav-link";
+
+      if(viewName === 'register') {
+        document.getElementById("registerView").style.display = "block";
+        document.getElementById("tabRegister").className = "nav-link active";
+        goBackToList();
+      } else if(viewName === 'history') {
+        document.getElementById("historyView").style.display = "block";
+        document.getElementById("tabHistory").className = "nav-link active";
+        fetchLogsData(); 
+      } else if (viewName === 'batch') {
+        document.getElementById("batchView").style.display = "block";
+        document.getElementById("tabBatch").className = "nav-link active";
+      }
+    }
+
+    // 🌟 ดึงข้อมูลประวัติจากตาราง RegistrationLogs
+    async function fetchLogsData() {
+      const tbody = document.getElementById("historyTableBody");
+      const pageInfo = document.getElementById("histPageInfo");
+      const ul = document.getElementById("histPaginationUl");
+      
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5">🔄 กำลังดึงข้อมูลประวัติทั้งหมด...</td></tr>';
+      pageInfo.innerHTML = ""; ul.innerHTML = "";
+      
+      const { data: logs, error } = await window.supabaseClient.from('RegistrationLogs').select('*').order('Timestamp', { ascending: false });
+
+      if (error || !logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ยังไม่มีประวัติการลงทะเบียนในระบบ</td></tr>';
+        globalHistoryLogs = [];
+        resetDashboardStats();
+        return;
+      }
+      
+      globalHistoryLogs = logs.map(function(row) {
+        let dateObj = new Date(row['Timestamp']);
+        let timestamp = "-";
+        
+        if (!isNaN(dateObj.getTime())) {
+          let d = ("0" + dateObj.getDate()).slice(-2);
+          let m = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+          let y = dateObj.getFullYear();
+          let h = ("0" + dateObj.getHours()).slice(-2);
+          let mi = ("0" + dateObj.getMinutes()).slice(-2);
+          let s = ("0" + dateObj.getSeconds()).slice(-2);
+          timestamp = d + '/' + m + '/' + y + ' ' + h + ':' + mi + ':' + s;
+        }
+
+        return {
+            dateObj: dateObj,
+            timestamp: timestamp,
+            who: row['Whoupdated'] || '-',
+            name: row['HCP Name'] || '-',
+            hospital: row['Hospital'] || '-',
+            email: row['Email'] || ''
+        };
+      });
+
+      buildRecorderDropdown(globalHistoryLogs);
+      histSortCol = 0; 
+      histSortAsc = false;
+      applyLogRecorderFilter();
+    }
+
+    function buildRecorderDropdown(logs) {
+      const select = document.getElementById("filterLogRecorder");
+      if (!select) return;
+      
+      const currentSelected = select.value;
+      select.innerHTML = '<option value="">-- แสดงทั้งหมด (Everyone) --</option>';
+      
+      const rawRecorders = logs.map(item => item.who).filter(Boolean);
+      const uniqueRecorders = [...new Set(rawRecorders)].sort();
+      
+      uniqueRecorders.forEach(recorder => {
+        if (recorder && recorder !== "-") {
+          const opt = document.createElement("option");
+          opt.value = recorder;
+          opt.innerText = recorder;
+          select.appendChild(opt);
+        }
+      });
+      
+      select.value = currentSelected;
+    }
+
+    function applyLogRecorderFilter() {
+      const selectedRecorder = document.getElementById("filterLogRecorder").value;
+      
+      let baseLogs = globalHistoryLogs;
+      if (selectedRecorder !== "") {
+        baseLogs = globalHistoryLogs.filter(log => log.who.toLowerCase() === selectedRecorder.toLowerCase());
+      }
+      
+      calculateAndRenderDashboard(baseLogs);
+      
+      filteredHistData = [...baseLogs];
+      sortHistData();
+      histCurrentPage = 1;
+      renderHistTable();
+    }
+
+    function calculateAndRenderDashboard(logsList) {
+      document.getElementById('statTotal').innerText = logsList.length;
+      
+      var now = new Date();
+      var currentYear = now.getFullYear();
+      var currentMonth = now.getMonth(); 
+      var currentDate = now.getDate();
+      
+      var currentCycle = Math.floor(currentMonth / 4); 
+      document.getElementById('cycleLabel').innerText = "Cycle " + (currentCycle + 1);
+
+      var statToday = 0;
+      var statMonth = 0;
+      var statCycle = 0;
+      var statYear = 0;
+
+      logsList.forEach(function(log) {
+        var d = log.dateObj;
+        if(isNaN(d.getTime())) return;
+        
+        var y = d.getFullYear();
+        var m = d.getMonth();
+        var d_date = d.getDate();
+        var logCycle = Math.floor(m / 4);
+
+        if (y === currentYear) {
+          statYear++;
+          if (logCycle === currentCycle) statCycle++;
+          if (m === currentMonth) {
+            statMonth++;
+            if (d_date === currentDate) statToday++;
+          }
+        }
+      });
+
+      document.getElementById('statToday').innerText = statToday;
+      document.getElementById('statMonth').innerText = statMonth;
+      document.getElementById('statCycle').innerText = statCycle;
+      document.getElementById('statYear').innerText = statYear;
+    }
+
+    function resetDashboardStats() {
+      document.getElementById('statTotal').innerText = "0";
+      document.getElementById('statToday').innerText = "0";
+      document.getElementById('statMonth').innerText = "0";
+      document.getElementById('statCycle').innerText = "0";
+      document.getElementById('statYear').innerText = "0";
+    }
+
+    function changeHistRowsPerPage() {
+      const selectEl = document.getElementById("histRowsSelect");
+      if(selectEl) {
+        histRowsPerPage = parseInt(selectEl.value);
+        histCurrentPage = 1;
+        renderHistTable();
+      }
+    }
+
+    function sortHistTable(colIndex) {
+      if (histSortCol === colIndex) {
+        histSortAsc = !histSortAsc;
+      } else {
+        histSortCol = colIndex;
+        histSortAsc = true;
+      }
+
+      document.querySelectorAll('#historyView .sortable-header').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#historyView .sort-icon').forEach(el => el.className = 'fa-solid fa-sort sort-icon');
+      
+      const activeHeader = document.querySelector('#icon-hist-' + colIndex).parentElement;
+      activeHeader.classList.add('active');
+      document.getElementById('icon-hist-' + colIndex).className = histSortAsc ? 'fa-solid fa-sort-up sort-icon' : 'fa-solid fa-sort-down sort-icon';
+
+      sortHistData();
+      histCurrentPage = 1;
+      renderHistTable();
+    }
+
+    function sortHistData() {
+      filteredHistData.sort((a, b) => {
+        let valA, valB;
+        if (histSortCol === 0) { valA = a.dateObj.getTime(); valB = b.dateObj.getTime(); }
+        else if (histSortCol === 1) { valA = a.who.toLowerCase(); valB = b.who.toLowerCase(); }
+        else if (histSortCol === 2) { valA = a.name.toLowerCase(); valB = b.name.toLowerCase(); }
+        else if (histSortCol === 3) { valA = a.hospital.toLowerCase(); valB = b.hospital.toLowerCase(); }
+        
+        if (valA < valB) return histSortAsc ? -1 : 1;
+        if (valA > valB) return histSortAsc ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function changeHistPage(page) {
+      const totalPages = Math.ceil(filteredHistData.length / histRowsPerPage);
+      if (page < 1 || page > totalPages) return;
+      histCurrentPage = page;
+      renderHistTable();
+    }
+
+    function renderHistTable() {
+      const tbody = document.getElementById("historyTableBody");
+      const pageInfo = document.getElementById("histPageInfo");
+      const ul = document.getElementById("histPaginationUl");
+      tbody.innerHTML = "";
+
+      if (filteredHistData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ไม่พบประวัติการลงทะเบียนตามเงื่อนไขที่เลือก</td></tr>';
+        pageInfo.innerText = "";
+        ul.innerHTML = "";
+        return;
+      }
+
+      const totalItems = filteredHistData.length;
+      const totalPages = Math.ceil(totalItems / histRowsPerPage);
+      if (histCurrentPage > totalPages) histCurrentPage = totalPages || 1;
+
+      const startIndex = (histCurrentPage - 1) * histRowsPerPage;
+      const endIndex = Math.min(startIndex + histRowsPerPage, totalItems);
+      const paginatedData = filteredHistData.slice(startIndex, endIndex);
+
+      pageInfo.innerText = 'Showing ' + (startIndex + 1) + ' to ' + endIndex + ' of ' + totalItems + ' entries';
+
+      let paginationHtml = '<li class="page-item ' + (histCurrentPage === 1 ? 'disabled' : '') + '"><a class="page-link" href="#" onclick="changeHistPage(' + (histCurrentPage - 1) + '); return false;">Prev</a></li>';
+      let startP = Math.max(1, histCurrentPage - 2);
+      let endP = Math.min(totalPages, histCurrentPage + 2);
+      
+      if (startP > 1) paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="changeHistPage(1); return false;">1</a></li>';
+      if (startP > 2) paginationHtml += '<li class="page-item disabled"><span class="page-link border-0">...</span></li>';
+      
+      for (let i = startP; i <= endP; i++) {
+        paginationHtml += '<li class="page-item ' + (i === histCurrentPage ? 'active' : '') + '"><a class="page-link" href="#" onclick="changeHistPage(' + i + '); return false;">' + i + '</a></li>';
+      }
+
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) paginationHtml += '<li class="page-item disabled"><span class="page-link border-0">...</span></li>';
+        paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="changeHistPage(' + totalPages + '); return false;">' + totalPages + '</a></li>';
+      }
+      paginationHtml += '<li class="page-item ' + (histCurrentPage === totalPages ? 'disabled' : '') + '"><a class="page-link" href="#" onclick="changeHistPage(' + (histCurrentPage + 1) + '); return false;">Next</a></li>';
+      ul.innerHTML = paginationHtml;
+
+      paginatedData.forEach(row => {
+          let emailIcon = (row.email && row.email !== "undefined" && row.email !== "null" && row.email !== "ไม่ได้กรอก" && row.email !== "-") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
+          
+          tbody.innerHTML += '<tr>' +
+                             '<td><small class="text-secondary fw-semibold">' + row.timestamp + '</small></td>' +
+                             '<td><small class="text-muted font-monospace">' + row.who + '</small></td>' +
+                             '<td class="fw-bold text-dark" style="font-size:14.5px;">' + row.name + '</td>' +
+                             '<td><small class="text-secondary fw-medium"><i class="fa-solid fa-building text-muted me-1"></i> ' + row.hospital + '</small></td>' +
+                             '<td class="text-center">' + emailIcon + '</td>' +
+                             '</tr>';
+      });
+    }
+
+    function similarity(s1, s2) {
+      let longer = s1;
+      let shorter = s2;
+      if (s1.length < s2.length) {
+        longer = s2;
+        shorter = s1;
+      }
+      let longerLength = longer.length;
+      if (longerLength == 0) return 100.0;
+      
+      return ((longerLength - editDistance(longer, shorter)) / parseFloat(longerLength)) * 100;
+    }
+
+    function editDistance(s1, s2) {
+      let costs = new Array();
+      for (let i = 0; i <= s1.length; i++) {
+        let lastValue = i;
+        for (let j = 0; j <= s2.length; j++) {
+          if (i == 0) {
+            costs[j] = j;
+          } else {
+            if (j > 0) {
+              let newValue = costs[j - 1];
+              if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+              }
+              costs[j - 1] = lastValue;
+              lastValue = newValue;
+            }
+          }
+        }
+        if (i > 0) costs[s2.length] = lastValue;
+      }
+      return costs[s2.length];
+    }  
+
+    function findPartialMatch(excelName) {
+      if(!excelName) return null;
+      
+      let rawName = excelName.toLowerCase();
+      const titlesToRemove = [
+        "assoc.prof.", "assoc. prof.", "asst.prof.", "asst. prof.", "prof.",
+        ", m.d.", "m.d.", ",m.d.", "dr.", "ph.d.", "mr.", "mrs.", "ms."
+      ];
+      
+      titlesToRemove.forEach(title => {
+        rawName = rawName.replace(title, "");
+      });
+
+      let searchName = rawName.replace(/[,.-]/g, ' ').replace(/\s+/g, ' ').trim();
+      if(searchName.length < 5) searchName = excelName.toLowerCase().replace(/[,.-]/g, ' ').replace(/\s+/g, ' ').trim(); 
+
+      let bestMatch = null;
+      let highestScore = 0;
+
+      for(let emp of hcpData) { 
+        let dbName = emp.name.toLowerCase().trim();
+        let score = similarity(searchName, dbName);
+        
+        if(score > highestScore) {
+          highestScore = score;
+          bestMatch = emp;
+        }
+      }
+
+      if(highestScore >= 75) {
+        return { emp: bestMatch, score: highestScore }; 
+      }
+      return null;
+    }
+
+    function generateBase64QR(urlText) {
+      return new Promise((resolve) => {
+         let tempDiv = document.createElement('div');
+         new QRCode(tempDiv, {
+            text: urlText,
+            width: 256,
+            height: 256,
+            colorDark : "#0066cc",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.M
+         });
+         setTimeout(() => {
+            let canvas = tempDiv.querySelector('canvas');
+            if(canvas) {
+               resolve(canvas.toDataURL('image/png'));
+            } else {
+               resolve(""); 
+            }
+         }, 100);
+      });
+    }
+
+    async function processExcelFile() {
+      const fileInput = document.getElementById("excelFileInput");
+      const statusLog = document.getElementById("batchStatusLog");
+      const btn = document.getElementById("btnProcessExcel");
+
+      if (!fileInput.files.length) {
+        alert("⚠️ กรุณาเลือกไฟล์ Excel (.xlsx) ก่อนครับ");
+        return;
+      }
+
+      btn.disabled = true;
+      statusLog.style.display = "block";
+      statusLog.innerText = "กำลังประมวลผลไฟล์... กรุณารอสักครู่ ⏳";
+
+      try {
+        const file = fileInput.files[0];
+        const arrayBuffer = await file.arrayBuffer();
+        
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(arrayBuffer);
+
+        let matchedCount = 0;
+        let unmatchedCount = 0;
+
+        for (const worksheet of workbook.worksheets) {
+          
+          worksheet.pageSetup.paperSize = 9; 
+          worksheet.pageSetup.orientation = 'landscape';
+          worksheet.pageSetup.margins = {
+            left: 0.25, right: 0.25,
+            top: 0.3, bottom: 0.3,
+            header: 0.1, footer: 0.1
+          };
+          worksheet.pageSetup.fitToPage = true;
+          worksheet.pageSetup.fitToWidth = 1;
+          worksheet.pageSetup.fitToHeight = 0; 
+          worksheet.pageSetup.printTitlesRow = '1:7'; 
+          worksheet.pageSetup.printArea = 'A:J';
+
+          worksheet.getColumn(6).width = 35;  // F (Consent/QR)
+          worksheet.getColumn(7).width = 10;  // G (LINE ID)
+          worksheet.getColumn(8).width = 10;  // H (Email)
+          worksheet.getColumn(9).width = 10;  // I (Mobile)
+          worksheet.getColumn(10).width = 28; // J (Status)
+          worksheet.getColumn(11).width = 30; // K (Remark)
+
+          const headerRow = worksheet.getRow(7);
+          const newHeaders = [
+            { col: 6, text: "Consent" },
+            { col: 7, text: "LINE ID" },
+            { col: 8, text: "Email" },
+            { col: 9, text: "Mobile" },
+            { col: 10, text: "Status / Action Required" },
+            { col: 11, text: "Remark" } 
+          ];
+
+          newHeaders.forEach(h => {
+            const cell = headerRow.getCell(h.col);
+            cell.value = h.text;
+            cell.style = {}; 
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF9BC2E6' } };
+            cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FF000000' } }; 
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+          });
+          headerRow.commit();
+
+          for (let rowNumber = 8; rowNumber <= worksheet.rowCount; rowNumber++) {
+            const row = worksheet.getRow(rowNumber);
+            const cellName = row.getCell(2).text; 
+            const cellSpecialty = row.getCell(3).text || "-"; 
+            const cellHospital = row.getCell(4).text || "-";  
+
+            if (!cellName || cellName.trim() === "") continue; 
+
+            const matchResult = findPartialMatch(cellName);
+            const empMatch = matchResult ? matchResult.emp : null;
+            const matchScore = matchResult ? matchResult.score : 0;
+
+            [6, 7, 8, 9, 10, 11].forEach(colIdx => {
+              const c = row.getCell(colIdx);
+              c.style = {}; 
+              c.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+              c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+            });
+
+            row.height = 180; 
+
+            const expireDate = new Date();
+            expireDate.setHours(expireDate.getHours() + 24*7);
+            const expireStr = expireDate.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }).replace(',', '');
+
+            if (empMatch) {
+              matchedCount++;
+              
+              const qrUrl = baseLineUrl + '?hcpmdmid=' + encodeURIComponent(empMatch.id) + 
+                            '&hcpName=' + encodeURIComponent(empMatch.name) + 
+                            '&thName=' + encodeURIComponent(empMatch.thName || "") + 
+                            '&hospital=' + encodeURIComponent(empMatch.hospital) + 
+                            '&specialty=' + encodeURIComponent(empMatch.spec) + 
+                            '&profession=' + encodeURIComponent(empMatch.profession) + 
+                            '&email=' + encodeURIComponent(empMatch.email || "") + 
+                            '&mobileNo=' + encodeURIComponent(empMatch.mobile || "") + 
+                            '&privacyPolicy=Accepted' + 
+                            '&marketingConsent=Accepted' + 
+                            '&expire=' + encodeURIComponent(expireStr) + 
+                            '&dkshid=' + encodeURIComponent(empMatch.dkshid || "-") + 
+                            '&hcpuciid=' + encodeURIComponent(empMatch.hcpuciid || "-");
+
+              const base64Img = await generateBase64QR(qrUrl);
+              if(base64Img) {
+                const imageId = workbook.addImage({ base64: base64Img, extension: 'png' });
+                worksheet.addImage(imageId, { 
+                  tl: { col: 5.04, row: rowNumber - 0.96 }, 
+                  ext: { width: 220, height: 220 } 
+                });
+              }
+
+              let hasLine = (empMatch.lineId && empMatch.lineId !== "-");
+              let hasEmail = (empMatch.email && empMatch.email.trim() !== "");
+              let hasMobile = (empMatch.mobile && empMatch.mobile.trim() !== "");
+              
+              row.getCell(7).value = hasLine ? "✅" : "❌";
+              row.getCell(8).value = hasEmail ? "✅" : "❌";
+              row.getCell(9).value = hasMobile ? "✅" : "❌"; 
+
+              row.getCell(7).font = { name: 'Arial', bold: true, color: { argb: hasLine ? 'FF00B050' : 'FFFF0000' } };
+              row.getCell(8).font = { name: 'Arial', bold: true, color: { argb: hasEmail ? 'FF00B050' : 'FFFF0000' } };
+              row.getCell(9).font = { name: 'Arial', bold: true, color: { argb: hasMobile ? 'FF00B050' : 'FFFF0000' } };
+
+              let missing = [];
+              if(!hasLine) missing.push("LINE");
+              if(!hasEmail) missing.push("Email");
+              if(!hasMobile) missing.push("Mobile");
+
+              if (missing.length === 0) {
+                row.getCell(10).value = "✅ สมบูรณ์";
+                row.getCell(10).font = { name: 'Arial', bold: true, color: { argb: 'FF00B050' } }; 
+              } else if (missing.length === 3) {
+                row.getCell(10).value = "❌ ขาดข้อมูลทั้งหมด";
+                row.getCell(10).font = { name: 'Arial', bold: true, color: { argb: 'FFFF0000' } }; 
+              } else {
+                row.getCell(10).value = "⚠️ ขาด: " + missing.join(", ");
+                row.getCell(10).font = { name: 'Arial', bold: true, color: { argb: 'FFFF8C00' } }; 
+              }
+
+              if (matchScore < 100) {
+                row.getCell(11).value = "ชื่อไม่ตรงกับระบบ ocep";
+                row.getCell(11).font = { name: 'Arial', color: { argb: 'FF000000' } }; 
+              } else {
+                row.getCell(11).value = "-";
+              }
+
+            } else {
+              unmatchedCount++;
+              
+              const qrUrlUnmatched = baseLineUrl + '?hcpmdmid=New' + 
+                            '&hcpName=' + encodeURIComponent(cellName.trim()) + 
+                            '&thName=' + 
+                            '&hospital=' + encodeURIComponent(cellHospital.trim()) + 
+                            '&specialty=' + encodeURIComponent(cellSpecialty.trim()) + 
+                            '&profession=Doctor' + 
+                            '&email=' + 
+                            '&mobileNo=' + 
+                            '&privacyPolicy=Accepted' + 
+                            '&marketingConsent=Accepted' + 
+                            '&expire=' + encodeURIComponent(expireStr) + 
+                            '&dkshid=-' + 
+                            '&hcpuciid=-';
+
+              const base64ImgUnmatched = await generateBase64QR(qrUrlUnmatched);
+              if(base64ImgUnmatched) {
+                const imageId = workbook.addImage({ base64: base64ImgUnmatched, extension: 'png' });
+                worksheet.addImage(imageId, { 
+                  tl: { col: 5.04, row: rowNumber - 0.96 }, 
+                  ext: { width: 220, height: 220 } 
+                });
+              }
+
+              row.getCell(7).value = "❌";
+              row.getCell(8).value = "❌";
+              row.getCell(9).value = "❌";
+              
+              row.getCell(7).font = { name: 'Arial', bold: true, color: { argb: 'FFFF0000' } };
+              row.getCell(8).font = { name: 'Arial', bold: true, color: { argb: 'FFFF0000' } };
+              row.getCell(9).font = { name: 'Arial', bold: true, color: { argb: 'FFFF0000' } };
+
+              row.getCell(10).value = "🆕 ไม่พบในระบบ OCEP";
+              row.getCell(10).font = { name: 'Arial', bold: true, color: { argb: 'FF8B4513' } }; 
+
+              row.getCell(11).value = "🆕 ไม่พบในระบบ OCEP";
+              row.getCell(11).font = { name: 'Arial', bold: true, color: { argb: 'FF8B4513' } }; 
+            }
+            row.commit();
+          }
+        } 
+
+        statusLog.innerText = `สร้าง QR เสร็จสิ้น (พบใน OCEP: ${matchedCount} คน, โหมด New Doctor: ${unmatchedCount} คน) กำลังดาวน์โหลด... 🎉`;
+        
+        const outBuffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([outBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const downloadUrl = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = "Sign_In_QR_Export_" + new Date().getTime() + ".xlsx";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+      } catch (error) {
+        console.error(error);
+        statusLog.innerText = "❌ เกิดข้อผิดพลาด: " + error.message;
+        statusLog.style.color = "red";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
