@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
   <base target="_top">
   <meta charset="UTF-8">
@@ -17,6 +17,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  
+  <!-- เพิ่ม Bootstrap Bundle JS สำหรับฟีเจอร์ Collapse (พับตัวกรอง) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- 🌟 โหลด Supabase SDK และ Config -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -24,8 +27,10 @@
 
   <style>
     body { background-color: #f1f6fa; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; padding: 0; margin: 0; color: #334155; }
-    .content-wrapper { padding: 25px 20px; }
-    .main-container { max-width: 1150px; margin: 0 auto; position: relative; width: 100%; }
+    
+    /* ปรับขอบและขยายความกว้างให้เต็มจอแบบ App */
+    .content-wrapper { padding: 15px 10px; }
+    .main-container { max-width: 1600px; margin: 0 auto; position: relative; width: 100%; }
     
     #networkStatusBanner {
       display: none; position: fixed; top: 0; left: 0; width: 100%;
@@ -40,13 +45,38 @@
     .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15); }
     
     .card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; }
-    .table-responsive { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    
+    /* 🌟 ตั้งค่าให้ Table Scroll ได้ในตัว และซ่อน Scrollbar หรือแต่งให้สวยงาม */
+    .table-responsive { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    #employeeListTableWrapper {
+      max-height: calc(100vh - 250px);
+      overflow-y: auto;
+      position: relative;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+    }
+    #employeeListTableWrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+    #employeeListTableWrapper::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
+    #employeeListTableWrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    #employeeListTableWrapper::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
     .table-register-view tbody tr { cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f1f5f9; }
     .table-register-view tbody tr:hover { background-color: #f0f7ff; } 
     
+    /* 🌟 Sticky Header ล็อกหัวตาราง */
     .table-register-view thead.roche-table-header th {
-      background-color: #0066cc !important; color: white !important; border-bottom: none !important; font-weight: 600; padding: 14px 12px; white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: #0066cc !important; 
+      color: white !important; 
+      border-bottom: none !important; 
+      font-weight: 600; 
+      padding: 14px 12px; 
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    
     .table-logs-view thead.roche-logs-header th {
       background-color: #0066cc !important; color: white !important; border-bottom: none !important; font-weight: 600; padding: 14px 12px; white-space: nowrap;
     }
@@ -61,9 +91,6 @@
 
     .reg-box { display: none; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); overflow: hidden; border: 1px solid #e2e8f0; padding-bottom: 20px; }
     .badge-custom { font-size: 12px; padding: 6px 12px; border-radius: 20px; background-color: #f1f5f9; color: #475569; margin-right: 4px; margin-bottom: 4px; display: inline-block; font-weight: 600; border: 1px solid #e2e8f0; }
-    
-    .status-checked { color: #0066cc; font-weight: bold; font-size: 1.25rem; }
-    .status-unchecked { color: #cbd5e1; font-size: 1.25rem; }
     
     .form-control, .form-select { 
       border-radius: 10px; border: 1px solid #cbd5e1; padding: 12px 14px; 
@@ -133,12 +160,8 @@
     @media (max-width: 767.98px) {
       .content-wrapper { padding: 10px 0px !important; }
       .nav-pills .nav-link { padding: 10px 8px; margin: 0 4px; font-size: 14px; border-radius: 20px; white-space: nowrap; }
-      .mobile-filter-collapse { display: none; }
-      .mobile-filter-collapse.show { display: block !important; }
-      .btn-toggle-filter { width: 100%; border-radius: 10px; border: 1px dashed #0066cc; color: #0066cc; font-weight: bold; font-size: 15px; background: rgba(0, 102, 204, 0.04); padding: 10px; margin-top: 4px; }
       #listView { padding: 0 10px; }
       #listView .card { padding: 15px 12px !important; margin-bottom: 12px !important; border-radius: 14px !important; }
-      #listView .card h2 { font-size: 1.4rem !important; margin-bottom: 10px !important; text-align: left !important; }
       #listView .table-responsive { padding: 8px; border-radius: 12px; }
       .table-register-view, .table-logs-view { width: 100%; min-width: 600px; }
       th, td { font-size: 13.5px !important; padding: 12px 6px !important; }
@@ -182,7 +205,8 @@
   <div id="networkStatusBanner"></div>
 
   <div class="content-wrapper">
-    <div class="container main-container">
+    <!-- 🌟 ขยายโครงสร้างให้กว้างเต็มตาแบบ App (container-fluid) -->
+    <div class="container-fluid main-container">
       
       <div class="nav-container-box">
         <ul class="nav nav-pills justify-content-center">
@@ -194,89 +218,86 @@
 
       <div id="registerView">
         <div id="listView">
-          <div class="card p-4 mb-4 border-0">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h2 class="fw-bold mb-0" style="color: #06C755; letter-spacing: -0.5px;">
-                <i class="fa-brands fa-line me-2"></i>LINE QR Connect 
-                <span class="text-secondary fs-6 fw-normal ms-2 d-none d-md-inline align-middle">| Fast Add & Consent</span>
-              </h2>
+          
+          <!-- 🌟 ดีไซน์กล่อง Filter ใหม่แบบประหยัดพื้นที่ (Smart Collapse) -->
+          <div class="card p-3 mb-3 border-0 shadow-sm" style="border-radius: 12px;">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
               
-              <div class="d-flex gap-2">
-                <!-- 🌟 ปุ่มสแกนด้วย AI จากหน้าหลัก (เรียกเปิดกล้อง iPad/iPhone ทันที) -->
-                <input type="file" id="mainAiInput" accept="image/*" capture="environment" style="display:none;" onchange="handleMainAIScan(this)">
-                <button class="btn btn-ai-scan shadow-sm" type="button" onclick="document.getElementById('mainAiInput').click()">
-                  <i class="fa-solid fa-wand-magic-sparkles me-1"></i> 📸 สแกนนามบัตร (AI)
-                </button>
-
-                <button class="btn-refresh-data shadow-sm" onclick="refreshEmployeeData()" type="button" title="ดึงข้อมูลใหม่จากฐานข้อมูล">
-                  <i class="fa-solid fa-arrows-rotate me-1" id="refreshIcon"></i> รีเฟรช
-                </button>
-                <button class="btn-clear-filter shadow-sm" onclick="clearAllFilters()" type="button" title="ล้างค่าตัวกรองทั้งหมด">
-                  <i class="fa-solid fa-broom me-1"></i> ล้างตัวกรอง
-                </button>
-              </div>
-            </div>
-            
-            <div class="row g-2">
-              <div class="col-md-3 col-12">
-                <label class="form-label small fw-bold text-secondary">🔎 ค้นหาชื่อ HCP (แพทย์)</label>
-                <input type="text" id="searchBox" class="form-control shadow-sm" oninput="applyFilters()" placeholder="พิมพ์ชื่อแพทย์ (TH/EN)...">
-              </div>
-
-              <div class="col-md-3 col-12 d-block d-md-none">
-                <button type="button" class="btn-toggle-filter" onclick="toggleMobileFilters()">⚙️ ตัวกรองเพิ่มเติม (คลิกเพื่อเปิด/ปิด)</button>
-              </div>
-              
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f1">
-                <label class="form-label small fw-bold text-secondary">🏥 HCO (โรงพยาบาล)</label>
-                <input type="text" id="filterHospital" class="form-control shadow-sm" oninput="applyFilters()" placeholder="พิมพ์ค้นหา รพ...">
-              </div>
-
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f2">
-                <label class="form-label small fw-bold text-secondary">🩺 Specialty</label>
-                <select id="filterSpecialty" class="form-select shadow-sm" onchange="applyFilters()">
-                  <option value="">-- ทั้งหมด --</option>
-                </select>
-              </div>
-
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f3">
-                <label class="form-label small fw-bold text-secondary">👤 PJP</label>
-                <select id="filterPjp" class="form-select shadow-sm" onchange="applyFilters()">
-                  <option value="">-- ทั้งหมด --</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row g-2 mt-md-2 mt-0">
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f4">
-                <label class="form-label small fw-bold text-secondary">🧬 DA</label>
-                <select id="filterDa" class="form-select shadow-sm" onchange="applyFilters()"><option value="">-- ทั้งหมด --</option></select>
-              </div>
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f5">
-                <label class="form-label small fw-bold text-secondary">📊 Class Max</label>
-                <div class="dropdown-multiselect shadow-sm" id="classMultiselectContainer">
-                  <div class="dropdown-multiselect-btn" id="classMultiselectBtn" onclick="toggleMultiselectMenu()">-- ทั้งหมด --</div>
-                  <div class="dropdown-multiselect-menu" id="classMultiselectMenu"></div>
+              <div class="d-flex flex-column flex-md-row align-items-md-center gap-3 flex-grow-1">
+                <h2 class="fw-bold mb-0 text-nowrap" style="color: #06C755; font-size: 1.4rem; letter-spacing: -0.5px;">
+                  <i class="fa-brands fa-line me-1"></i>LINE QR Connect
+                </h2>
+                <div class="input-group" style="max-width: 400px; width: 100%;">
+                  <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                  <input type="text" id="searchBox" class="form-control border-start-0 ps-0 shadow-none" oninput="applyFilters()" placeholder="ค้นหาชื่อแพทย์ (TH/EN)...">
                 </div>
               </div>
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f6">
-                <label class="form-label small fw-bold text-secondary">💬 สถานะ LINE ID</label>
-                <select id="filterLineStatus" class="form-select shadow-sm" onchange="applyFilters()">
-                  <option value="">-- ทั้งหมด --</option>
-                  <option value="allocated">มี LINE ID แล้ว</option>
-                  <option value="empty">ยังไม่มี LINE ID</option>
-                </select>
-              </div>
-              <div class="col-md-3 col-12 mobile-filter-collapse id-mo-f7">
-                <label class="form-label small fw-bold text-secondary">✉️ สถานะ Email</label>
-                <select id="filterEmailStatus" class="form-select shadow-sm" onchange="applyFilters()">
-                  <option value="">-- ทั้งหมด --</option>
-                  <option value="allocated">มี Email แล้ว</option>
-                  <option value="empty">ยังไม่มี Email</option>
-                </select>
+              
+              <div class="d-flex gap-2 flex-wrap justify-content-end">
+                <input type="file" id="mainAiInput" accept="image/*" capture="environment" style="display:none;" onchange="handleMainAIScan(this)">
+                <button class="btn btn-ai-scan" type="button" onclick="document.getElementById('mainAiInput').click()">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> สแกน (AI)
+                </button>
+                
+                <button class="btn btn-outline-secondary fw-bold shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFiltersWrapper" style="border-radius: 10px; font-size: 13.5px;">
+                  <i class="fa-solid fa-sliders me-1"></i> ตัวกรอง
+                </button>
+          
+                <button class="btn-refresh-data" onclick="refreshEmployeeData()" type="button" title="รีเฟรช">
+                  <i class="fa-solid fa-arrows-rotate" id="refreshIcon"></i>
+                </button>
               </div>
             </div>
-
+          
+            <div class="collapse mt-3 pt-3 border-top" id="advancedFiltersWrapper">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-primary small"><i class="fa-solid fa-filter me-1"></i> ตัวกรองข้อมูลขั้นสูง</span>
+                <button class="btn-clear-filter" onclick="clearAllFilters()" type="button"><i class="fa-solid fa-broom me-1"></i> ล้างตัวกรองทั้งหมด</button>
+              </div>
+              
+              <div class="row g-2">
+                <div class="col-md-4 col-12">
+                  <label class="form-label small fw-bold text-secondary">🏥 HCO (โรงพยาบาล)</label>
+                  <input type="text" id="filterHospital" class="form-control form-control-sm shadow-none" oninput="applyFilters()" placeholder="พิมพ์ค้นหา รพ...">
+                </div>
+                <div class="col-md-4 col-12">
+                  <label class="form-label small fw-bold text-secondary">🩺 Specialty</label>
+                  <select id="filterSpecialty" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">-- ทั้งหมด --</option></select>
+                </div>
+                <div class="col-md-4 col-12">
+                  <label class="form-label small fw-bold text-secondary">👤 PJP</label>
+                  <select id="filterPjp" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">-- ทั้งหมด --</option></select>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="form-label small fw-bold text-secondary">🧬 DA</label>
+                  <select id="filterDa" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">-- ทั้งหมด --</option></select>
+                </div>
+                <div class="col-md-3 col-6">
+                  <!-- 🌟 เปลี่ยนหัวข้อเป็น Status -->
+                  <label class="form-label small fw-bold text-secondary">📊 Status</label>
+                  <div class="dropdown-multiselect" id="classMultiselectContainer">
+                    <div class="dropdown-multiselect-btn p-1 px-2" style="font-size: 14px;" id="classMultiselectBtn" onclick="toggleMultiselectMenu()">-- ทั้งหมด --</div>
+                    <div class="dropdown-multiselect-menu" id="classMultiselectMenu"></div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="form-label small fw-bold text-secondary">💬 สถานะ LINE</label>
+                  <select id="filterLineStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()">
+                    <option value="">-- ทั้งหมด --</option>
+                    <option value="allocated">มี LINE ID แล้ว</option>
+                    <option value="empty">ยังไม่มี LINE ID</option>
+                  </select>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label class="form-label small fw-bold text-secondary">✉️ สถานะ Email</label>
+                  <select id="filterEmailStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()">
+                    <option value="">-- ทั้งหมด --</option>
+                    <option value="allocated">มี Email แล้ว</option>
+                    <option value="empty">ยังไม่มี Email</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div id="loading" class="text-center my-5">
@@ -284,23 +305,26 @@
             <p class="text-muted mt-2" id="loadingText">กำลังดึงข้อมูลรายชื่อแพทย์...</p>
           </div>
 
-          <div id="employeeListTableWrapper" class="table-responsive" style="display: none;">
-            <table class="table table-striped table-hover align-middle table-register-view">
-              <thead class="roche-table-header">
-                <tr>
-                  <th class="sortable-header" onclick="sortEmpTable('name')">HCP Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-name"></i></th>
-                  <th class="sortable-header" onclick="sortEmpTable('thName')">TH Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-thName"></i></th> 
-                  <th class="sortable-header" onclick="sortEmpTable('spec')">Specialty <i class="fa-solid fa-sort sort-icon" id="icon-emp-spec"></i></th>
-                  <th class="sortable-header" onclick="sortEmpTable('hospital')">HCO <i class="fa-solid fa-sort sort-icon" id="icon-emp-hospital"></i></th>
-                  <th style="width: 80px;" class="text-center">LINE</th>
-                  <th style="width: 60px;" class="text-center">Email</th>
-                  <th style="width: 80px;" class="text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody id="employeeTableBody"></tbody>
-            </table>
+          <div class="table-responsive" style="padding: 0;">
+            <!-- 🌟 หุ้มตารางไว้ใน Wrapper เพื่อให้ Scroll ได้ในกรอบ -->
+            <div id="employeeListTableWrapper" style="display: none;">
+              <table class="table table-striped table-hover align-middle table-register-view mb-0">
+                <thead class="roche-table-header">
+                  <tr>
+                    <th class="sortable-header" onclick="sortEmpTable('name')">HCP Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-name"></i></th>
+                    <th class="sortable-header" onclick="sortEmpTable('thName')">TH Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-thName"></i></th> 
+                    <th class="sortable-header" onclick="sortEmpTable('spec')">Specialty <i class="fa-solid fa-sort sort-icon" id="icon-emp-spec"></i></th>
+                    <th class="sortable-header" onclick="sortEmpTable('hospital')">HCO <i class="fa-solid fa-sort sort-icon" id="icon-emp-hospital"></i></th>
+                    <th style="width: 100px;" class="text-center">LINE</th>
+                    <th style="width: 100px;" class="text-center">Email</th>
+                    <th style="width: 80px;" class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTableBody"></tbody>
+              </table>
+            </div>
             
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 pt-3 border-top">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-white" style="border-radius: 0 0 16px 16px;">
               <div class="d-flex align-items-center mb-2 mb-md-0">
                 <label class="text-secondary small fw-bold me-2 mb-0">แสดง:</label>
                 <select id="empRowsSelect" class="form-select form-select-sm shadow-none border-light" style="width: 80px; border-radius: 8px;" onchange="changeEmpRowsPerPage()">
@@ -329,7 +353,6 @@
               </p>
             </div>
 
-            <!-- 🌟 ปุ่มสแกนด้วย Gemini AI ในหน้าฟอร์ม 🌟 -->
             <div id="aiScanBlock" class="mb-4">
               <input type="file" id="aiImageInput" accept="image/*" capture="environment" style="display:none;" onchange="handleAIScan(this)">
               <button type="button" class="btn btn-ai-scan w-100 py-2 fs-6" onclick="document.getElementById('aiImageInput').click()">
@@ -373,7 +396,6 @@
                   <div id="emailReminderText" class="text-danger mt-2" style="display: none; font-size: 13.5px; font-weight: 600; line-height: 1.4;">
                     <i class="fa-solid fa-triangle-exclamation me-1"></i> เนื่องจากท่านได้เลือกยินยอมรับข้อมูลข่าวสาร โปรดระบุอีเมลเพื่อให้ระบบสามารถจัดส่งข้อมูลทางการแพทย์ได้อย่างสมบูรณ์
                   </div>
-
                 </div>
               </div>
 
@@ -579,20 +601,16 @@
   <script>
     // 🌟 ระบบ Authentication Guard สำหรับตรวจสอบสิทธิ์เข้าใช้งาน
     async function checkAuth() {
-      // ดึง session จาก Supabase client ที่เตรียมไว้ใน config.js
       if (window.supabaseClient) {
         const { data, error } = await window.supabaseClient.auth.getSession();
         if (!data.session) {
-          // ถ้าไม่มี session ให้เด้งกลับไปหน้า Login
           window.location.href = 'login.html';
         } else {
           console.log("Logged in as:", data.session.user.email);
-          // ทำการโหลดข้อมูลหลังจากตรวจสอบ Auth ผ่าน
           loadEmployeeData(); 
         }
       }
     }
-    // รันการตรวจสอบทันทีเมื่อโหลดสคริปต์
     checkAuth();
 
     let employeeData = [];
@@ -616,7 +634,6 @@
     let histSortCol = 0; 
     let histSortAsc = false; 
 
-    // 🌟 ฟังก์ชันย่อภาพฝั่ง Client สำหรับ iPad / iPhone (ช่วยให้สแกนไวขึ้น 3-5 เท่า)
     function compressImage(file, callback) {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -625,7 +642,7 @@
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const maxHeight = 1024; // ย่อความสูงไม่เกิน 1024px
+          const maxHeight = 1024;
           
           if (height > maxHeight) {
             width *= maxHeight / height;
@@ -637,7 +654,6 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // ส่งภาพ JPEG คุณภาพ 0.7 ขนาดไฟล์เหลือ ~100-200KB
           callback(canvas.toDataURL('image/jpeg', 0.7));
         };
         img.src = e.target.result;
@@ -645,7 +661,6 @@
       reader.readAsDataURL(file);
     }
 
-    // 🌟 ฟังก์ชันจัดการ Smart AI Image Scan จากหน้าหลัก (Main Page)
     async function handleMainAIScan(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
@@ -660,7 +675,6 @@
         tableWrapper.style.display = "none";
       }
 
-      // ย่อภาพความละเอียดสูงก่อนส่งไป API Edge Function ของ Supabase
       compressImage(file, async function(compressedBase64) {
         try {
           const { data: res, error } = await window.supabaseClient.functions.invoke('analyze-hcp-card', {
@@ -724,7 +738,6 @@
       input.value = ""; 
     }
 
-    // 🌟 ฟังก์ชันจัดการ Gemini AI Image Scan ในหน้าฟอร์ม (Form Page)
     async function handleAIScan(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
@@ -801,7 +814,6 @@
       }
     }
 
-    // 🌟 ดึงข้อมูล Sync ที่ค้างไว้ส่งเข้า Supabase
     async function syncOfflineLogs() {
       let queue = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
       if (queue.length > 0 && navigator.onLine) {
@@ -819,7 +831,6 @@
 
     const sessionStartTime = new Date();
 
-    // 🌟 บันทึกประวัติใช้งาน UserLog ลง Supabase
     async function sendUserLogToBackend() {
       if (!navigator.onLine || !window.supabaseClient) return;
       const sessionEndTime = new Date();
@@ -840,7 +851,7 @@
       await window.supabaseClient.from('UserLogs').insert([{
         "Whoupaccess": userEmail,
         "Device": deviceName,
-        "Session Duratior": durationFormatted // ชื่อฟิลด์อิงตามตารางเดิม
+        "Session Duratior": durationFormatted 
       }]);
     }
 
@@ -855,7 +866,6 @@
     window.onload = () => { 
       updateOnlineStatus(); 
       updateOfflineStat();
-      // loadEmployeeData() ถูกย้ายไปเรียกหลังจาก checkAuth() สำเร็จแล้ว
       document.addEventListener("click", (e) => {
         const container = document.getElementById("classMultiselectContainer");
         if (container && !container.contains(e.target)) {
@@ -893,7 +903,6 @@
       }, 1000);
     }
 
-    // 🌟 โหลดข้อมูลจากตาราง EmployeeList บน Supabase
     async function loadEmployeeData() {
       if (!window.supabaseClient) return;
 
@@ -908,7 +917,6 @@
         return;
       }
       
-      // แมปข้อมูลให้ตรงกับ Frontend (ชื่อฟิลด์ตัวเล็ก)
       employeeData = data.map(emp => ({
         id: emp.hcp_mdm_id,
         name: emp.hcp,
@@ -960,6 +968,7 @@
         }
       });
 
+      // 🌟 แปลงคำศัพท์ ACTV / INAC ในส่วน Dropdown
       const classMenu = document.getElementById("classMultiselectMenu");
       if (classMenu) {
         classMenu.innerHTML = "";
@@ -969,16 +978,27 @@
         uniqueClasses.forEach(clsName => {
           let cleanCls = String(clsName).trim();
           if (cleanCls && cleanCls !== "-" && cleanCls !== "undefined" && cleanCls !== "null" && !cleanCls.includes("ไม่ระบุ")) {
+            
+            let displayLabel = cleanCls;
+            if (cleanCls === "ACTV") {
+              displayLabel = "🟢 Active (ใช้งาน)";
+            } else if (cleanCls === "INAC") {
+              displayLabel = "🔴 Inactive (ยกเลิก)";
+            }
+
             const itemDiv = document.createElement("div");
             itemDiv.className = "multiselect-item";
+            
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.value = cleanCls;
             checkbox.id = "chk_cls_" + cleanCls;
             checkbox.onchange = handleClassCheckboxChange;
+            
             const label = document.createElement("label");
             label.htmlFor = "chk_cls_" + cleanCls;
-            label.innerText = cleanCls;
+            label.innerText = displayLabel; 
+            
             itemDiv.appendChild(checkbox);
             itemDiv.appendChild(label);
             classMenu.appendChild(itemDiv);
@@ -1015,6 +1035,7 @@
       }
     }
 
+    // 🌟 แปลงคำแสดงผลบนปุ่มเวลาติ๊กเลือก Status 
     function handleClassCheckboxChange() {
       const checkedBoxes = document.querySelectorAll("#classMultiselectMenu input[type='checkbox']:checked");
       selectedClasses = Array.from(checkedBoxes).map(cb => cb.value);
@@ -1023,9 +1044,14 @@
       if (selectedClasses.length === 0) {
         btn.innerText = "-- ทั้งหมด --";
       } else if (selectedClasses.length <= 2) {
-        btn.innerText = selectedClasses.join(", ");
+        const displayNames = selectedClasses.map(val => {
+           if(val === "ACTV") return "Active";
+           if(val === "INAC") return "Inactive";
+           return val;
+        });
+        btn.innerText = displayNames.join(", ");
       } else {
-        btn.innerText = "เลือกแล้ว (" + selectedClasses.length + " คลาส)";
+        btn.innerText = "เลือกแล้ว (" + selectedClasses.length + " สถานะ)";
       }
       applyFilters();
     }
@@ -1058,6 +1084,7 @@
       return safeText.replace(regex, '<span class="highlight-text">$1</span>');
     }
 
+    // 🌟 อัปเดต Filter ให้ตรวจเช็คค่า Yes/No/None
     function applyFilters() {
       const keyword = document.getElementById("searchBox").value.toLowerCase().trim();
       const hosp = document.getElementById("filterHospital").value.toLowerCase().trim();
@@ -1081,17 +1108,19 @@
         const matchesCls = (selectedClasses.length === 0) || selectedClasses.includes(String(h.cls).trim());
         
         let matchesLineCheck = true;
+        let lVal = String(h.lineId).toLowerCase().trim();
         if (lineStatus === "allocated") {
-          matchesLineCheck = (h.lineId && h.lineId.trim() !== "" && h.lineId !== "-");
+          matchesLineCheck = (lVal === "yes" || (lVal !== "none" && lVal !== "no" && lVal !== ""));
         } else if (lineStatus === "empty") {
-          matchesLineCheck = (!h.lineId || h.lineId.trim() === "" || h.lineId === "-");
+          matchesLineCheck = (lVal === "none" || lVal === "no" || lVal === "");
         }
 
         let matchesEmailCheck = true;
+        let eVal = String(h.email).toLowerCase().trim();
         if (emailStatus === "allocated") {
-          matchesEmailCheck = (h.email && h.email.trim() !== "");
+          matchesEmailCheck = (eVal === "yes" || (eVal !== "none" && eVal !== "no" && eVal !== ""));
         } else if (emailStatus === "empty") {
-          matchesEmailCheck = (!h.email || h.email.trim() === "");
+          matchesEmailCheck = (eVal === "none" || eVal === "no" || eVal === "");
         }
         
         return matchesSearch && matchesHosp && matchesPjp && matchesSpec && matchesDa && matchesCls && matchesLineCheck && matchesEmailCheck;
@@ -1144,6 +1173,19 @@
       empCurrentPage = page;
       renderEmployeeTable();
     }
+
+    // 🌟 ฟังก์ชันแปลงค่าเป็นป้าย Badge สีสันสวยงาม
+    const getStatusUI = (val) => {
+      const v = String(val || "").trim().toLowerCase();
+      if (v === "yes") {
+        return '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1" style="font-size: 12px; font-weight: 600;"><i class="fa-solid fa-check me-1"></i>มีแล้ว</span>';
+      } else if (v === "no") {
+        return '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1" style="font-size: 12px; font-weight: 600;"><i class="fa-solid fa-xmark me-1"></i>ไม่ให้</span>';
+      } else if (v === "none" || v === "") {
+        return '<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 12px; font-weight: 500;"><i class="fa-solid fa-minus me-1"></i>ไม่มี</span>';
+      }
+      return '<span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 12px;">' + (val || "-") + '</span>';
+    };
 
     function renderEmployeeTable() {
       const tbody = document.getElementById("employeeTableBody"); 
@@ -1198,8 +1240,9 @@
       ul.innerHTML = paginationHtml;
 
       paginatedData.forEach((emp) => {
-        let hasLineIdIcon = (emp.lineId && emp.lineId.trim() !== "" && emp.lineId !== "-") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
-        let hasEmailIcon = (emp.email && emp.email.trim() !== "") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
+        // 🌟 เรียกใช้ฟังก์ชันแปลง Badge ที่สร้างไว้
+        let displayLine = getStatusUI(emp.lineId);
+        let displayEmail = getStatusUI(emp.email);
 
         let displayHcpName = highlightText(emp.name, currentSearchKeyword);
         let displayThName = highlightText(emp.thName, currentSearchKeyword);
@@ -1210,8 +1253,8 @@
                         '<td class="text-secondary">' + displayThName + '</td>' +
                         '<td><span class="badge bg-light text-dark border" style="font-size:11.5px;"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ' + emp.spec + '</span></td>' +
                         '<td><small class="fw-medium text-secondary"><i class="fa-solid fa-building text-muted me-1"></i> ' + displayHospital + '</small></td>' +
-                        '<td class="text-center">' + hasLineIdIcon + '</td>' +
-                        '<td class="text-center">' + hasEmailIcon + '</td>' +
+                        '<td class="text-center">' + displayLine + '</td>' +
+                        '<td class="text-center">' + displayEmail + '</td>' +
                         '<td class="text-center"><button class="btn-roche-action" type="button">Click</button></td>';
         row.onclick = () => openRegistrationForm(emp);
         tbody.appendChild(row);
@@ -1437,7 +1480,6 @@
       }
     }
 
-    // 🌟 โค้ดส่งข้อมูลไปยัง Supabase Backend
     async function submitRegistrationToBackend(finalEmployeeObj, actionLog, finalEmail, finalMobile) {
       const { data: sessionData } = await window.supabaseClient.auth.getSession();
       const adminEmail = sessionData?.session?.user?.email || "Unknown User";
@@ -1527,7 +1569,7 @@
         btn.style.setProperty("color", "#212529", "important");
         btn.innerText = "⏳ กำลังบันทึกข้อมูลประวัติ...";
         
-        await submitRegistrationToBackend(finalEmployeeObj, "เก็บ LINE ID เรียบร้อยแล้ว", finalEmail, finalMobile);
+        await submitRegistrationToBackend(finalEmployeeObj, "Yes", finalEmail, finalMobile);
 
         btn.style.setProperty("background-color", "#198754", "important");
         btn.style.setProperty("color", "#ffffff", "important");
@@ -1542,7 +1584,7 @@
       } else {
         let logData = {
           emp: finalEmployeeObj,
-          action: "เก็บ LINE ID เรียบร้อยแล้ว",
+          action: "Yes",
           email: finalEmail,
           mobile: finalMobile
         };
@@ -1582,7 +1624,6 @@
       }
     }
 
-    // 🌟 ดึงข้อมูลประวัติจากตาราง RegistrationLogs
     async function fetchLogsData() {
       const tbody = document.getElementById("historyTableBody");
       const pageInfo = document.getElementById("histPageInfo");
@@ -1809,7 +1850,8 @@
       ul.innerHTML = paginationHtml;
 
       paginatedData.forEach(row => {
-          let emailIcon = (row.email && row.email !== "undefined" && row.email !== "null" && row.email !== "ไม่ได้กรอก" && row.email !== "-") ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
+          let eVal = String(row.email || "").trim().toLowerCase();
+          let emailIcon = (eVal === "yes" || (eVal !== "none" && eVal !== "no" && eVal !== "")) ? '<span class="status-checked"><i class="fa-solid fa-check"></i></span>' : '<span class="status-unchecked"><i class="fa-solid fa-minus"></i></span>';
           
           tbody.innerHTML += '<tr>' +
                              '<td><small class="text-secondary fw-semibold">' + row.timestamp + '</small></td>' +
@@ -1953,12 +1995,12 @@
           worksheet.pageSetup.printTitlesRow = '1:7'; 
           worksheet.pageSetup.printArea = 'A:J';
 
-          worksheet.getColumn(6).width = 35;  // F (Consent/QR)
-          worksheet.getColumn(7).width = 10;  // G (LINE ID)
-          worksheet.getColumn(8).width = 10;  // H (Email)
-          worksheet.getColumn(9).width = 10;  // I (Mobile)
-          worksheet.getColumn(10).width = 28; // J (Status)
-          worksheet.getColumn(11).width = 30; // K (Remark)
+          worksheet.getColumn(6).width = 35;  
+          worksheet.getColumn(7).width = 10;  
+          worksheet.getColumn(8).width = 10;  
+          worksheet.getColumn(9).width = 10;  
+          worksheet.getColumn(10).width = 28; 
+          worksheet.getColumn(11).width = 30; 
 
           const headerRow = worksheet.getRow(7);
           const newHeaders = [
@@ -2032,9 +2074,14 @@
                 });
               }
 
-              let hasLine = (empMatch.lineId && empMatch.lineId !== "-");
-              let hasEmail = (empMatch.email && empMatch.email.trim() !== "");
-              let hasMobile = (empMatch.mobile && empMatch.mobile.trim() !== "");
+              let lVal = String(empMatch.lineId).toLowerCase().trim();
+              let hasLine = (lVal === "yes" || (lVal !== "none" && lVal !== "no" && lVal !== ""));
+              
+              let eVal = String(empMatch.email).toLowerCase().trim();
+              let hasEmail = (eVal === "yes" || (eVal !== "none" && eVal !== "no" && eVal !== ""));
+              
+              let mVal = String(empMatch.mobile).toLowerCase().trim();
+              let hasMobile = (mVal === "yes" || (mVal !== "none" && mVal !== "no" && mVal !== ""));
               
               row.getCell(7).value = hasLine ? "✅" : "❌";
               row.getCell(8).value = hasEmail ? "✅" : "❌";
