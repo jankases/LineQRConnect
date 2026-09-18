@@ -35,6 +35,18 @@
       flex-direction: column;
       overflow: hidden; 
     }
+
+    /* 🌟 Top Bar สำหรับแสดง Email และปุ่ม Logout */
+    .top-user-bar {
+      background-color: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
     
     .content-wrapper { 
       flex: 1; 
@@ -76,7 +88,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s ease;
     }
     
-    .nav-container-box { display: flex; justify-content: center; margin-top: 0px; margin-bottom: 8px; flex-shrink: 0; }
+    .nav-container-box { display: flex; justify-content: center; margin-top: 5px; margin-bottom: 8px; flex-shrink: 0; }
     .nav-pills .nav-link { cursor: pointer; color: #64748b; font-weight: bold; margin: 0 4px; background: #e2e8f0; border-radius: 30px; padding: 6px 20px; font-size: 14px; transition: 0.2s; border: 1px solid transparent; }
     .nav-pills .nav-link:hover { background: #cbd5e1; color: #0066cc; }
     .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15); }
@@ -253,12 +265,23 @@
       .bg-light.border.rounded { border: none !important; background: transparent !important; }
       #qrExpiryText { font-size: 14pt !important; margin-top: 15px !important; }
       #btnCopyLink { display: none !important; }
+      .top-user-bar { display: none !important; }
     }
   </style>
 </head>
 <body>
 
   <div id="networkStatusBanner"></div>
+
+  <!-- 🌟 Top Bar สำหรับแสดง Email ของแอดมิน และปุ่ม Logout -->
+  <div class="top-user-bar">
+    <span class="small fw-bold text-secondary me-3">
+      <i class="fa-solid fa-user-shield me-1"></i> <span id="currentUserEmail">กำลังตรวจสอบ...</span>
+    </span>
+    <button class="btn btn-outline-danger btn-sm rounded-pill fw-bold" style="font-size: 12px; padding: 4px 12px;" onclick="handleLogoutUser()">
+      <i class="fa-solid fa-right-from-bracket me-1"></i> ออกจากระบบ
+    </button>
+  </div>
 
   <div class="content-wrapper">
     <div class="container-fluid main-container">
@@ -658,12 +681,49 @@
   </div>
 
   <script>
+    // 🌟 ฟังก์ชัน Logout พร้อมระบบเช็คข้อมูลออฟไลน์ค้างส่ง
+    async function handleLogoutUser() {
+      const offlineLogs = JSON.parse(localStorage.getItem('offlineLogs') || '[]');
+      if (offlineLogs.length > 0) {
+        const confirmLogout = confirm(`⚠️ แจ้งเตือนความปลอดภัย\n\nคุณมีข้อมูลการลงทะเบียนออฟไลน์ค้างส่งอยู่ในเครื่องจำนวน ${offlineLogs.length} รายการ\nหากคุณออกจากระบบตอนนี้ ข้อมูลที่ค้างอยู่จะถูกลบและสูญหายถาวร!\n\nยืนยันที่จะออกจากระบบและลบข้อมูลหรือไม่?`);
+        if (!confirmLogout) return;
+        localStorage.removeItem('offlineLogs');
+      }
+      
+      if (window.supabaseClient) {
+        await window.supabaseClient.auth.signOut();
+      }
+      window.location.href = 'login.html';
+    }
+
+    // 🌟 ระบบ Auto-Logout หากไม่เคลื่อนไหว 30 นาที (1,800,000 มิลลิวินาที)
+    let inactivityTimer;
+    const INACTIVITY_LIMIT = 30 * 60 * 1000; 
+
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        alert("🔒 หมดเวลาการเชื่อมต่อ (Inactive Session)\nระบบได้ทำการนำคุณออกจากระบบอัตโนมัติเพื่อความปลอดภัยของข้อมูล");
+        handleLogoutUser();
+      }, INACTIVITY_LIMIT);
+    }
+
+    // ดักจับการเคลื่อนไหวเพื่อรีเซ็ตตัวนับเวลา
+    ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt => {
+      document.addEventListener(evt, resetInactivityTimer, true);
+    });
+    resetInactivityTimer();
+
     async function checkAuth() {
       if (window.supabaseClient) {
         const { data, error } = await window.supabaseClient.auth.getSession();
         if (!data.session) {
           window.location.href = 'login.html';
         } else {
+          // 🌟 แสดงอีเมลของผู้ใช้ที่ล็อกอินอยู่บน Top Bar
+          const emailDisplay = document.getElementById('currentUserEmail');
+          if(emailDisplay) emailDisplay.innerText = data.session.user.email;
+          
           console.log("Logged in as:", data.session.user.email);
           loadEmployeeData(); 
         }
@@ -1565,7 +1625,26 @@
           confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         }
         
-        setTimeout(() => { goBackToList(); loadEmployeeData(); }, 1500);
+        // 🌟 อัปเดตข้อมูลตารางแบบ Real-time โดยไม่ต้องโหลดฐานข้อมูลใหม่
+        if (finalEmployeeObj.id !== "New") {
+          let targetEmp = employeeData.find(e => e.id === finalEmployeeObj.id);
+          if (targetEmp) {
+            targetEmp.lineId = "Yes";
+            targetEmp.email = finalEmail !== "" ? finalEmail : targetEmp.email;
+            targetEmp.mobile = finalMobile !== "" ? finalMobile : targetEmp.mobile;
+          }
+          let targetHcp = hcpData.find(e => e.id === finalEmployeeObj.id);
+          if (targetHcp) {
+            targetHcp.lineId = "Yes";
+            targetHcp.email = finalEmail !== "" ? finalEmail : targetHcp.email;
+            targetHcp.mobile = finalMobile !== "" ? finalMobile : targetHcp.mobile;
+          }
+        }
+        
+        setTimeout(() => { 
+          goBackToList(); 
+          applyFilters(); // เรนเดอร์ตารางใหม่ทันทีด้วยข้อมูลที่อัปเดตแล้ว
+        }, 1500);
 
       } else {
         let logData = {
@@ -1583,7 +1662,19 @@
         btn.style.setProperty("color", "#ffffff", "important");
         btn.innerText = "💾 บันทึกออฟไลน์ลงเครื่องแล้ว!";
         
-        setTimeout(() => { goBackToList(); }, 1200);
+        if (finalEmployeeObj.id !== "New") {
+          let targetEmp = employeeData.find(e => e.id === finalEmployeeObj.id);
+          if (targetEmp) {
+            targetEmp.lineId = "Yes";
+            targetEmp.email = finalEmail !== "" ? finalEmail : targetEmp.email;
+            targetEmp.mobile = finalMobile !== "" ? finalMobile : targetEmp.mobile;
+          }
+        }
+
+        setTimeout(() => { 
+          goBackToList(); 
+          applyFilters(); 
+        }, 1200);
       }
     }
 
