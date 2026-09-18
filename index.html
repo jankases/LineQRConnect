@@ -17,7 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- โหลด Supabase SDK และ Config -->
@@ -37,16 +36,17 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s ease;
     }
     
-    .nav-container-box { display: flex; justify-content: center; margin-top: 5px; margin-bottom: 25px; }
+    .nav-container-box { display: flex; justify-content: center; margin-top: 0px; margin-bottom: 15px; }
     .nav-pills .nav-link { cursor: pointer; color: #64748b; font-weight: bold; margin: 0 6px; background: #e2e8f0; border-radius: 30px; padding: 8px 24px; transition: 0.2s; border: 1px solid transparent; }
     .nav-pills .nav-link:hover { background: #cbd5e1; color: #0066cc; }
     .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15); }
     
     .card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; }
     
-    .table-responsive { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    /* 🌟 ปรับความสูงตารางเพื่อแก้ปัญหา Scrollbar ซ้อนกัน */
+    .table-responsive { background: white; border-radius: 16px; padding: 0; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
     #employeeListTableWrapper {
-      max-height: calc(100vh - 250px);
+      max-height: calc(100vh - 290px); 
       overflow-y: auto;
       position: relative;
       scrollbar-width: thin;
@@ -97,7 +97,6 @@
     .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 15px; }
 
-    /* แก้ขนาดช่องค้นหาและ Dropdown ให้สมดุลกัน */
     .form-control-sm, .form-select-sm {
       padding: 6px 12px !important;
       font-size: 14px !important;
@@ -234,9 +233,13 @@
                 <h2 class="fw-bold mb-0 text-nowrap" style="color: #06C755; font-size: 1.4rem; letter-spacing: -0.5px;">
                   <i class="fa-brands fa-line me-1"></i>LINE QR Connect
                 </h2>
+                <!-- 🌟 เพิ่มปุ่มไมโครโฟนในช่องค้นหา -->
                 <div class="input-group" style="max-width: 400px; width: 100%;">
                   <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                  <input type="text" id="searchBox" class="form-control border-start-0 ps-0 shadow-none" oninput="applyFilters()" placeholder="ค้นหาชื่อแพทย์ (TH/EN)...">
+                  <input type="text" id="searchBox" class="form-control border-start-0 border-end-0 ps-0 shadow-none" oninput="applyFilters()" placeholder="ค้นหาชื่อแพทย์ (TH/EN) หรือกดไมค์พูด...">
+                  <button class="btn btn-outline-secondary bg-white border-start-0" type="button" id="btnMic" onclick="startDictation()" style="border-color: #cbd5e1;" title="ค้นหาด้วยเสียง">
+                    <i class="fa-solid fa-microphone text-primary"></i>
+                  </button>
                 </div>
               </div>
               
@@ -666,6 +669,37 @@
       reader.readAsDataURL(file);
     }
 
+    // 🌟 ระบบสั่งงานด้วยเสียง (Voice Search)
+    function startDictation() {
+      if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'th-TH';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const micBtn = document.getElementById('btnMic');
+        const originalHtml = micBtn.innerHTML;
+        micBtn.innerHTML = '<i class="fa-solid fa-microphone-lines fa-beat text-danger"></i>';
+
+        recognition.start();
+
+        recognition.onresult = function(e) {
+          document.getElementById('searchBox').value = e.results[0][0].transcript;
+          applyFilters();
+          recognition.stop();
+          micBtn.innerHTML = originalHtml;
+        };
+
+        recognition.onerror = function(e) {
+          recognition.stop();
+          micBtn.innerHTML = originalHtml;
+        };
+      } else {
+        alert("เบราว์เซอร์ของคุณไม่รองรับการสั่งงานด้วยเสียงครับ (แนะนำให้ใช้ Google Chrome)");
+      }
+    }
+
     async function handleMainAIScan(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
@@ -908,44 +942,65 @@
       }, 1000);
     }
 
+    // 🌟 ดึงข้อมูลแบบ Pagination (Loop ทีละ 1000 แถว)
     async function loadEmployeeData() {
       if (!window.supabaseClient) return;
 
       document.getElementById("loading").style.display = "block";
       document.getElementById("employeeListTableWrapper").style.display = "none";
       
-      const { data, error } = await window.supabaseClient.from('EmployeeList').select('*');
-      
-      if (error) {
+      try {
+        let allData = [];
+        let limit = 1000;
+        let start = 0;
+        let hasMore = true;
+
+        while (hasMore) {
+          const { data, error } = await window.supabaseClient
+            .from('EmployeeList')
+            .select('*')
+            .range(start, start + limit - 1);
+            
+          if (error) throw error;
+          
+          allData = allData.concat(data);
+          
+          if (data.length < limit) {
+            hasMore = false;
+          } else {
+            start += limit;
+          }
+        }
+        
+        employeeData = allData.map(emp => ({
+          id: emp.hcp_mdm_id,
+          name: emp.hcp,
+          thName: emp.preferredname,
+          hospital: emp.hco,
+          pjp: emp.pjp,
+          spec: emp.specialty,
+          profession: emp.hcp_type,
+          da: emp.da,
+          cls: emp.class,
+          lineId: emp.lineid,
+          email: emp.email,
+          mobile: emp.mobile,
+          dkshid: emp.dkshid,
+          hcpuciid: emp.hcp_uci_id
+        }));
+
+        hcpData = [...employeeData];
+        
+        buildDropdowns(employeeData); 
+        applyFilters();
+        
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("employeeListTableWrapper").style.display = "block";
+        
+      } catch (error) {
         console.error("Error fetching employees:", error);
         document.getElementById("loadingText").innerText = "❌ เกิดข้อผิดพลาดในการโหลดข้อมูล: " + error.message;
-        return;
       }
-      
-      employeeData = data.map(emp => ({
-        id: emp.hcp_mdm_id,
-        name: emp.hcp,
-        thName: emp.preferredname,
-        hospital: emp.hco,
-        pjp: emp.pjp,
-        spec: emp.specialty,
-        profession: emp.hcp_type,
-        da: emp.da,
-        cls: emp.class,
-        lineId: emp.lineid,
-        email: emp.email,
-        mobile: emp.mobile,
-        dkshid: emp.dkshid,
-        hcpuciid: emp.hcp_uci_id
-      }));
-
-      hcpData = [...employeeData];
-      
-      buildDropdowns(employeeData); 
-      applyFilters();
-      
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("employeeListTableWrapper").style.display = "block";
     }
 
     function buildDropdowns(data) {
@@ -1176,7 +1231,7 @@
       renderEmployeeTable();
     }
 
-    // ฟังก์ชันเช็คค่าและแสดงผลเครื่องหมายถูก/ผิด แบบดั้งเดิม
+    // 🌟 เครื่องหมายถูก/ผิด ดีไซน์ออริจินัลพร้อมลอจิกใหม่
     const getStatusUI = (val) => {
       const v = String(val || "").trim().toLowerCase();
       if (v === "yes" || (v !== "none" && v !== "no" && v !== "")) {
@@ -1624,6 +1679,7 @@
       }
     }
 
+    // 🌟 ดึงข้อมูลประวัติทั้งหมดแบบ Pagination
     async function fetchLogsData() {
       const tbody = document.getElementById("historyTableBody");
       const pageInfo = document.getElementById("histPageInfo");
@@ -1632,43 +1688,70 @@
       tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5">🔄 กำลังดึงข้อมูลประวัติทั้งหมด...</td></tr>';
       pageInfo.innerHTML = ""; ul.innerHTML = "";
       
-      const { data: logs, error } = await window.supabaseClient.from('RegistrationLogs').select('*').order('Timestamp', { ascending: false });
+      try {
+        let allLogs = [];
+        let limit = 1000;
+        let start = 0;
+        let hasMore = true;
 
-      if (error || !logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ยังไม่มีประวัติการลงทะเบียนในระบบ</td></tr>';
-        globalHistoryLogs = [];
-        resetDashboardStats();
-        return;
-      }
-      
-      globalHistoryLogs = logs.map(function(row) {
-        let dateObj = new Date(row['Timestamp']);
-        let timestamp = "-";
-        
-        if (!isNaN(dateObj.getTime())) {
-          let d = ("0" + dateObj.getDate()).slice(-2);
-          let m = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-          let y = dateObj.getFullYear();
-          let h = ("0" + dateObj.getHours()).slice(-2);
-          let mi = ("0" + dateObj.getMinutes()).slice(-2);
-          let s = ("0" + dateObj.getSeconds()).slice(-2);
-          timestamp = d + '/' + m + '/' + y + ' ' + h + ':' + mi + ':' + s;
+        while (hasMore) {
+          const { data, error } = await window.supabaseClient
+            .from('RegistrationLogs')
+            .select('*')
+            .order('Timestamp', { ascending: false })
+            .range(start, start + limit - 1);
+            
+          if (error) throw error;
+          
+          allLogs = allLogs.concat(data);
+          
+          if (data.length < limit) {
+            hasMore = false;
+          } else {
+            start += limit;
+          }
         }
 
-        return {
-            dateObj: dateObj,
-            timestamp: timestamp,
-            who: row['Whoupdated'] || '-',
-            name: row['HCP Name'] || '-',
-            hospital: row['Hospital'] || '-',
-            email: row['Email'] || ''
-        };
-      });
+        if (allLogs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-folder-open fs-2 mb-3 d-block"></i>📭 ยังไม่มีประวัติการลงทะเบียนในระบบ</td></tr>';
+          globalHistoryLogs = [];
+          resetDashboardStats();
+          return;
+        }
+        
+        globalHistoryLogs = allLogs.map(function(row) {
+          let dateObj = new Date(row['Timestamp']);
+          let timestamp = "-";
+          
+          if (!isNaN(dateObj.getTime())) {
+            let d = ("0" + dateObj.getDate()).slice(-2);
+            let m = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+            let y = dateObj.getFullYear();
+            let h = ("0" + dateObj.getHours()).slice(-2);
+            let mi = ("0" + dateObj.getMinutes()).slice(-2);
+            let s = ("0" + dateObj.getSeconds()).slice(-2);
+            timestamp = d + '/' + m + '/' + y + ' ' + h + ':' + mi + ':' + s;
+          }
 
-      buildRecorderDropdown(globalHistoryLogs);
-      histSortCol = 0; 
-      histSortAsc = false;
-      applyLogRecorderFilter();
+          return {
+              dateObj: dateObj,
+              timestamp: timestamp,
+              who: row['Whoupdated'] || '-',
+              name: row['HCP Name'] || '-',
+              hospital: row['Hospital'] || '-',
+              email: row['Email'] || ''
+          };
+        });
+
+        buildRecorderDropdown(globalHistoryLogs);
+        histSortCol = 0; 
+        histSortAsc = false;
+        applyLogRecorderFilter();
+        
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-danger"><i class="fa-solid fa-triangle-exclamation fs-2 mb-3 d-block"></i>เกิดข้อผิดพลาดในการโหลดประวัติ</td></tr>';
+      }
     }
 
     function buildRecorderDropdown(logs) {
