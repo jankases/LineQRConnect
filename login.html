@@ -16,16 +16,23 @@
     body { background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
     .login-wrapper { width: 100%; max-width: 400px; padding: 15px; }
     .login-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px 30px; border: 1px solid #e2e8f0; }
-    .login-brand-icon { width: 60px; height: 60px; background: #06C755; color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3); }
+    
+    /* 🌟 โลโก้เป็นสีเขียว LINE */
+    .login-brand-icon { width: 60px; height: 60px; background: #06C755; color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(6, 199, 85, 0.3); transition: background 0.3s; }
+    
     .login-title { font-weight: 800; color: #1e293b; font-size: 24px; }
     .login-subtitle { color: #64748b; font-size: 14px; margin-bottom: 30px; }
     .login-label { font-weight: 600; color: #475569; font-size: 13px; margin-bottom: 6px; display: block; text-align: left; }
     .login-input-group .input-group-text { background: transparent; border-right: none; color: #94a3b8; border-color: #cbd5e1; border-radius: 10px 0 0 10px; }
     .login-input { border-left: none; border-color: #cbd5e1; font-weight: 500; color: #334155; border-radius: 0 10px 10px 0 !important; }
     .login-input:focus { border-color: #cbd5e1; box-shadow: none; background-color: #f8fafc; }
-    .login-input-group:focus-within .input-group-text, .login-input-group:focus-within .login-input { border-color: #06C755; }
-    .btn-login-submit { background: #06C755; color: white; border: none; border-radius: 10px; padding: 12px; font-weight: bold; font-size: 15px; transition: 0.2s; }
-    .btn-login-submit:hover { background: #05b04b; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(6, 199, 85, 0.2); }
+    
+    /* 🌟 Focus สีขอบช่องกรอกเป็นสีฟ้า CRM */
+    .login-input-group:focus-within .input-group-text, .login-input-group:focus-within .login-input { border-color: #0066cc; }
+    
+    /* 🌟 เปลี่ยนปุ่มหลักเป็นสีฟ้า CRM */
+    .btn-login-submit { background: #0066cc; color: white; border: none; border-radius: 10px; padding: 12px; font-weight: bold; font-size: 15px; transition: 0.2s; }
+    .btn-login-submit:hover { background: #0052a3; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2); }
   </style>
 </head>
 <body>
@@ -58,7 +65,7 @@
       </div>
       <button type="submit" class="btn btn-login-submit w-100 mb-4" id="btnLoginBtn">Log In</button>
       <div class="pt-2 border-top text-center">
-        <a href="#" class="text-decoration-none text-secondary small fw-bold" onclick="toggleView('forgot'); return false;">
+        <a href="#" class="text-decoration-none small fw-bold" style="color: #0066cc;" onclick="toggleView('forgot'); return false;">
           <i class="fa-solid fa-file-signature me-1"></i> Forgot Password?
         </a>
       </div>
@@ -78,7 +85,7 @@
       </div>
       <button type="submit" class="btn btn-warning w-100 mb-3 fw-bold text-dark border-0 rounded-3 py-2" id="btnForgotBtn">Send Reset Link</button>
       <div class="pt-2 border-top">
-        <a href="#" class="text-decoration-none small fw-bold" style="color: #06C755;" onclick="toggleView('login'); return false;">
+        <a href="#" class="text-decoration-none small fw-bold" style="color: #0066cc;" onclick="toggleView('login'); return false;">
           <i class="fa-solid fa-arrow-left me-1"></i> Back to Log In
         </a>
       </div>
