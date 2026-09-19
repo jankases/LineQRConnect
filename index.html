@@ -153,13 +153,13 @@
     .multiselect-item input { margin-right: 8px; cursor: pointer; }
 
     .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
-    .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15); }
+    .consent-box.active { background-color: #eff6ff; border-color: #0d6efd; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15); }
     .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
 
     .pagination { justify-content: flex-end; margin-bottom: 0; }
     .page-link { color: #475569; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 10px; font-size: 13px; }
-    .page-link:hover { background-color: #f1f5f9; color: #0066cc; }
-    .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
+    .page-link:hover { background-color: #f1f5f9; color: #0d6efd; }
+    .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
     .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
@@ -485,9 +485,15 @@
                   </div>
 
                   <div id="qrContentBlock" class="d-none flex-column align-items-center justify-content-center h-100">
+                    <!-- 🌟 ปุ่ม Print กลับมาแล้ว -->
+                    <div class="text-end w-100 mb-2">
+                      <button class="btn btn-white border bg-white shadow-sm rounded-pill text-primary fw-bold btn-sm px-3" onclick="window.print()">
+                        <i class="fa-solid fa-print me-1"></i> Print / Save PDF
+                      </button>
+                    </div>
                     <div class="bg-white p-3 border rounded-4 shadow-sm w-100">
                       <div id="qrcodeContainer"></div>
-                      <p class="text-success fw-bold mt-3 mb-1" style="font-size:13.5px;">📲 สแกนเพื่อเพิ่มเพื่อน Roche Thailand</p>
+                      <p class="text-success fw-bold mt-2 mb-1" style="font-size:13.5px;">📲 สแกนเพื่อเพิ่มเพื่อน Roche Thailand</p>
                       <p id="qrExpiryText" class="text-danger small fw-bold mb-0" style="font-size: 12px;"></p>
                     </div>
                     <button id="btnCopyLink" class="btn btn-white border bg-white btn-sm mt-3 fw-bold text-dark w-100 rounded-pill py-2 shadow-sm" onclick="copyQrLink()"><i class="fa-solid fa-link me-1 text-primary"></i> คัดลอกลิงก์ส่งให้แพทย์</button>
@@ -748,7 +754,6 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
-    // 🌟 ฟังก์ชันเปลี่ยนแท็บที่แก้ไขแล้ว ไม่ซ้อนทับกันแน่นอน
     function switchTab(viewName) {
       document.getElementById("registerView").style.display = "none"; 
       document.getElementById("historyView").style.display = "none"; 
@@ -1065,7 +1070,6 @@
       currentGeneratedUrl = `${baseLineUrl}?hcpmdmid=${encodeURIComponent(id)}&hcpName=${encodeURIComponent(name)}&thName=${encodeURIComponent(thName)}&hospital=${encodeURIComponent(hospital)}&specialty=${encodeURIComponent(spec)}&profession=${encodeURIComponent(profession)}&email=${encodeURIComponent(email)}&mobileNo=${encodeURIComponent(mobile)}&privacyPolicy=${encodeURIComponent(pS)}&marketingConsent=${encodeURIComponent(mS)}&expire=${encodeURIComponent(exS)}&dkshid=${encodeURIComponent(dkshid)}&hcpuciid=${encodeURIComponent(hcpuciid)}`;
       document.getElementById("qrcodeContainer").innerHTML = ""; 
       
-      /* 🌟 ปรับขนาด QR Code ให้เล็กลง เพื่อไม่ดันหน้าจอ */
       new QRCode(document.getElementById("qrcodeContainer"), { text: currentGeneratedUrl, width: 220, height: 220, colorDark : "#0066cc", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M });
       checkConsentState();
     }
@@ -1085,7 +1089,6 @@
         if (!h || s === "-" || p === "-") { isValid = false; msg = "กรุณากรอกข้อมูลองค์กร ความเชี่ยวชาญ และอาชีพ<br>ให้ครบถ้วนก่อนครับ"; }
       }
       
-      /* 🌟 แก้ไข Logic การแสดงผล QR Code ไม่ให้กระตุกหรือล้น */
       if (isAgreed && isValid) {
         document.getElementById("lockAlert").classList.remove("d-flex");
         document.getElementById("lockAlert").style.display = "none"; 
@@ -1120,7 +1123,7 @@
 
     async function submitRegistration() {
       let fEmp = {}; const fEmail = document.getElementById("inputEmail").value.trim(); const fMobile = document.getElementById("inputMobile").value.trim();
-      const btn = document.getElementById("btnConfirm"); 
+      const btn = document.getElementById("btnConfirm"); const lockAlertBox = document.getElementById("lockAlert");
       
       if (isNewDoctorMode) {
         const n = document.getElementById("inputNewName").value.trim(); const h = document.getElementById("inputNewHospital").value.trim(); const s = document.getElementById("inputNewSpec").value.trim(); const p = document.getElementById("inputNewProfession").value.trim();
