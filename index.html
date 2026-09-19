@@ -76,7 +76,7 @@
     
     .card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
     
-    /* 🌟 Overview Stat Cards (Premium CRM Style) */
+    /* 🌟 Overview Stat Cards */
     .overview-scroll-container { display: flex; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; }
     .overview-scroll-container::-webkit-scrollbar { display: none; }
     
@@ -121,18 +121,18 @@
     }
 
     .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-    .sortable-header:hover { color: #0066cc !important; }
+    .sortable-header:hover { color: #0d6efd !important; }
     .sort-icon { font-size: 0.85em; opacity: 0.3; margin-left: 4px; }
-    .sortable-header.active .sort-icon { opacity: 1; color: #0066cc; }
+    .sortable-header.active .sort-icon { opacity: 1; color: #0d6efd; }
 
     /* 🌟 Search & Inputs */
     .search-input-pill { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 50px; padding: 6px 16px; transition: border-color 0.2s; display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .search-input-pill:focus-within { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1); }
+    .search-input-pill:focus-within { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1); }
     .search-input-pill input { border: none; outline: none; box-shadow: none; font-size: 14px; width: 100%; margin-left: 8px; }
+    
     .btn-filter-pill { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; display: flex; align-items: center; }
-    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0066cc; }
+    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0d6efd; }
 
-    /* 🌟 Minimal Status Indicators */
     .status-check { color: #10b981; font-size: 1.1rem; font-weight: 800; }
     .status-dash { color: #cbd5e1; font-size: 1rem; font-weight: 800; }
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
@@ -143,6 +143,8 @@
     .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 
+    .form-control-sm, .form-select-sm { padding: 4px 10px !important; font-size: 13.5px !important; border-radius: 6px !important; min-height: 32px; }
+    
     .dropdown-multiselect { position: relative; width: 100%; }
     .dropdown-multiselect-btn { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; width: 100%; text-align: left; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
     .dropdown-multiselect-menu { position: absolute; top: 100%; left: 0; width: 100%; max-height: 240px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); z-index: 1000; padding: 6px; display: none; }
@@ -203,7 +205,7 @@
   <!-- 🌟 Unified Header Bar -->
   <header class="app-header">
     <div class="brand-logo">
-      <i class="fa-brands fa-line"></i>
+      <i class="fa-brands fa-line" style="color: #00c300;"></i>
       <span>LINE QR Connect</span>
     </div>
 
@@ -290,28 +292,60 @@
             </div>
           </div>
           
+          <!-- 🌟 ฟิลเตอร์แถวเดียว (Single Row Filter) -->
           <div class="collapse mb-3 flex-shrink-0" id="advancedFiltersWrapper">
             <div class="card p-3 border-0 shadow-sm rounded-4">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-primary small">Filters</span>
                 <a href="#" class="text-danger small text-decoration-none fw-bold" onclick="clearAllFilters(); return false;">Clear All</a>
               </div>
-              <div class="row g-2">
-                <div class="col-md-3 col-6"><label class="form-label text-secondary small">HCO (Hospital)</label><input type="text" id="filterHospital" class="form-control form-control-sm shadow-none" oninput="applyFilters()" placeholder="Search HCO..."></div>
-                <div class="col-md-2 col-6"><label class="form-label text-secondary small">Specialty</label><select id="filterSpecialty" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">All</option></select></div>
-                <div class="col-md-2 col-6"><label class="form-label text-secondary small">PJP</label><select id="filterPjp" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">All</option></select></div>
-                <div class="col-md-1 col-6"><label class="form-label text-secondary small">DA</label><select id="filterDa" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">All</option></select></div>
-                <div class="col-md-2 col-6">
+              <div class="d-flex flex-wrap gap-2 align-items-end">
+                <!-- 1. HCO (มีปุ่มกากบาทด้านใน) -->
+                <div style="flex: 2; min-width: 160px;">
+                  <label class="form-label text-secondary small">HCO (Hospital)</label>
+                  <div class="d-flex align-items-center bg-white border border-secondary-subtle rounded px-2" style="height: 31px;">
+                    <input type="text" id="filterHospital" class="border-0 w-100 shadow-none p-0 bg-transparent" style="font-size:13.5px; outline:none;" oninput="toggleClearHcoBtn(); applyFilters()" placeholder="Search HCO...">
+                    <i class="fa-solid fa-circle-xmark text-muted ms-1" id="btnClearHco" style="cursor: pointer; display: none; font-size: 14px;" onclick="clearHcoBox()"></i>
+                  </div>
+                </div>
+                <!-- 2. Specialty -->
+                <div style="flex: 1.5; min-width: 120px;">
+                  <label class="form-label text-secondary small">Specialty</label>
+                  <select id="filterSpecialty" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">All</option></select>
+                </div>
+                <!-- 3. DA -->
+                <div style="flex: 1; min-width: 80px;">
+                  <label class="form-label text-secondary small">DA</label>
+                  <select id="filterDa" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">All</option></select>
+                </div>
+                <!-- 4. Status -->
+                <div style="flex: 1.5; min-width: 120px;">
                   <label class="form-label text-secondary small">Status</label>
                   <div class="dropdown-multiselect" id="classMultiselectContainer">
                     <div class="dropdown-multiselect-btn btn-sm-custom shadow-none" id="classMultiselectBtn" onclick="toggleMultiselectMenu()">All</div>
                     <div class="dropdown-multiselect-menu" id="classMultiselectMenu"></div>
                   </div>
                 </div>
-                <div class="col-md-2 col-6">
-                  <label class="form-label text-secondary small">LINE / Email</label>
-                  <select id="filterLineStatus" class="form-select form-select-sm shadow-none mb-1" onchange="applyFilters()"><option value="">LINE: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select>
-                  <select id="filterEmailStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()"><option value="">Email: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select>
+                <!-- 5. LINE -->
+                <div style="flex: 1; min-width: 110px;">
+                  <label class="form-label text-secondary small">LINE</label>
+                  <select id="filterLineStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()">
+                    <option value="">All (ทั้งหมด)</option><option value="collected">มีข้อมูล</option><option value="missing">ไม่มีข้อมูล</option>
+                  </select>
+                </div>
+                <!-- 6. Email -->
+                <div style="flex: 1; min-width: 110px;">
+                  <label class="form-label text-secondary small">Email</label>
+                  <select id="filterEmailStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()">
+                    <option value="">All (ทั้งหมด)</option><option value="collected">มีข้อมูล</option><option value="missing">ไม่มีข้อมูล</option>
+                  </select>
+                </div>
+                <!-- 7. Mobile -->
+                <div style="flex: 1; min-width: 110px;">
+                  <label class="form-label text-secondary small">Mobile</label>
+                  <select id="filterMobileStatus" class="form-select form-select-sm shadow-none" onchange="applyFilters()">
+                    <option value="">All (ทั้งหมด)</option><option value="collected">มีข้อมูล</option><option value="missing">ไม่มีข้อมูล</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -702,6 +736,31 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
+    function switchTab(viewName) {
+      document.getElementById("registerView").style.display = "none"; 
+      document.getElementById("historyView").style.display = "none"; 
+      document.getElementById("batchView").style.display = "none";
+      
+      document.getElementById("tabRegister").className = "nav-link"; 
+      document.getElementById("tabHistory").className = "nav-link"; 
+      document.getElementById("tabBatch").className = "nav-link";
+      
+      if(viewName === 'register') { 
+        document.getElementById("registerView").style.display = "flex"; 
+        document.getElementById("tabRegister").className = "nav-link active"; 
+        goBackToList(); 
+      } 
+      else if(viewName === 'history') { 
+        document.getElementById("historyView").style.display = "flex"; 
+        document.getElementById("tabHistory").className = "nav-link active"; 
+        fetchLogsData(); 
+      } 
+      else if (viewName === 'batch') { 
+        document.getElementById("batchView").style.display = "flex"; 
+        document.getElementById("tabBatch").className = "nav-link active"; 
+      }
+    }
+
     function toggleClearBtn() { document.getElementById("btnClearSearch").style.display = document.getElementById("searchBox").value.length > 0 ? "block" : "none"; }
     function clearSearchBox() { document.getElementById("searchBox").value = ""; toggleClearBtn(); applyFilters(); }
     function toggleClearHcoBtn() { document.getElementById("btnClearHco").style.display = document.getElementById("filterHospital").value.length > 0 ? "block" : "none"; }
@@ -781,7 +840,7 @@
     }
 
     function buildDropdowns(data) {
-      const filters = [{ key: "pjp", id: "filterPjp" }, { key: "spec", id: "filterSpecialty" }, { key: "da", id: "filterDa" }];
+      const filters = [{ key: "spec", id: "filterSpecialty" }, { key: "da", id: "filterDa" }];
       filters.forEach(cfg => {
         const sel = document.getElementById(cfg.id);
         if (sel) {
@@ -802,10 +861,6 @@
           }
         });
       }
-      const hosp = document.getElementById("inputNewHospital");
-      if(hosp) { hosp.innerHTML = '<option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option>'; [...new Set(data.map(i=>i.hospital).filter(Boolean))].sort().forEach(v=>{ let cv=String(v).trim(); if(cv && cv!=="-") hosp.innerHTML+=`<option value="${cv}">${cv}</option>`; }); }
-      const sp = document.getElementById("inputNewSpec");
-      if(sp) { sp.innerHTML = '<option value="-">-</option>'; [...new Set(data.map(i=>i.spec).filter(Boolean))].sort().forEach(v=>{ let cv=String(v).trim(); if(cv && cv!=="-") sp.innerHTML+=`<option value="${cv}">${cv}</option>`; }); }
     }
 
     function handleClassCheckboxChange() {
@@ -819,7 +874,7 @@
 
     function clearAllFilters() {
       document.getElementById("searchBox").value = ""; toggleClearBtn(); document.getElementById("filterHospital").value = ""; toggleClearHcoBtn();
-      ["filterSpecialty", "filterPjp", "filterDa", "filterLineStatus", "filterEmailStatus"].forEach(id => document.getElementById(id).value = "");
+      ["filterSpecialty", "filterDa", "filterLineStatus", "filterEmailStatus", "filterMobileStatus"].forEach(id => document.getElementById(id).value = "");
       selectedClasses = []; document.querySelectorAll("#classMultiselectMenu input").forEach(cb => cb.checked = false);
       if(document.getElementById("classMultiselectBtn")) document.getElementById("classMultiselectBtn").innerText = "All";
       applyFilters();
@@ -827,7 +882,6 @@
 
     function highlightText(t, k) { if(!t) return '-'; let st = String(t); if(!k || k.trim()==='') return st; return st.replace(new RegExp('(' + k.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<span class="highlight-text">$1</span>'); }
 
-    // 🌟 ฟังก์ชันสำหรับอัปเดตตัวเลขในกล่อง Overview Cards
     function updateRegisterStats() {
       const total = filteredEmpData.length;
       let lineCount = 0, emailCount = 0, mobileCount = 0;
@@ -843,13 +897,10 @@
       });
 
       document.getElementById('regStatTotal').innerText = total.toLocaleString();
-      
       document.getElementById('regStatLine').innerText = lineCount.toLocaleString();
       document.getElementById('regStatLinePct').innerText = total > 0 ? `(${((lineCount/total)*100).toFixed(1)}%)` : '(0%)';
-
       document.getElementById('regStatEmail').innerText = emailCount.toLocaleString();
       document.getElementById('regStatEmailPct').innerText = total > 0 ? `(${((emailCount/total)*100).toFixed(1)}%)` : '(0%)';
-
       document.getElementById('regStatMobile').innerText = mobileCount.toLocaleString();
       document.getElementById('regStatMobilePct').innerText = total > 0 ? `(${((mobileCount/total)*100).toFixed(1)}%)` : '(0%)';
     }
@@ -857,20 +908,36 @@
     function applyFilters() {
       const kw = document.getElementById("searchBox").value.toLowerCase().trim();
       const hosp = document.getElementById("filterHospital").value.toLowerCase().trim();
-      const pjp = document.getElementById("filterPjp").value; const spec = document.getElementById("filterSpecialty").value; const da = document.getElementById("filterDa").value;
-      const ls = document.getElementById("filterLineStatus").value; const es = document.getElementById("filterEmailStatus").value;
+      const spec = document.getElementById("filterSpecialty").value;
+      const da = document.getElementById("filterDa").value;
+      const ls = document.getElementById("filterLineStatus").value;
+      const es = document.getElementById("filterEmailStatus").value;
+      const ms = document.getElementById("filterMobileStatus").value; 
       
       filteredEmpData = employeeData.filter(h => {
         let mKw = !kw || h.name.toLowerCase().includes(kw) || (h.thName && h.thName.toLowerCase().includes(kw));
-        let mH = !hosp || h.hospital.toLowerCase().includes(hosp); let mP = !pjp || h.pjp === pjp; let mS = !spec || h.spec === spec; let mD = !da || h.da === da;
+        let mH = !hosp || h.hospital.toLowerCase().includes(hosp); 
+        let mS = !spec || h.spec === spec; 
+        let mD = !da || h.da === da;
         let mC = selectedClasses.length === 0 || selectedClasses.includes(String(h.cls).trim());
-        let lV = String(h.lineId).toLowerCase().trim(); let eV = String(h.email).toLowerCase().trim();
-        let mL = ls === "allocated" ? (lV === "yes" || (lV !== "none" && lV !== "no" && lV !== "")) : ls === "empty" ? (lV === "none" || lV === "no" || lV === "") : true;
-        let mE = es === "allocated" ? (eV === "yes" || (eV !== "none" && eV !== "no" && eV !== "")) : es === "empty" ? (eV === "none" || eV === "no" || eV === "") : true;
-        return mKw && mH && mP && mS && mD && mC && mL && mE;
+        
+        let lV = String(h.lineId).toLowerCase().trim(); 
+        let eV = String(h.email).toLowerCase().trim();
+        let mbV = String(h.mobile).toLowerCase().trim();
+
+        let hasL = (lV === "yes" || (lV !== "none" && lV !== "no" && lV !== ""));
+        let mL = ls === "collected" ? hasL : ls === "missing" ? !hasL : true;
+
+        let hasE = (eV === "yes" || (eV !== "none" && eV !== "no" && eV !== ""));
+        let mE = es === "collected" ? hasE : es === "missing" ? !hasE : true;
+
+        let hasM = (mbV === "yes" || (mbV !== "none" && mbV !== "no" && mbV !== ""));
+        let mM = ms === "collected" ? hasM : ms === "missing" ? !hasM : true;
+
+        return mKw && mH && mS && mD && mC && mL && mE && mM;
       });
       
-      updateRegisterStats(); // 🌟 อัปเดตสถิติทุกครั้งที่มีการฟิลเตอร์
+      updateRegisterStats(); 
       empCurrentPage = 1; 
       renderEmployeeTable(); 
     }
