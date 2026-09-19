@@ -8,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./assets/js/config.js"></script>
 
@@ -101,16 +102,76 @@
   </div>
 </div>
 
+<!-- 🌟 Custom Alert Modal -->
+<div class="modal fade" id="customAlertModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      <div class="modal-body text-center p-4">
+        <div id="customAlertIcon" class="mb-3 fs-1"></div>
+        <h5 id="customAlertTitle" class="fw-bold mb-2"></h5>
+        <p id="customAlertMessage" class="text-secondary mb-4" style="font-size: 14.5px; white-space: pre-line; line-height: 1.5;"></p>
+        <button type="button" class="btn w-100 fw-bold rounded-pill" id="customAlertBtn" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const sb = window.supabaseClient;
+
+  // ฟังก์ชันแสดง Custom Alert 
+  function showCustomAlert(message, type = 'info', onHideCallback = null) {
+    const iconEl = document.getElementById('customAlertIcon');
+    const titleEl = document.getElementById('customAlertTitle');
+    const msgEl = document.getElementById('customAlertMessage');
+    const btnEl = document.getElementById('customAlertBtn');
+
+    msgEl.innerText = message;
+
+    if (type === 'error') {
+      iconEl.innerHTML = '<i class="fa-solid fa-circle-xmark text-danger"></i>';
+      titleEl.innerText = 'Error';
+      titleEl.className = 'fw-bold mb-2 text-danger';
+      btnEl.className = 'btn btn-danger w-100 fw-bold rounded-pill';
+    } else if (type === 'success') {
+      iconEl.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i>';
+      titleEl.innerText = 'Success';
+      titleEl.className = 'fw-bold mb-2 text-success';
+      btnEl.className = 'btn btn-success w-100 fw-bold rounded-pill';
+    } else if (type === 'warning') {
+      iconEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-warning"></i>';
+      titleEl.innerText = 'Warning';
+      titleEl.className = 'fw-bold mb-2 text-warning';
+      btnEl.className = 'btn btn-warning w-100 fw-bold rounded-pill text-dark';
+    } else {
+      iconEl.innerHTML = '<i class="fa-solid fa-circle-info text-primary"></i>';
+      titleEl.innerText = 'Information';
+      titleEl.className = 'fw-bold mb-2 text-primary';
+      btnEl.className = 'btn btn-primary w-100 fw-bold rounded-pill';
+    }
+
+    const modalEl = document.getElementById('customAlertModal');
+    const alertModal = new bootstrap.Modal(modalEl);
+    
+    if (onHideCallback) {
+      modalEl.addEventListener('hidden.bs.modal', function handler() {
+        onHideCallback();
+        modalEl.removeEventListener('hidden.bs.modal', handler);
+      });
+    }
+    
+    alertModal.show();
+  }
 
   window.onload = () => {
     if (window.location.hash.includes("type=recovery")) {
       toggleView('reset');
     } else {
-      sb.auth.getSession().then(({ data }) => {
-        if (data.session) window.location.href = 'index.html';
-      });
+      if(sb) {
+        sb.auth.getSession().then(({ data }) => {
+          if (data && data.session) window.location.href = 'index.html';
+        });
+      }
     }
   };
 
@@ -132,12 +193,10 @@
       title.innerText = "Forgot Password"; subtitle.innerText = "Request a password reset link";
       icon.innerHTML = '<i class="fa-solid fa-envelope-open-text fs-2"></i>'; icon.style.background = "#f59e0b";
       
-      // 🌟 ดึง Email จากหน้า Login มาใส่ให้อัตโนมัติ
       const currentEmail = document.getElementById('loginEmail').value.trim();
       if(currentEmail) {
         document.getElementById('forgotEmail').value = currentEmail;
       }
-      
     } else if (view === 'reset') {
       document.getElementById('resetForm').classList.remove('d-none');
       title.innerText = "Reset Password"; subtitle.innerText = "Create your new secure password";
@@ -151,12 +210,22 @@
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
 
+    if (!email || !password) {
+      showCustomAlert("Please enter both Email and Password.", "warning");
+      return;
+    }
+
+    if (!sb) {
+      showCustomAlert("Supabase configuration not found.", "error");
+      return;
+    }
+
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Logging in...';
 
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
     if (error) {
-      alert("❌ Invalid email or password.");
+      showCustomAlert("Invalid email or password.", "error");
       btn.disabled = false; btn.innerHTML = 'Log In';
     } else {
       window.location.href = 'index.html';
@@ -175,10 +244,11 @@
     });
 
     if (error) {
-      alert("❌ Error: " + error.message);
+      showCustomAlert("Error: " + error.message, "error");
     } else {
-      alert("✅ Password reset link sent! Please check your inbox.");
-      toggleView('login');
+      showCustomAlert("Password reset link sent!\nPlease check your inbox.", "success", () => {
+        toggleView('login');
+      });
     }
     btn.disabled = false; btn.innerHTML = 'Send Reset Link';
   }
@@ -193,11 +263,12 @@
     const { data, error } = await sb.auth.updateUser({ password: newPassword });
 
     if (error) {
-      alert("❌ Failed to reset password: " + error.message);
+      showCustomAlert("Failed to reset password:\n" + error.message, "error");
       btn.disabled = false; btn.innerHTML = 'Save New Password';
     } else {
-      alert("✅ Password reset successfully! Logging you in...");
-      window.location.href = 'index.html';
+      showCustomAlert("Password reset successfully!\nLogging you in...", "success", () => {
+        window.location.href = 'index.html';
+      });
     }
   }
 </script>
