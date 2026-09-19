@@ -71,23 +71,49 @@
     .content-wrapper { flex: 1; display: flex; flex-direction: column; padding: 20px 24px; min-height: 0; }
     .main-container { flex: 1; display: flex; flex-direction: column; max-width: 100%; width: 100%; min-height: 0; margin: 0; padding: 0; }
 
-    /* 🌟 แก้ไข: บังคับให้ View ยืดเต็มพื้นที่ แต่ไม่ล้น */
     .view-section { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     #listView { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     
-    /* 🌟 Clean Table Styles (Image 2 Theme) */
-    .table-container-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+    .card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
     
+    /* 🌟 Overview Stat Cards (Premium CRM Style) */
+    .overview-scroll-container { display: flex; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; }
+    .overview-scroll-container::-webkit-scrollbar { display: none; }
+    
+    .overview-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; min-width: 220px; flex: 1; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .overview-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    
+    .overview-card.blue { border-left: 4px solid #0066cc; }
+    .overview-card.green { border-left: 4px solid #06C755; }
+    .overview-card.amber { border-left: 4px solid #f59e0b; }
+    .overview-card.purple { border-left: 4px solid #8b5cf6; }
+    
+    .overview-card .overview-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
+    .overview-card.blue .overview-icon { background: #e0f2fe; color: #0066cc; }
+    .overview-card.green .overview-icon { background: #dcfce7; color: #06C755; }
+    .overview-card.amber .overview-icon { background: #fef3c7; color: #f59e0b; }
+    .overview-card.purple .overview-icon { background: #ede9fe; color: #8b5cf6; }
+
+    .overview-info { display: flex; flex-direction: column; justify-content: center; }
+    .overview-label { font-size: 12.5px; font-weight: 700; color: #64748b; margin-bottom: 2px; line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; }
+    .overview-value { font-size: 24px; font-weight: 800; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+    .overview-card.blue .overview-value { color: #0066cc; }
+    .overview-card.green .overview-value { color: #06C755; }
+    .overview-card.amber .overview-value { color: #f59e0b; }
+    .overview-card.purple .overview-value { color: #8b5cf6; }
+    .overview-pct { font-size: 14px; font-weight: 700; opacity: 0.75; }
+
+    /* 🌟 Clean Table Styles & Headers (สีเทาอ่อน) */
+    .table-container-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
     #employeeListTableWrapper, #historyTableWrapper { flex: 1; overflow-y: auto; position: relative; scrollbar-width: thin; }
     
     .table-register-view tbody tr, .table-logs-view tbody tr { cursor: pointer; transition: 0.1s; border-bottom: 1px solid #f1f5f9; }
     .table-register-view tbody tr:hover, .table-logs-view tbody tr:hover { background-color: #f8fafc; } 
     .table-register-view td, .table-logs-view td { padding: 14px 16px; font-size: 14px; color: #334155; vertical-align: middle; } 
     
-    /* 🌟 ปรับหัวตารางให้เป็นสีเทาอ่อนตามต้องการ */
     .roche-table-header th, .roche-logs-header th {
       position: sticky; top: 0; z-index: 10; 
-      background-color: #f8fafc !important; /* พื้นหลังเทาอ่อน */
+      background-color: #f8fafc !important; 
       color: #64748b !important; 
       border-bottom: 2px solid #e2e8f0 !important; 
       font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;
@@ -95,18 +121,18 @@
     }
 
     .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-    .sortable-header:hover { color: #0d6efd !important; }
+    .sortable-header:hover { color: #0066cc !important; }
     .sort-icon { font-size: 0.85em; opacity: 0.3; margin-left: 4px; }
-    .sortable-header.active .sort-icon { opacity: 1; color: #0d6efd; }
+    .sortable-header.active .sort-icon { opacity: 1; color: #0066cc; }
 
-    /* 🌟 Search & Inputs (Floating look) */
+    /* 🌟 Search & Inputs */
     .search-input-pill { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 50px; padding: 6px 16px; transition: border-color 0.2s; display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .search-input-pill:focus-within { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1); }
+    .search-input-pill:focus-within { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1); }
     .search-input-pill input { border: none; outline: none; box-shadow: none; font-size: 14px; width: 100%; margin-left: 8px; }
-    
     .btn-filter-pill { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; display: flex; align-items: center; }
-    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0d6efd; }
+    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0066cc; }
 
+    /* 🌟 Minimal Status Indicators */
     .status-check { color: #10b981; font-size: 1.1rem; font-weight: 800; }
     .status-dash { color: #cbd5e1; font-size: 1rem; font-weight: 800; }
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
@@ -133,10 +159,9 @@
     .page-link { color: #475569; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 10px; font-size: 13px; }
     .page-link:hover { background-color: #f1f5f9; color: #0d6efd; }
     .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
-    .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent; }
+    .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
-
     #qrcodeContainer { display: flex; justify-content: center; margin: 10px auto; padding: 10px; background: white; border-radius: 10px; }
     #qrcodeContainer img { max-width: 100%; height: auto; }
 
@@ -146,7 +171,7 @@
     .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: all 0.2s ease; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .stat-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-    .stat-value { font-size: 24px; font-weight: 800; color: #1e293b; line-height: 1; }
+    .stat-value-hist { font-size: 24px; font-weight: 800; color: #1e293b; line-height: 1; }
     .border-left-primary { border-left: 4px solid #0066cc !important; }
     .border-left-success { border-left: 4px solid #10b981 !important; }
     .border-left-info { border-left: 4px solid #0ea5e9 !important; }
@@ -167,7 +192,7 @@
       body * { visibility: hidden; }
       #qrView, #qrView * { visibility: visible; }
       #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; display: block !important; }
-      .app-header, .btn, .nav-container-box { display: none !important; }
+      .app-header, .btn, .nav-container-box, .overview-scroll-container { display: none !important; }
     }
   </style>
 </head>
@@ -178,7 +203,7 @@
   <!-- 🌟 Unified Header Bar -->
   <header class="app-header">
     <div class="brand-logo">
-      <i class="fa-brands fa-line" style="color: #00c300;"></i>
+      <i class="fa-brands fa-line"></i>
       <span>LINE QR Connect</span>
     </div>
 
@@ -192,7 +217,7 @@
 
     <div class="user-area d-flex align-items-center gap-2">
       <div class="user-profile-btn d-none d-md-flex">
-        <i class="fa-solid fa-user" style="color: #0d6efd;"></i> <span id="currentUserEmail">Checking...</span>
+        <i class="fa-solid fa-user" style="color: #0066cc;"></i> <span id="currentUserEmail">Checking...</span>
       </div>
       <button class="btn-action-outline" data-bs-toggle="modal" data-bs-target="#changePassModal" title="Change Password">
         <i class="fa-solid fa-key"></i>
@@ -210,6 +235,43 @@
       <div id="registerView" class="view-section" style="display: flex;">
         <div id="listView">
           
+          <!-- 🌟 Data Completion Dashboard (Premium Cards) -->
+          <div class="overview-scroll-container flex-shrink-0">
+            <!-- Total -->
+            <div class="overview-card blue">
+              <div class="overview-icon"><i class="fa-solid fa-user-doctor"></i></div>
+              <div class="overview-info">
+                <div class="overview-label">Total HCPs</div>
+                <div class="overview-value"><span id="regStatTotal">0</span></div>
+              </div>
+            </div>
+            <!-- LINE -->
+            <div class="overview-card green">
+              <div class="overview-icon"><i class="fa-brands fa-line"></i></div>
+              <div class="overview-info">
+                <div class="overview-label">LINE Collected</div>
+                <div class="overview-value"><span id="regStatLine">0</span> <span class="overview-pct" id="regStatLinePct">(0%)</span></div>
+              </div>
+            </div>
+            <!-- Email -->
+            <div class="overview-card amber">
+              <div class="overview-icon"><i class="fa-solid fa-envelope"></i></div>
+              <div class="overview-info">
+                <div class="overview-label">Email Collected</div>
+                <div class="overview-value"><span id="regStatEmail">0</span> <span class="overview-pct" id="regStatEmailPct">(0%)</span></div>
+              </div>
+            </div>
+            <!-- Mobile -->
+            <div class="overview-card purple">
+              <div class="overview-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+              <div class="overview-info">
+                <div class="overview-label">Mobile Collected</div>
+                <div class="overview-value"><span id="regStatMobile">0</span> <span class="overview-pct" id="regStatMobilePct">(0%)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar -->
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 flex-shrink-0">
             <div class="search-input-pill flex-grow-1" style="max-width: 450px;">
               <i class="fa-solid fa-magnifying-glass text-muted"></i>
@@ -292,12 +354,12 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (แบบภาษาไทยกลับมาเหมือนเดิมเต็มรูปแบบ ไร้ปุ่ม AI) -->
+        <!-- QR View (ภาษาไทยแบบ Form ดั้งเดิม) -->
         <div id="qrView" class="reg-box mx-auto" style="max-width: 650px; position: relative;">
           <div class="p-4 p-sm-5 text-center">
             
             <div class="text-start mb-4 pb-3 border-bottom">
-              <h2 class="fw-bold mb-1" style="color: #0066cc; font-style: italic; font-size: 1.9rem; letter-spacing: -0.5px;">ยืนยันข้อมูล<br>บุคลากรทางการแพทย์</h2>
+              <h2 class="fw-bold mb-1 header-title-print" style="color: #0066cc; font-style: italic; font-size: 1.9rem; letter-spacing: -0.5px;">ยืนยันข้อมูล<br>บุคลากรทางการแพทย์</h2>
               <p class="text-secondary mt-2 mb-0" style="font-size: 14.5px; font-style: italic; line-height: 1.5;">
                 กรุณากรอกข้อมูลเพื่อใช้ในการตรวจสอบ และยืนยันข้อมูลการเป็นบุคลากรทางการแพทย์ตามความเป็นจริง<br>
                 หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก
@@ -412,12 +474,12 @@
         </div>
         
         <div class="row g-3 mb-4 flex-shrink-0">
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-info"><div class="stat-title"><i class="fa-regular fa-calendar-check text-info"></i> Today</div><div class="stat-value" id="statToday">0</div></div></div>
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-success"><div class="stat-title"><i class="fa-solid fa-calendar-days text-success"></i> Month</div><div class="stat-value" id="statMonth">0</div></div></div>
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-solid fa-rotate text-primary"></i> <span id="cycleLabel">Cycle</span></div><div class="stat-value" id="statCycle">0</div></div></div>
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-regular fa-calendar text-primary"></i> Year</div><div class="stat-value" id="statYear">0</div></div></div>
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card" style="border-left: 4px solid #475569 !important;"><div class="stat-title"><i class="fa-solid fa-layer-group text-secondary"></i> Total</div><div class="stat-value" id="statTotal">0</div></div></div>
-          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-warning"><div class="stat-title"><i class="fa-solid fa-wifi text-warning"></i> Offline</div><div class="stat-value text-warning" id="statOffline">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-info"><div class="stat-title"><i class="fa-regular fa-calendar-check text-info"></i> Today</div><div class="stat-value-hist" id="statToday">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-success"><div class="stat-title"><i class="fa-solid fa-calendar-days text-success"></i> Month</div><div class="stat-value-hist" id="statMonth">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-solid fa-rotate text-primary"></i> <span id="cycleLabel">Cycle</span></div><div class="stat-value-hist" id="statCycle">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-regular fa-calendar text-primary"></i> Year</div><div class="stat-value-hist" id="statYear">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card" style="border-left: 4px solid #475569 !important;"><div class="stat-title"><i class="fa-solid fa-layer-group text-secondary"></i> Total</div><div class="stat-value-hist" id="statTotal">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-warning"><div class="stat-title"><i class="fa-solid fa-wifi text-warning"></i> Offline</div><div class="stat-value-hist text-warning" id="statOffline">0</div></div></div>
         </div>
 
         <div class="table-container-card">
@@ -538,7 +600,6 @@
   </div>
 
   <script>
-    // 🌟 Utility / Modal Functions
     function showCustomAlert(message, type = 'info', onHideCallback = null) {
       const iconEl = document.getElementById('customAlertIcon');
       const titleEl = document.getElementById('customAlertTitle');
@@ -624,7 +685,6 @@
     ['mousemove', 'keydown', 'scroll', 'click'].forEach(evt => document.addEventListener(evt, resetInactivityTimer, true));
     resetInactivityTimer();
 
-    // 🌟 Auth & Initialization
     async function checkAuth() {
       if (window.supabaseClient) {
         const { data } = await window.supabaseClient.auth.getSession();
@@ -641,35 +701,6 @@
     const baseLineUrl = "https://liff.line.me/1654210606-d1qQ264p/hcp/pre-register"; let currentGeneratedUrl = ""; 
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
-
-    // 🌟 Tab Switching Logic (Fixing the Overflow & Layout issue)
-    function switchTab(viewName) {
-      // ซ่อนทุกหน้าก่อน
-      document.getElementById("registerView").style.display = "none"; 
-      document.getElementById("historyView").style.display = "none"; 
-      document.getElementById("batchView").style.display = "none";
-      
-      // เอา Active ออกจากเมนูทั้งหมด
-      document.getElementById("tabRegister").className = "nav-link"; 
-      document.getElementById("tabHistory").className = "nav-link"; 
-      document.getElementById("tabBatch").className = "nav-link";
-      
-      // แสดงหน้าตามที่คลิก (ตั้งเป็น display: flex เพื่อให้จัด Layout ได้เต็มพื้นที่)
-      if(viewName === 'register') { 
-        document.getElementById("registerView").style.display = "flex"; 
-        document.getElementById("tabRegister").className = "nav-link active"; 
-        goBackToList(); 
-      } 
-      else if(viewName === 'history') { 
-        document.getElementById("historyView").style.display = "flex"; 
-        document.getElementById("tabHistory").className = "nav-link active"; 
-        fetchLogsData(); 
-      } 
-      else if (viewName === 'batch') { 
-        document.getElementById("batchView").style.display = "flex"; // Changed to flex for proper centering
-        document.getElementById("tabBatch").className = "nav-link active"; 
-      }
-    }
 
     function toggleClearBtn() { document.getElementById("btnClearSearch").style.display = document.getElementById("searchBox").value.length > 0 ? "block" : "none"; }
     function clearSearchBox() { document.getElementById("searchBox").value = ""; toggleClearBtn(); applyFilters(); }
@@ -796,6 +827,33 @@
 
     function highlightText(t, k) { if(!t) return '-'; let st = String(t); if(!k || k.trim()==='') return st; return st.replace(new RegExp('(' + k.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<span class="highlight-text">$1</span>'); }
 
+    // 🌟 ฟังก์ชันสำหรับอัปเดตตัวเลขในกล่อง Overview Cards
+    function updateRegisterStats() {
+      const total = filteredEmpData.length;
+      let lineCount = 0, emailCount = 0, mobileCount = 0;
+
+      filteredEmpData.forEach(emp => {
+        let lV = String(emp.lineId).toLowerCase().trim();
+        let eV = String(emp.email).toLowerCase().trim();
+        let mV = String(emp.mobile).toLowerCase().trim();
+
+        if (lV === "yes" || (lV !== "none" && lV !== "no" && lV !== "")) lineCount++;
+        if (eV === "yes" || (eV !== "none" && eV !== "no" && eV !== "")) emailCount++;
+        if (mV === "yes" || (mV !== "none" && mV !== "no" && mV !== "")) mobileCount++;
+      });
+
+      document.getElementById('regStatTotal').innerText = total.toLocaleString();
+      
+      document.getElementById('regStatLine').innerText = lineCount.toLocaleString();
+      document.getElementById('regStatLinePct').innerText = total > 0 ? `(${((lineCount/total)*100).toFixed(1)}%)` : '(0%)';
+
+      document.getElementById('regStatEmail').innerText = emailCount.toLocaleString();
+      document.getElementById('regStatEmailPct').innerText = total > 0 ? `(${((emailCount/total)*100).toFixed(1)}%)` : '(0%)';
+
+      document.getElementById('regStatMobile').innerText = mobileCount.toLocaleString();
+      document.getElementById('regStatMobilePct').innerText = total > 0 ? `(${((mobileCount/total)*100).toFixed(1)}%)` : '(0%)';
+    }
+
     function applyFilters() {
       const kw = document.getElementById("searchBox").value.toLowerCase().trim();
       const hosp = document.getElementById("filterHospital").value.toLowerCase().trim();
@@ -811,7 +869,10 @@
         let mE = es === "allocated" ? (eV === "yes" || (eV !== "none" && eV !== "no" && eV !== "")) : es === "empty" ? (eV === "none" || eV === "no" || eV === "") : true;
         return mKw && mH && mP && mS && mD && mC && mL && mE;
       });
-      empCurrentPage = 1; renderEmployeeTable(); 
+      
+      updateRegisterStats(); // 🌟 อัปเดตสถิติทุกครั้งที่มีการฟิลเตอร์
+      empCurrentPage = 1; 
+      renderEmployeeTable(); 
     }
 
     function sortEmpTable(col) {
@@ -842,7 +903,7 @@
       tb.innerHTML = ""; const kw = document.getElementById("searchBox").value.trim(); const hw = document.getElementById("filterHospital").value.trim();
       if(filteredEmpData.length === 0) {
         pi.innerHTML = ""; ul.innerHTML = "";
-        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="8" class="text-center text-muted border-0" style="height: 45vh; vertical-align: middle;"><div class="d-flex flex-column justify-content-center align-items-center h-100"><i class="fa-solid fa-folder-open mb-3 d-block" style="font-size: 3.5rem; color: #cbd5e1;"></i><p class="mb-3 fw-bold">No HCP records found.</p>' + (kw ? `<button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" type="button" onclick="openNewDoctorForm('${kw.replace(/'/g, "\\'")}')"><i class="fa-solid fa-plus me-1"></i> Register new HCP</button>` : '') + '</div></td></tr>';
+        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="8" class="text-center text-muted border-0" style="height: 45vh; vertical-align: middle;"><div class="d-flex flex-column justify-content-center align-items-center h-100"><i class="fa-solid fa-folder-open mb-3 d-block" style="font-size: 3.5rem; color: #cbd5e1;"></i><p class="mb-3 fw-bold">ไม่พบรายชื่อในระบบ</p>' + (kw ? `<button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" type="button" onclick="openNewDoctorForm('${kw.replace(/'/g, "\\'")}')"><i class="fa-solid fa-plus me-1"></i> เพิ่มรายชื่อแพทย์ใหม่</button>` : '') + '</div></td></tr>';
         return;
       }
       const t = filteredEmpData.length; const tp = Math.ceil(t / empRowsPerPage); if (empCurrentPage > tp) empCurrentPage = tp;
@@ -897,7 +958,7 @@
       document.getElementById("targetName").innerText = emp.name;
       document.getElementById("targetThName").innerText = emp.thName || ""; document.getElementById("targetThName").style.display = emp.thName ? "block" : "none";
       document.getElementById("targetId").innerText = "HCO: " + emp.hospital;
-      document.getElementById("targetBadges").innerHTML = `<span class="badge rounded-pill bg-light text-secondary border px-3 py-2 shadow-sm" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> Specialty: ${emp.spec}</span>`;
+      document.getElementById("targetBadges").innerHTML = `<span class="badge bg-light text-secondary border px-3 py-2 shadow-sm rounded-pill" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> ${emp.spec}</span>`;
       document.getElementById("newDoctorFields").style.display = "none";
       document.getElementById("inputEmail").value = getCleanInput(emp.email); document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
       document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
