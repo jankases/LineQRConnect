@@ -185,13 +185,42 @@
       .qr-row-container { flex-direction: column; }
     }
     
+    /* 🌟 ตั้งค่า Print ให้เป็นแนวนอนและแผ่นเดียว */
     @media print {
-      @page { size: A4 portrait; margin: 1.5cm; }
-      body { background-color: #fff !important; overflow: visible; height: auto; }
+      @page { size: A4 landscape; margin: 10mm; }
+      body { background-color: #fff !important; overflow: visible !important; height: auto !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       body * { visibility: hidden; }
       #qrView, #qrView * { visibility: visible; }
-      #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; display: block !important; }
-      .app-header, .btn, .nav-container-box, .overview-scroll-container, #actionBottomBar { display: none !important; }
+      
+      /* บังคับให้หน้า QR เป็นหน้าแรกและหน้าเดียวเต็มๆ */
+      #qrView { 
+        position: absolute; left: 0; top: 0; right: 0; 
+        width: 100%; max-width: 100% !important; 
+        margin: 0 !important; padding: 0 !important; 
+        display: flex !important; flex-direction: column !important; 
+      }
+      
+      .app-header, .btn, .nav-container-box, .overview-scroll-container, #actionBottomBar, #lockAlert { display: none !important; }
+      
+      /* บังคับ 3 คอลัมน์ให้เรียงแนวนอนในหน้ากระดาษ */
+      .qr-row-container { 
+        display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; 
+        gap: 15px !important; width: 100% !important; align-items: stretch !important;
+      }
+      .qr-row-container > div { 
+        flex: 1 1 33.33% !important; max-width: 33.33% !important; width: 33.33% !important; 
+      }
+      
+      .card { 
+        box-shadow: none !important; border: 1px solid #cbd5e1 !important; 
+        overflow: visible !important; page-break-inside: avoid !important; height: 100% !important;
+      }
+      
+      /* ปรับขนาดเนื้อหาเพื่อไม่ให้ล้นลงแผ่นที่ 2 */
+      .header-title-print { font-size: 1.5rem !important; }
+      #targetName { font-size: 1.6rem !important; }
+      #targetThName { font-size: 1.1rem !important; }
+      #qrcodeContainer img { max-width: 180px !important; margin: 0 auto; }
     }
   </style>
 </head>
@@ -485,7 +514,6 @@
                   </div>
 
                   <div id="qrContentBlock" class="d-none flex-column align-items-center justify-content-center h-100">
-                    <!-- 🌟 ปุ่ม Print กลับมาแล้ว -->
                     <div class="text-end w-100 mb-2">
                       <button class="btn btn-white border bg-white shadow-sm rounded-pill text-primary fw-bold btn-sm px-3" onclick="window.print()">
                         <i class="fa-solid fa-print me-1"></i> Print / Save PDF
@@ -1251,7 +1279,7 @@
 
       pd.forEach(row => {
           let ev = String(row.email || "").trim().toLowerCase(); let ic = (ev==="yes"||(ev!=="none"&&ev!=="no"&&ev!=="")) ? '<i class="fa-solid fa-check text-success fs-5"></i>' : '<span class="text-muted opacity-25 fw-bold">—</span>';
-          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
+          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
       });
     }
 
