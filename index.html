@@ -1142,15 +1142,43 @@
       }
     }
 
-    async function submitRegistrationToBackend(emp, action, email, mobile) {
+    // 🌟 Logic การบันทึกแบบ Data Privacy ไม่เก็บค่า Email/Mobile
+    async function submitRegistrationToBackend(emp, action, finalEmailStatus, finalMobileStatus) {
       const { data } = await window.supabaseClient.auth.getSession(); const adminEmail = data?.session?.user?.email || "Unknown User";
-      const { error } = await window.supabaseClient.from('RegistrationLogs').insert([{ "Whoupdated": adminEmail, "HCP ID": emp.id, "HCP Name": emp.name, "Hospital": emp.hospital, "PJP": emp.pjp, "Specialty": emp.spec, "Profession": emp.profession, "DA": emp.da, "Classification": emp.cls, "Line ID": action, "Email": email, "Mobile No": mobile, "Privacy Policy": "Accepted", "Terms of Service": "Accepted" }]);
+      
+      // บันทึกเฉพาะค่า "Yes", "No", หรือค่าเดิม (ไม่บันทึก Sensitive String)
+      const { error } = await window.supabaseClient.from('RegistrationLogs').insert([{ 
+        "Whoupdated": adminEmail, 
+        "HCP ID": emp.id, 
+        "HCP Name": emp.name, 
+        "Hospital": emp.hospital, 
+        "PJP": emp.pjp, 
+        "Specialty": emp.spec, 
+        "Profession": emp.profession, 
+        "DA": emp.da, 
+        "Classification": emp.cls, 
+        "Line ID": action, 
+        "Email": finalEmailStatus, 
+        "Mobile No": finalMobileStatus, 
+        "Privacy Policy": "Accepted", 
+        "Terms of Service": "Accepted" 
+      }]);
       if (error) { console.error("Error inserting log:", error); showCustomAlert("เกิดข้อผิดพลาดในการบันทึก Log", "error"); return; }
-      if (emp.id !== "New") await window.supabaseClient.from('EmployeeList').update({ lineid: action, email: email, mobile: mobile }).eq('hcp_mdm_id', emp.id);
+      
+      // อัปเดตตารางหลัก
+      if (emp.id !== "New") {
+        await window.supabaseClient.from('EmployeeList').update({ 
+          lineid: action, 
+          email: finalEmailStatus, 
+          mobile: finalMobileStatus 
+        }).eq('hcp_mdm_id', emp.id);
+      }
     }
 
     async function submitRegistration() {
-      let fEmp = {}; const fEmail = document.getElementById("inputEmail").value.trim(); const fMobile = document.getElementById("inputMobile").value.trim();
+      let fEmp = {}; 
+      const rawEmail = document.getElementById("inputEmail").value.trim(); 
+      const rawMobile = document.getElementById("inputMobile").value.trim();
       const btn = document.getElementById("btnConfirm"); const lockAlertBox = document.getElementById("lockAlert");
       
       if (isNewDoctorMode) {
@@ -1158,28 +1186,45 @@
         if (!n || !h || s === "-" || p === "-") {
           showCustomAlert("กรุณากรอกข้อมูลและเลือกอาชีพให้ครบถ้วนก่อนบันทึกครับ", "warning"); return;
         }
-        fEmp = { id: "New", name: n, hospital: h, spec: s, profession: p, da: "-", cls: "-", pjp: "แพทย์คีย์สด" };
+        fEmp = { id: "New", name: n, hospital: h, spec: s, profession: p, da: "-", cls: "-", pjp: "แพทย์คีย์สด", email: "", mobile: "" };
       } else {
         if(!activeEmployee) return; fEmp = activeEmployee;
       }
       
+      // 🌟 คำนวณค่าที่จะบันทึก
+      // ถ้ามีการกรอกข้อมูล = "Yes"
+      // ถ้าปล่อยว่าง = ใช้ค่าเก่าจาก Database (เพื่อไม่ให้ค่าเก่าหาย)
+      let finalEmailStatus = rawEmail !== "" ? "Yes" : (fEmp.email || "");
+      let finalMobileStatus = rawMobile !== "" ? "Yes" : (fEmp.mobile || "");
+
       btn.disabled = true; 
 
       if (navigator.onLine) {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> กำลังบันทึกข้อมูล...';
-        await submitRegistrationToBackend(fEmp, "Yes", fEmail, fMobile);
+        
+        // ส่งสถานะ ("Yes" หรือค่าเก่า) ไปฟังก์ชันบันทึก
+        await submitRegistrationToBackend(fEmp, "Yes", finalEmailStatus, finalMobileStatus);
+        
         btn.innerHTML = "🎉 บันทึกข้อมูลสำเร็จ!";
         if (typeof confetti !== "undefined") confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         
+        // อัปเดตข้อมูลบนหน้า UI
         if (fEmp.id !== "New") {
-          let tE = employeeData.find(e => e.id === fEmp.id); if (tE) { tE.lineId = "Yes"; tE.email = fEmail !== "" ? fEmail : tE.email; tE.mobile = fMobile !== "" ? fMobile : tE.mobile; }
-          let tH = hcpData.find(e => e.id === fEmp.id); if (tH) { tH.lineId = "Yes"; tH.email = fEmail !== "" ? fEmail : tH.email; tH.mobile = fMobile !== "" ? fMobile : tH.mobile; }
+          let tE = employeeData.find(e => e.id === fEmp.id); if (tE) { tE.lineId = "Yes"; tE.email = finalEmailStatus; tE.mobile = finalMobileStatus; }
+          let tH = hcpData.find(e => e.id === fEmp.id); if (tH) { tH.lineId = "Yes"; tH.email = finalEmailStatus; tH.mobile = finalMobileStatus; }
         }
         setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ ยืนยันการออกคิวอาร์ (Save Log)"; }, 1500);
       } else {
-        let q = JSON.parse(localStorage.getItem('offlineLogs') || '[]'); q.push({ emp: fEmp, action: "Yes", email: fEmail, mobile: fMobile }); localStorage.setItem('offlineLogs', JSON.stringify(q)); updateOfflineStat();
+        // กรณี Offline
+        let q = JSON.parse(localStorage.getItem('offlineLogs') || '[]'); 
+        q.push({ emp: fEmp, action: "Yes", email: finalEmailStatus, mobile: finalMobileStatus }); 
+        localStorage.setItem('offlineLogs', JSON.stringify(q)); updateOfflineStat();
+        
         btn.innerHTML = "💾 บันทึกออฟไลน์สำเร็จ!";
-        if (fEmp.id !== "New") { let tE = employeeData.find(e => e.id === fEmp.id); if (tE) { tE.lineId = "Yes"; tE.email = fEmail !== "" ? fEmail : tE.email; tE.mobile = fMobile !== "" ? fMobile : tE.mobile; } }
+        if (fEmp.id !== "New") { 
+          let tE = employeeData.find(e => e.id === fEmp.id); 
+          if (tE) { tE.lineId = "Yes"; tE.email = finalEmailStatus; tE.mobile = finalMobileStatus; } 
+        }
         setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ ยืนยันการออกคิวอาร์ (Save Log)"; }, 1200);
       }
     }
