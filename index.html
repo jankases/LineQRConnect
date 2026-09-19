@@ -177,6 +177,16 @@
     .stat-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
     .stat-value-hist { font-size: 24px; font-weight: 800; color: #1e293b; line-height: 1; }
 
+    /* 🌟 CSS 3 Columns & Scroll Constraint Fixes */
+    .qr-col { min-height: 0; }
+    .qr-card { min-height: 0; overflow-y: auto; }
+
+    @media (min-width: 992px) {
+      .qr-row-container {
+        flex-wrap: nowrap;
+      }
+    }
+
     @media (max-width: 991.98px) {
       .app-header { flex-direction: column; gap: 12px; padding: 12px; }
       .nav-container-box { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
@@ -186,9 +196,10 @@
       
       .view-section { overflow-y: auto; display: block; }
       .qr-row-container { flex-direction: column; }
+      .qr-col { height: auto !important; flex: none !important; }
+      .qr-card { overflow-y: visible !important; }
     }
     
-    /* 🌟 ตั้งค่า Print ให้เป็นแนวนอนและแผ่นเดียว */
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background-color: #fff !important; overflow: visible !important; height: auto !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -208,7 +219,7 @@
         display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; 
         gap: 15px !important; width: 100% !important; align-items: stretch !important;
       }
-      .qr-row-container > div { 
+      .qr-col { 
         flex: 1 1 33.33% !important; max-width: 33.33% !important; width: 33.33% !important; 
       }
       
@@ -406,13 +417,13 @@
           <div class="row g-3 flex-grow-1 qr-row-container" style="min-height: 0;">
             
             <!-- Column 1: Profile & Contact -->
-            <div class="col-lg-4 col-md-6 col-12 d-flex flex-column" style="min-height: 0;">
-               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
+            <div class="col-lg-4 col-md-6 col-12 qr-col">
+               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
                   
                   <div class="text-center mb-4 pb-3 border-bottom">
-                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.6rem; color:#0066cc;"></h3>
-                    <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.1rem;"></h4>
-                    <p id="targetId" class="text-muted mb-3" style="font-size: 0.95rem;"></p>
+                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.5rem; color:#0066cc;"></h3>
+                    <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.05rem;"></h4>
+                    <p id="targetId" class="text-muted mb-3" style="font-size: 0.9rem;"></p>
                     <div id="targetBadges" class="mb-2 d-flex flex-wrap justify-content-center"></div>
                   </div>
 
@@ -420,8 +431,8 @@
                      <span class="badge bg-warning text-dark fw-bold mb-2 px-3 py-2 rounded-pill">New Doctor Registration</span>
                      <p class="text-muted small mb-2">โหมดบันทึกและสร้างรหัสลงทะเบียนแพทย์ท่านใหม่</p>
                      <div class="px-2 mb-3 text-start">
-                       <label class="form-label fw-bold text-primary d-block mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
-                       <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
+                       <label class="form-label fw-bold text-primary small d-block mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
+                       <input type="text" id="inputNewName" class="form-control form-control-sm text-center fw-bold shadow-none" style="color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
                      </div>
                   </div>
 
@@ -430,55 +441,59 @@
                        <i class="fa-solid fa-address-book fs-5 me-2" style="color: #0066cc;"></i>
                        <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลติดต่อ</h6>
                      </div>
-                     <p class="text-secondary mb-3" style="font-size: 13px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+                     <p class="text-secondary mb-3" style="font-size: 12.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
                      
-                     <div class="mb-3">
-                       <label class="form-label fw-bold text-dark">หมายเลขโทรศัพท์</label>
-                       <input type="tel" id="inputMobile" class="form-control shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์">
+                     <div class="mb-2">
+                       <label class="form-label fw-bold text-dark small mb-1">หมายเลขโทรศัพท์</label>
+                       <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์">
                      </div>
                      <div class="mb-2">
-                       <label class="form-label fw-bold text-dark">อีเมล <span class="text-danger">*</span></label>
-                       <input type="email" id="inputEmail" class="form-control shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล">
-                       <div id="emailSuggestionText" class="text-primary mt-2 small" style="display: none;">
+                       <label class="form-label fw-bold text-dark small mb-1">อีเมล <span class="text-danger">*</span></label>
+                       <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล">
+                       <div id="emailSuggestionText" class="text-primary mt-2" style="display: none; font-size: 12px;">
                          <i class="fa-solid fa-circle-info me-1"></i> ข้อแนะนำ: อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE
                        </div>
-                       <div id="emailReminderText" class="text-danger mt-2 small fw-bold" style="display: none;">
+                       <div id="emailReminderText" class="text-danger mt-2 fw-bold" style="display: none; font-size: 12px;">
                          <i class="fa-solid fa-triangle-exclamation me-1"></i> โปรดระบุอีเมล เนื่องจากท่านยอมรับข้อตกลง
                        </div>
                      </div>
                   </div>
 
                   <!-- New Doctor Fields -->
-                  <div id="newDoctorFields" class="mt-4 pt-4 border-top text-start" style="display: none;">
-                    <div class="d-flex align-items-center mb-3">
+                  <div id="newDoctorFields" class="mt-3 pt-3 border-top text-start" style="display: none;">
+                    <div class="d-flex align-items-center mb-2">
                       <i class="fa-solid fa-user-md fs-5 me-2" style="color: #0066cc;"></i>
                       <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลอาชีพ</h6>
                     </div>
-                    <div class="mb-3">
-                      <label class="form-label fw-bold text-dark">อาชีพ <span class="text-danger">*</span></label>
-                      <select id="inputNewProfession" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
-                        <option value="-">-- เลือกอาชีพ --</option>
-                        <option value="Doctor">Doctor / แพทย์</option>
-                        <option value="Nurse">Nurse / พยาบาล</option>
-                        <option value="Pharmacist">Pharmacist / เภสัชกร</option>
-                        <option value="Other">Other Contact / อื่นๆ</option>
-                      </select>
+                    
+                    <div class="row g-2 mb-2">
+                      <div class="col-6">
+                        <label class="form-label fw-bold text-dark small mb-1">อาชีพ <span class="text-danger">*</span></label>
+                        <select id="inputNewProfession" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()">
+                          <option value="-">- เลือกอาชีพ -</option>
+                          <option value="Doctor">Doctor / แพทย์</option>
+                          <option value="Nurse">Nurse / พยาบาล</option>
+                          <option value="Pharmacist">Pharmacist</option>
+                          <option value="Other">Other Contact</option>
+                        </select>
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label fw-bold text-dark small mb-1">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
+                        <select id="inputNewSpec" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
+                      </div>
                     </div>
-                    <div class="mb-3">
-                      <label class="form-label fw-bold text-dark">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
-                      <select id="inputNewSpec" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label fw-bold text-dark">องค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
-                      <select id="inputNewHospital" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="">เลือกสถานที่ทำงาน</option></select>
+
+                    <div class="mb-2">
+                      <label class="form-label fw-bold text-dark small mb-1">องค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
+                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()"><option value="">เลือกสถานที่ทำงาน</option></select>
                     </div>
                   </div>
                </div>
             </div>
 
             <!-- Column 2: Consent -->
-            <div class="col-lg-4 col-md-6 col-12 d-flex flex-column" style="min-height: 0;">
-               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
+            <div class="col-lg-4 col-md-6 col-12 qr-col">
+               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
                   <div class="text-start mb-3">
                     <div class="d-flex align-items-center mb-3">
                       <i class="fa-solid fa-gavel fs-5 me-2" style="color: #0066cc;"></i>
@@ -506,8 +521,8 @@
             </div>
 
             <!-- Column 3: QR Code Display -->
-            <div class="col-lg-4 col-md-12 col-12 d-flex flex-column" style="min-height: 0;">
-               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 d-flex flex-column justify-content-center text-center custom-scrollbar" style="background-color: #f8fafc; overflow-y: auto;">
+            <div class="col-lg-4 col-md-12 col-12 qr-col">
+               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar d-flex flex-column justify-content-center text-center" style="background-color: #f8fafc;">
                   
                   <div id="lockAlert" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
                     <i class="fa-solid fa-lock mb-3 opacity-50" style="font-size: 3.5rem;"></i>
@@ -523,7 +538,7 @@
                     <div class="bg-white p-3 border rounded-4 shadow-sm w-100">
                       <div id="qrcodeContainer"></div>
                       <p class="text-success fw-bold mt-2 mb-1" style="font-size:13.5px;">📲 สแกนเพื่อเพิ่มเพื่อน Roche Thailand</p>
-                      <p id="qrExpiryText" class="text-danger small fw-bold mb-0" style="font-size: 12px;"></p>
+                      <p id="qrExpiryText" class="text-danger small fw-bold mb-0" style="font-size: 11px;"></p>
                     </div>
                     <button id="btnCopyLink" class="btn btn-white border bg-white btn-sm mt-3 fw-bold text-dark w-100 rounded-pill py-2 shadow-sm" onclick="copyQrLink()"><i class="fa-solid fa-link me-1 text-primary"></i> คัดลอกลิงก์ส่งให้แพทย์</button>
                   </div>
@@ -572,7 +587,6 @@
                   <th class="sortable-header" onclick="sortHistTable(1)">Admin <i class="fa-solid fa-sort sort-icon" id="icon-hist-1"></i></th>
                   <th class="sortable-header" onclick="sortHistTable(2)">Doctor <i class="fa-solid fa-sort sort-icon" id="icon-hist-2"></i></th>
                   <th class="sortable-header" onclick="sortHistTable(3)">Hospital <i class="fa-solid fa-sort sort-icon" id="icon-hist-3"></i></th>
-                  <!-- 🌟 เพิ่มคอลัมน์ Mobile ในหน้า Logs ให้ตรงกับหน้า Register -->
                   <th style="width: 60px;" class="text-center">Email</th>
                   <th style="width: 60px;" class="text-center pe-4">Mobile</th>
                 </tr>
@@ -615,7 +629,7 @@
                 ระบบจะค้นหารายชื่อจากฐานข้อมูล สร้าง QR Code ประจำตัวแพทย์ และกรอกข้อมูลสถานะให้โดยอัตโนมัติ
               </p>
               
-              <div class="p-4 bg-light rounded-4 border border-light mb-4 w-100">
+              <div class="p-4 bg-light rounded-4 border border-light mb-4 mx-auto w-100" style="max-width: 600px;">
                 <input type="file" id="excelFileInput" accept=".xlsx" class="form-control mb-3 shadow-sm bg-white py-2">
                 <button class="btn btn-primary w-100 py-2 fw-bold rounded-3 shadow-sm" id="btnProcessExcel" onclick="processExcelFile()" style="background-color: #0066cc; border: none; font-size: 16px;">
                   <i class="fa-solid fa-wand-magic-sparkles me-2"></i> ประมวลผลไฟล์ (Process)
@@ -623,7 +637,7 @@
                 <div id="batchStatusLog" class="mt-3 text-primary fw-bold" style="display:none;">กำลังประมวลผล กรุณารอสักครู่ ⏳</div>
               </div>
               
-              <div class="text-start bg-white p-3 rounded-3 border small text-secondary w-100">
+              <div class="text-start bg-white p-3 rounded-3 border small text-secondary mx-auto w-100" style="max-width: 600px;">
                 💡 <b>ข้อแนะนำการเตรียมไฟล์:</b> ระบบจะอ่านชื่อจาก <b>คอลัมน์ B</b> และวาง QR Code ที่ <b>คอลัมน์ F</b> (แถวที่มีข้อมูลเริ่มต้นตั้งแต่บรรทัดที่ 8 เป็นต้นไป)
               </div>
             </div>
@@ -802,8 +816,6 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
-    // 🌟 แก้ไขฟังก์ชันสลับแท็บโดยเช็คว่าแต่ละ Element มีอยู่จริงหรือไม่ก่อนซ่อน 
-    // เพื่อป้องกัน Error ถ่ายทอด (Cannot read properties of null)
     function switchTab(viewName) {
       const regView = document.getElementById("registerView");
       const histView = document.getElementById("historyView");
@@ -1189,7 +1201,6 @@
       }
     }
 
-    // 🌟 Logic การบันทึกแบบ Data Privacy ไม่เก็บค่า Email/Mobile
     async function submitRegistrationToBackend(emp, action, finalEmailStatus, finalMobileStatus) {
       const { data } = await window.supabaseClient.auth.getSession(); const adminEmail = data?.session?.user?.email || "Unknown User";
       
@@ -1224,7 +1235,7 @@
       let fEmp = {}; 
       const rawEmail = document.getElementById("inputEmail").value.trim(); 
       const rawMobile = document.getElementById("inputMobile").value.trim();
-      const btn = document.getElementById("btnConfirm"); const lockAlertBox = document.getElementById("lockAlert");
+      const btn = document.getElementById("btnConfirm"); 
       
       if (isNewDoctorMode) {
         const n = document.getElementById("inputNewName").value.trim(); const h = document.getElementById("inputNewHospital").value.trim(); const s = document.getElementById("inputNewSpec").value.trim(); const p = document.getElementById("inputNewProfession").value.trim();
