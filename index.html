@@ -24,7 +24,7 @@
   <script src="./assets/js/config.js"></script>
 
   <style>
-    /* 🌟 Global Minimalist Theme */
+    /* 🌟 Global Minimalist CRM Theme */
     body { 
       background-color: #f4f7fa; 
       font-family: 'Segoe UI', Tahoma, Arial, sans-serif; 
@@ -58,8 +58,8 @@
       background: transparent; border-radius: 50px; padding: 8px 20px; 
       font-size: 14px; transition: 0.2s; border: none;
     }
-    .nav-pills .nav-link:hover { background: #f1f5f9; color: #0066cc; }
-    .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2); }
+    .nav-pills .nav-link:hover { background: #f1f5f9; color: #0d6efd; }
+    .nav-pills .nav-link.active { background-color: #0d6efd !important; color: white !important; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); }
 
     .user-profile-btn { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .btn-action-outline { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 0.2s; }
@@ -71,48 +71,50 @@
     .content-wrapper { flex: 1; display: flex; flex-direction: column; padding: 20px 24px; min-height: 0; }
     .main-container { flex: 1; display: flex; flex-direction: column; max-width: 100%; width: 100%; min-height: 0; margin: 0; padding: 0; }
 
+    /* 🌟 แก้ไข: บังคับให้ View ยืดเต็มพื้นที่ แต่ไม่ล้น */
     .view-section { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     #listView { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     
-    .card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
-    
-    /* 🌟 Clean Table Styles & Headers (สีเทาอ่อน) */
+    /* 🌟 Clean Table Styles (Image 2 Theme) */
     .table-container-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+    
     #employeeListTableWrapper, #historyTableWrapper { flex: 1; overflow-y: auto; position: relative; scrollbar-width: thin; }
     
     .table-register-view tbody tr, .table-logs-view tbody tr { cursor: pointer; transition: 0.1s; border-bottom: 1px solid #f1f5f9; }
     .table-register-view tbody tr:hover, .table-logs-view tbody tr:hover { background-color: #f8fafc; } 
     .table-register-view td, .table-logs-view td { padding: 14px 16px; font-size: 14px; color: #334155; vertical-align: middle; } 
     
+    /* 🌟 ปรับหัวตารางให้เป็นสีเทาอ่อนตามต้องการ */
     .roche-table-header th, .roche-logs-header th {
       position: sticky; top: 0; z-index: 10; 
-      background-color: #ffffff !important; 
-      color: #94a3b8 !important; /* หัวตารางสีเทาอ่อน */
-      border-bottom: 2px solid #f1f5f9 !important; 
+      background-color: #f8fafc !important; /* พื้นหลังเทาอ่อน */
+      color: #64748b !important; 
+      border-bottom: 2px solid #e2e8f0 !important; 
       font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;
       padding: 16px 16px; white-space: nowrap; box-shadow: 0 1px 0 rgba(0,0,0,0.02);
     }
 
     .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-    .sortable-header:hover { color: #0066cc !important; }
+    .sortable-header:hover { color: #0d6efd !important; }
     .sort-icon { font-size: 0.85em; opacity: 0.3; margin-left: 4px; }
-    .sortable-header.active .sort-icon { opacity: 1; color: #0066cc; }
+    .sortable-header.active .sort-icon { opacity: 1; color: #0d6efd; }
 
-    /* 🌟 Search & Inputs */
+    /* 🌟 Search & Inputs (Floating look) */
     .search-input-pill { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 50px; padding: 6px 16px; transition: border-color 0.2s; display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .search-input-pill:focus-within { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1); }
+    .search-input-pill:focus-within { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1); }
     .search-input-pill input { border: none; outline: none; box-shadow: none; font-size: 14px; width: 100%; margin-left: 8px; }
+    
     .btn-filter-pill { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; display: flex; align-items: center; }
-    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0066cc; }
+    .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0d6efd; }
 
-    /* 🌟 Minimal Status Indicators */
     .status-check { color: #10b981; font-size: 1.1rem; font-weight: 800; }
+    .status-dash { color: #cbd5e1; font-size: 1rem; font-weight: 800; }
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
 
-    .reg-box { display: none; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); overflow: hidden; border: 1px solid #e2e8f0; padding-bottom: 20px; overflow-y: auto; height: 100%; }
+    .reg-box { display: none; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); border: 1px solid #e2e8f0; overflow-y: auto; height: 100%; }
 
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
-    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
+    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 
     .dropdown-multiselect { position: relative; width: 100%; }
@@ -124,20 +126,31 @@
     .multiselect-item input { margin-right: 8px; cursor: pointer; }
 
     .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
-    .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15); }
+    .consent-box.active { background-color: #eff6ff; border-color: #0d6efd; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15); }
     .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
 
     .pagination { justify-content: flex-end; margin-bottom: 0; }
     .page-link { color: #475569; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 10px; font-size: 13px; }
-    .page-link:hover { background-color: #f1f5f9; color: #0066cc; }
-    .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(0, 102, 204, 0.2); }
-    .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
+    .page-link:hover { background-color: #f1f5f9; color: #0d6efd; }
+    .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
+    .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent; }
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
+
     #qrcodeContainer { display: flex; justify-content: center; margin: 10px auto; padding: 10px; background: white; border-radius: 10px; }
     #qrcodeContainer img { max-width: 100%; height: auto; }
 
     #networkStatusBanner { display: none; position: fixed; top: 0; left: 0; width: 100%; color: white; font-weight: bold; text-align: center; padding: 10px 15px; z-index: 9999; font-size: 14.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s ease; }
+
+    /* Minimal Stat Cards for History */
+    .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: all 0.2s ease; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .stat-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+    .stat-value { font-size: 24px; font-weight: 800; color: #1e293b; line-height: 1; }
+    .border-left-primary { border-left: 4px solid #0066cc !important; }
+    .border-left-success { border-left: 4px solid #10b981 !important; }
+    .border-left-info { border-left: 4px solid #0ea5e9 !important; }
+    .border-left-warning { border-left: 4px solid #f59e0b !important; }
 
     @media (max-width: 991.98px) {
       .app-header { flex-direction: column; gap: 12px; padding: 12px; }
@@ -165,7 +178,7 @@
   <!-- 🌟 Unified Header Bar -->
   <header class="app-header">
     <div class="brand-logo">
-      <i class="fa-brands fa-line"></i>
+      <i class="fa-brands fa-line" style="color: #00c300;"></i>
       <span>LINE QR Connect</span>
     </div>
 
@@ -179,7 +192,7 @@
 
     <div class="user-area d-flex align-items-center gap-2">
       <div class="user-profile-btn d-none d-md-flex">
-        <i class="fa-solid fa-user" style="color: #0066cc;"></i> <span id="currentUserEmail">Checking...</span>
+        <i class="fa-solid fa-user" style="color: #0d6efd;"></i> <span id="currentUserEmail">Checking...</span>
       </div>
       <button class="btn-action-outline" data-bs-toggle="modal" data-bs-target="#changePassModal" title="Change Password">
         <i class="fa-solid fa-key"></i>
@@ -197,7 +210,6 @@
       <div id="registerView" class="view-section" style="display: flex;">
         <div id="listView">
           
-          <!-- Search & Filter Toolbar -->
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 flex-shrink-0">
             <div class="search-input-pill flex-grow-1" style="max-width: 450px;">
               <i class="fa-solid fa-magnifying-glass text-muted"></i>
@@ -271,7 +283,7 @@
               <div class="d-flex align-items-center mb-2 mb-md-0">
                 <label class="text-secondary small fw-bold me-2 mb-0">Show rows:</label>
                 <select id="empRowsSelect" class="form-select form-select-sm shadow-none" style="width: 70px; border-radius: 6px; font-weight: bold;" onchange="changeEmpRowsPerPage()">
-                  <option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="100" selected>100</option>
+                  <option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="50">50</option><option value="100" selected>100</option>
                 </select>
                 <span id="empPageInfo" class="text-muted small ms-3"></span>
               </div>
@@ -280,89 +292,108 @@
           </div>
         </div>
 
-        <!-- QR View (กลับไปเป็นแบบ Form ดั้งเดิม) -->
+        <!-- 🌟 QR View (แบบภาษาไทยกลับมาเหมือนเดิมเต็มรูปแบบ ไร้ปุ่ม AI) -->
         <div id="qrView" class="reg-box mx-auto" style="max-width: 650px; position: relative;">
           <div class="p-4 p-sm-5 text-center">
             
             <div class="text-start mb-4 pb-3 border-bottom">
-              <h2 class="fw-bold mb-1" style="color: #1e293b; font-size: 1.8rem;">Verify Information</h2>
-              <p class="text-secondary mt-1 mb-0" style="font-size: 14px;">Fields marked with <span class="text-danger fw-bold">*</span> are required.</p>
+              <h2 class="fw-bold mb-1" style="color: #0066cc; font-style: italic; font-size: 1.9rem; letter-spacing: -0.5px;">ยืนยันข้อมูล<br>บุคลากรทางการแพทย์</h2>
+              <p class="text-secondary mt-2 mb-0" style="font-size: 14.5px; font-style: italic; line-height: 1.5;">
+                กรุณากรอกข้อมูลเพื่อใช้ในการตรวจสอบ และยืนยันข้อมูลการเป็นบุคลากรทางการแพทย์ตามความเป็นจริง<br>
+                หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก
+              </p>
             </div>
 
             <h3 id="targetName" class="fw-bold mb-0" style="font-size: 2.2rem; color:#0066cc;"></h3>
-            <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.2rem;"></h4>
-            <p id="targetId" class="text-muted mb-3"></p>
+            <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.3rem;"></h4>
+            <p id="targetId" class="text-muted mb-3" style="font-size: 1.1rem;"></p>
             <div id="targetBadges" class="mb-4 d-flex flex-wrap justify-content-center"></div>
             
             <div id="newDoctorTitleBlock" style="display: none; margin-bottom: 15px;">
                <span class="badge bg-warning text-dark fw-bold mb-2">New Doctor Registration</span>
+               <p class="text-muted small mb-1">🆕 โหมดบันทึกและสร้างรหัสลงทะเบียนแพทย์ท่านใหม่</p>
                <div class="px-2 mb-2">
-                 <label class="form-label fw-bold text-dark d-block text-start mb-1">HCP Name <span class="text-danger">*</span></label>
-                 <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="font-size: 1.2rem;" oninput="regenerateAutomatedQR()" placeholder="Enter Doctor Name...">
+                 <label class="form-label fw-bold text-primary d-block text-start mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
+                 <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="font-size: 1.35rem; color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
                </div>
             </div>
             
             <div class="card p-4 mb-4 text-start shadow-sm border-0" style="border-radius: 12px; border: 1px solid #e2e8f0 !important;">
-              <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-address-book text-muted me-2"></i>Contact Info</h5>
-              <div class="mb-3">
-                <label class="form-label fw-semibold text-secondary">Mobile Number</label>
-                <input type="tel" id="inputMobile" class="form-control" maxlength="10" oninput="validateMobileInput(this)">
+              <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-address-book text-muted me-2"></i>ข้อมูลติดต่อ</h5>
+              <p class="text-secondary mb-3" style="font-size: 13.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+              
+              <div class="mb-3 mt-3">
+                <label class="form-label fw-bold text-dark">หมายเลขโทรศัพท์</label>
+                <input type="tel" id="inputMobile" class="form-control shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์">
               </div>
               <div class="mb-2">
-                <label class="form-label fw-semibold text-secondary">Email <span class="text-danger">*</span></label>
-                <input type="email" id="inputEmail" class="form-control" oninput="regenerateAutomatedQR(); checkEmailReminder();">
-                <div id="emailSuggestionText" class="text-primary mt-2 small" style="display: none;">Email is required for LINE registration.</div>
-                <div id="emailReminderText" class="text-danger mt-2 small fw-bold" style="display: none;">Email must be provided for Marketing Consent.</div>
+                <label class="form-label fw-bold text-dark">อีเมล <span class="text-danger">*</span></label>
+                <input type="email" id="inputEmail" class="form-control shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล">
+                <div id="emailSuggestionText" class="text-primary mt-2 small" style="display: none;">
+                  <i class="fa-solid fa-circle-info me-1"></i> ข้อแนะนำ: อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE
+                </div>
+                <div id="emailReminderText" class="text-danger mt-2 small fw-bold" style="display: none;">
+                  <i class="fa-solid fa-triangle-exclamation me-1"></i> เนื่องจากท่านเลือกยินยอมรับข้อมูลข่าวสาร โปรดระบุอีเมล
+                </div>
               </div>
             </div>
 
             <div id="newDoctorFields" class="card p-4 mb-4 text-start shadow-sm border-0" style="display: none; border-radius: 12px; border: 1px solid #e2e8f0 !important;">
-              <h5 class="fw-bold mb-3 text-dark">Professional Info</h5>
+              <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-user-md text-muted me-2"></i>ข้อมูลอาชีพ</h5>
               <div class="mb-3">
-                <label class="form-label fw-semibold text-secondary">Profession <span class="text-danger">*</span></label>
-                <select id="inputNewProfession" class="form-select" onchange="regenerateAutomatedQR()">
-                  <option value="-">Select Profession</option><option value="Doctor">Doctor</option><option value="Nurse">Nurse</option><option value="Pharmacist">Pharmacist</option><option value="Other">Other Contact</option>
+                <label class="form-label fw-bold text-dark">อาชีพ <span class="text-danger">*</span></label>
+                <select id="inputNewProfession" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
+                  <option value="-">-- เลือกอาชีพ --</option>
+                  <option value="Doctor">Doctor / แพทย์</option>
+                  <option value="Nurse">Nurse / พยาบาล</option>
+                  <option value="Pharmacist">Pharmacist / เภสัชกร</option>
+                  <option value="Other">Other Contact / อื่นๆ</option>
                 </select>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold text-secondary">Specialty <span class="text-danger">*</span></label>
-                <select id="inputNewSpec" class="form-select" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
+                <label class="form-label fw-bold text-dark">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
+                <select id="inputNewSpec" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold text-secondary">Organization / Hospital <span class="text-danger">*</span></label>
-                <select id="inputNewHospital" class="form-select" onchange="regenerateAutomatedQR()"><option value="">Select Organization</option></select>
+                <label class="form-label fw-bold text-dark">ชื่อองค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
+                <select id="inputNewHospital" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option></select>
               </div>
             </div>
 
-            <div class="text-start mb-4">
+            <div class="consent-card text-start mb-4 mt-2">
+              <h6 class="fw-bold mb-3" style="font-size:18px; color: #0066cc;"><i class="fa-solid fa-gavel me-2"></i>ข้อมูลด้านกฎหมาย</h6>
               <label class="consent-box shadow-sm" id="boxPrivacy">
                 <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
-                <span class="consent-text fw-medium">
-                  <span class="text-danger fw-bold">*</span> I agree to the Roche Privacy Policy and Terms<br>
-                  <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="small text-primary" onclick="event.stopPropagation()">View Policy</a>
+                <span class="consent-text fw-medium fst-italic">
+                  <span class="text-danger fw-bold fst-normal">*</span> ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
+                  <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold text-primary" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
                 </span>
               </label>
               <label class="consent-box shadow-sm" id="boxTerms">
                 <input class="form-check-input consent-checkbox" type="checkbox" id="chkTerms" onchange="toggleConsentStyle('boxTerms', this); checkConsentState(); regenerateAutomatedQR(); checkEmailReminder();">
-                <span class="consent-text fw-medium">
-                  I consent to Roche processing my data for marketing communications.
+                <span class="consent-text fw-medium fst-italic">
+                  ฉันยินยอมให้โรชและบริษัทในเครือประมวลผลข้อมูลส่วนบุคคลของฉันเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาดตามที่ระบุในข้อกำหนดและนโยบายของโรช
+                  <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold text-primary" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
                 </span>
               </label>
             </div>
 
-            <div id="lockAlert" class="alert alert-light border small fw-bold mb-3 text-secondary">Please accept the terms to display the QR Code.</div>
+            <div id="lockAlert" class="alert alert-info small fw-bold mb-3" style="font-size:14.5px;">📋 กรุณาติ๊กกล่องด้านบนเพื่อยอมรับข้อกำหนดและนโยบายของโรช ก่อนแสดง QR Code ครับ</div>
             
             <div id="qrContentBlock" style="display: none;">
+              <div class="text-end d-md-block d-none"> 
+                <button class="btn-action-outline mb-2" onclick="window.print()"><i class="fa-solid fa-print me-1"></i> Print / Save PDF</button>
+              </div>
               <div class="bg-light p-4 border rounded-4 mb-4 shadow-sm">
                 <div id="qrcodeContainer"></div>
-                <p class="text-dark fw-bold mt-3 mb-1">Scan to Add LINE</p>
+                <p class="text-success fw-bold mt-3 mb-1" style="font-size:14px;">📲 สแกนรหัส QR Code เพื่อเพิ่มเพื่อน (Add LINE) Roche Thailand</p>
                 <p id="qrExpiryText" class="text-danger small fw-bold mb-0"></p>
-                <button id="btnCopyLink" class="btn btn-light border btn-sm mt-3 w-100 fw-bold text-dark" onclick="copyQrLink()"><i class="fa-solid fa-link me-1"></i> Copy Link</button>
+                <button id="btnCopyLink" class="btn btn-light border btn-sm mt-3 w-100 fw-bold text-dark" onclick="copyQrLink()"><i class="fa-solid fa-link me-1"></i> คัดลอกลิงก์ (Copy Link) ให้คุณหมอ</button>
               </div>
-              <button id="btnConfirm" class="btn btn-primary w-100 py-3 fw-bold mb-2 shadow-sm rounded-3" onclick="submitRegistration()">Confirm & Save Log</button>
+              <button id="btnConfirm" class="btn btn-primary w-100 py-3 fw-bold mb-2 shadow-sm rounded-3" onclick="submitRegistration()">✅ ยืนยันการออกคิวอาร์ (Save Log)</button>
             </div>
 
-            <button class="btn btn-light border w-100 py-2 fw-bold text-secondary rounded-3 mt-2" onclick="goBackToList()">Cancel</button>
+            <button class="btn btn-light border w-100 py-2 fw-bold text-secondary rounded-3 mt-2" onclick="goBackToList()">⬅️ กลับไปหน้าเลือกรายชื่อ</button>
           </div>
         </div>
       </div>
@@ -380,44 +411,13 @@
           </div>
         </div>
         
-        <!-- Clean Stat Cards -->
         <div class="row g-3 mb-4 flex-shrink-0">
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card border-left-info">
-              <div class="stat-title"><i class="fa-regular fa-calendar-check text-info"></i> Today</div>
-              <div class="stat-value" id="statToday">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card border-left-success">
-              <div class="stat-title"><i class="fa-solid fa-calendar-days text-success"></i> Month</div>
-              <div class="stat-value" id="statMonth">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card border-left-primary">
-              <div class="stat-title"><i class="fa-solid fa-rotate text-primary"></i> <span id="cycleLabel">Cycle</span></div>
-              <div class="stat-value" id="statCycle">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card border-left-primary">
-              <div class="stat-title"><i class="fa-regular fa-calendar text-primary"></i> Year</div>
-              <div class="stat-value" id="statYear">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card" style="border-left: 4px solid #475569 !important;">
-              <div class="stat-title"><i class="fa-solid fa-layer-group text-secondary"></i> Total</div>
-              <div class="stat-value" id="statTotal">0</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-            <div class="stat-card border-left-warning">
-              <div class="stat-title"><i class="fa-solid fa-wifi text-warning"></i> Offline</div>
-              <div class="stat-value text-warning" id="statOffline">0</div>
-            </div>
-          </div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-info"><div class="stat-title"><i class="fa-regular fa-calendar-check text-info"></i> Today</div><div class="stat-value" id="statToday">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-success"><div class="stat-title"><i class="fa-solid fa-calendar-days text-success"></i> Month</div><div class="stat-value" id="statMonth">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-solid fa-rotate text-primary"></i> <span id="cycleLabel">Cycle</span></div><div class="stat-value" id="statCycle">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-regular fa-calendar text-primary"></i> Year</div><div class="stat-value" id="statYear">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card" style="border-left: 4px solid #475569 !important;"><div class="stat-title"><i class="fa-solid fa-layer-group text-secondary"></i> Total</div><div class="stat-value" id="statTotal">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-warning"><div class="stat-title"><i class="fa-solid fa-wifi text-warning"></i> Offline</div><div class="stat-value text-warning" id="statOffline">0</div></div></div>
         </div>
 
         <div class="table-container-card">
@@ -471,7 +471,6 @@
             💡 <b>Note:</b> The system reads names from <b>Column B</b> and places QR Codes in <b>Column F</b> (Row 8 onwards).
           </div>
 
-          <!-- Quick User Manual Image -->
           <hr style="border-color: #e2e8f0; margin: 30px 0;">
           <div class="text-center mx-auto" style="max-width: 700px;">
             <h5 class="fw-bold text-secondary mb-3" style="font-size: 16px;"><i class="fa-solid fa-book-open me-2"></i>Quick User Manual</h5>
@@ -539,6 +538,7 @@
   </div>
 
   <script>
+    // 🌟 Utility / Modal Functions
     function showCustomAlert(message, type = 'info', onHideCallback = null) {
       const iconEl = document.getElementById('customAlertIcon');
       const titleEl = document.getElementById('customAlertTitle');
@@ -624,6 +624,7 @@
     ['mousemove', 'keydown', 'scroll', 'click'].forEach(evt => document.addEventListener(evt, resetInactivityTimer, true));
     resetInactivityTimer();
 
+    // 🌟 Auth & Initialization
     async function checkAuth() {
       if (window.supabaseClient) {
         const { data } = await window.supabaseClient.auth.getSession();
@@ -640,6 +641,35 @@
     const baseLineUrl = "https://liff.line.me/1654210606-d1qQ264p/hcp/pre-register"; let currentGeneratedUrl = ""; 
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
+
+    // 🌟 Tab Switching Logic (Fixing the Overflow & Layout issue)
+    function switchTab(viewName) {
+      // ซ่อนทุกหน้าก่อน
+      document.getElementById("registerView").style.display = "none"; 
+      document.getElementById("historyView").style.display = "none"; 
+      document.getElementById("batchView").style.display = "none";
+      
+      // เอา Active ออกจากเมนูทั้งหมด
+      document.getElementById("tabRegister").className = "nav-link"; 
+      document.getElementById("tabHistory").className = "nav-link"; 
+      document.getElementById("tabBatch").className = "nav-link";
+      
+      // แสดงหน้าตามที่คลิก (ตั้งเป็น display: flex เพื่อให้จัด Layout ได้เต็มพื้นที่)
+      if(viewName === 'register') { 
+        document.getElementById("registerView").style.display = "flex"; 
+        document.getElementById("tabRegister").className = "nav-link active"; 
+        goBackToList(); 
+      } 
+      else if(viewName === 'history') { 
+        document.getElementById("historyView").style.display = "flex"; 
+        document.getElementById("tabHistory").className = "nav-link active"; 
+        fetchLogsData(); 
+      } 
+      else if (viewName === 'batch') { 
+        document.getElementById("batchView").style.display = "flex"; // Changed to flex for proper centering
+        document.getElementById("tabBatch").className = "nav-link active"; 
+      }
+    }
 
     function toggleClearBtn() { document.getElementById("btnClearSearch").style.display = document.getElementById("searchBox").value.length > 0 ? "block" : "none"; }
     function clearSearchBox() { document.getElementById("searchBox").value = ""; toggleClearBtn(); applyFilters(); }
@@ -742,7 +772,7 @@
         });
       }
       const hosp = document.getElementById("inputNewHospital");
-      if(hosp) { hosp.innerHTML = '<option value="">Select Organization</option>'; [...new Set(data.map(i=>i.hospital).filter(Boolean))].sort().forEach(v=>{ let cv=String(v).trim(); if(cv && cv!=="-") hosp.innerHTML+=`<option value="${cv}">${cv}</option>`; }); }
+      if(hosp) { hosp.innerHTML = '<option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option>'; [...new Set(data.map(i=>i.hospital).filter(Boolean))].sort().forEach(v=>{ let cv=String(v).trim(); if(cv && cv!=="-") hosp.innerHTML+=`<option value="${cv}">${cv}</option>`; }); }
       const sp = document.getElementById("inputNewSpec");
       if(sp) { sp.innerHTML = '<option value="-">-</option>'; [...new Set(data.map(i=>i.spec).filter(Boolean))].sort().forEach(v=>{ let cv=String(v).trim(); if(cv && cv!=="-") sp.innerHTML+=`<option value="${cv}">${cv}</option>`; }); }
     }
@@ -836,7 +866,7 @@
         row.innerHTML = `<td class="fw-bold ps-4" style="color: #1e293b; font-size:13.5px;">${highlightText(emp.name, kw)}</td>
                          <td class="text-secondary" style="font-size:13px;">${highlightText(emp.thName, kw)}</td>
                          <td><span class="badge badge-specialty"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ${emp.spec}</span></td>
-                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
+                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
                          <td class="text-center">${getStatusUI(emp.lineId)}</td>
                          <td class="text-center">${getStatusUI(emp.email)}</td>
                          <td class="text-center">${getStatusUI(emp.mobile)}</td>
@@ -867,7 +897,7 @@
       document.getElementById("targetName").innerText = emp.name;
       document.getElementById("targetThName").innerText = emp.thName || ""; document.getElementById("targetThName").style.display = emp.thName ? "block" : "none";
       document.getElementById("targetId").innerText = "HCO: " + emp.hospital;
-      document.getElementById("targetBadges").innerHTML = `<span class="badge bg-light text-secondary border px-3 py-2 shadow-sm rounded-pill" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> ${emp.spec}</span>`;
+      document.getElementById("targetBadges").innerHTML = `<span class="badge rounded-pill bg-light text-secondary border px-3 py-2 shadow-sm" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> Specialty: ${emp.spec}</span>`;
       document.getElementById("newDoctorFields").style.display = "none";
       document.getElementById("inputEmail").value = getCleanInput(emp.email); document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
       document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
@@ -877,7 +907,7 @@
     function regenerateAutomatedQR() {
       let id, name, thName, hospital, spec, profession, email, mobile, dkshid, hcpuciid;
       if (isNewDoctorMode) {
-        id = "New"; name = document.getElementById("inputNewName").value.trim() || "Unspecified"; thName = "-"; hospital = document.getElementById("inputNewHospital").value.trim(); spec = document.getElementById("inputNewSpec").value.trim() || "-"; profession = document.getElementById("inputNewProfession").value.trim() || "-"; email = document.getElementById("inputEmail").value.trim(); mobile = document.getElementById("inputMobile").value.trim(); dkshid = "-"; hcpuciid = "-";
+        id = "New"; name = document.getElementById("inputNewName").value.trim() || "ไม่ระบุชื่อ"; thName = "-"; hospital = document.getElementById("inputNewHospital").value.trim(); spec = document.getElementById("inputNewSpec").value.trim() || "-"; profession = document.getElementById("inputNewProfession").value.trim() || "-"; email = document.getElementById("inputEmail").value.trim(); mobile = document.getElementById("inputMobile").value.trim(); dkshid = "-"; hcpuciid = "-";
       } else {
         if (!activeEmployee) return;
         id = activeEmployee.id; name = activeEmployee.name; thName = activeEmployee.thName || "-"; hospital = activeEmployee.hospital; spec = activeEmployee.spec; profession = activeEmployee.profession || "-"; email = document.getElementById("inputEmail").value.trim(); mobile = document.getElementById("inputMobile").value.trim(); dkshid = activeEmployee.dkshid || "-"; hcpuciid = activeEmployee.hcpuciid || "-"; 
@@ -885,7 +915,7 @@
       
       const pS = document.getElementById("chkPrivacy").checked ? "Accepted" : "Declined"; const mS = document.getElementById("chkTerms").checked ? "Accepted" : "Declined";
       const ex = new Date(); ex.setHours(ex.getHours() + 24*7); const exS = ex.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '');
-      document.getElementById("qrExpiryText").innerText = '⚠️ This QR Code will expire on: ' + exS + ' (7 days from generation)';
+      document.getElementById("qrExpiryText").innerText = '⚠️ QR Code นี้จะหมดอายุในวันที่: ' + exS;
       
       currentGeneratedUrl = `${baseLineUrl}?hcpmdmid=${encodeURIComponent(id)}&hcpName=${encodeURIComponent(name)}&thName=${encodeURIComponent(thName)}&hospital=${encodeURIComponent(hospital)}&specialty=${encodeURIComponent(spec)}&profession=${encodeURIComponent(profession)}&email=${encodeURIComponent(email)}&mobileNo=${encodeURIComponent(mobile)}&privacyPolicy=${encodeURIComponent(pS)}&marketingConsent=${encodeURIComponent(mS)}&expire=${encodeURIComponent(exS)}&dkshid=${encodeURIComponent(dkshid)}&hcpuciid=${encodeURIComponent(hcpuciid)}`;
       document.getElementById("qrcodeContainer").innerHTML = ""; 
@@ -897,15 +927,15 @@
       if (!currentGeneratedUrl) return;
       var temp = document.createElement("input"); temp.value = currentGeneratedUrl; document.body.appendChild(temp); temp.select(); document.execCommand("copy"); document.body.removeChild(temp);
       const btn = document.getElementById("btnCopyLink"); const orig = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Link Copied!'; btn.className = "btn btn-success btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm";
+      btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> คัดลอกสำเร็จแล้ว!'; btn.className = "btn btn-success btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm";
       setTimeout(() => { btn.innerHTML = orig; btn.className = "btn btn-outline-primary btn-sm mt-3 mb-2 fw-bold w-100 py-2 shadow-sm"; }, 2000);
     }
 
     function checkConsentState() {
-      const isAgreed = document.getElementById("chkPrivacy").checked; let isValid = true; let msg = "📋 Please tick the boxes above to accept the terms before displaying the QR Code.";
+      const isAgreed = document.getElementById("chkPrivacy").checked; let isValid = true; let msg = "📋 กรุณาติ๊กกล่องด้านบนเพื่อยอมรับข้อกำหนดและนโยบายของโรช ก่อนแสดง QR Code ครับ";
       if (isNewDoctorMode) {
         const h = document.getElementById("inputNewHospital").value; const s = document.getElementById("inputNewSpec").value; const p = document.getElementById("inputNewProfession").value;
-        if (!h || s === "-" || p === "-") { isValid = false; msg = "⚠️ Please select Organization, Specialty, and Profession, and accept the Consent to display the QR Code."; }
+        if (!h || s === "-" || p === "-") { isValid = false; msg = "⚠️ กรุณาเลือกข้อมูล ชื่อองค์กร/สถานที่ทำงาน, ความเชี่ยวชาญ และ อาชีพ ให้ครบถ้วน รวมถึงยอมรับ Consent เพื่อเปิดแสดง QR Code"; }
       }
       if (isAgreed && isValid) {
         document.getElementById("lockAlert").style.display = "none"; document.getElementById("qrContentBlock").style.display = "block";
@@ -928,7 +958,7 @@
     async function submitRegistrationToBackend(emp, action, email, mobile) {
       const { data } = await window.supabaseClient.auth.getSession(); const adminEmail = data?.session?.user?.email || "Unknown User";
       const { error } = await window.supabaseClient.from('RegistrationLogs').insert([{ "Whoupdated": adminEmail, "HCP ID": emp.id, "HCP Name": emp.name, "Hospital": emp.hospital, "PJP": emp.pjp, "Specialty": emp.spec, "Profession": emp.profession, "DA": emp.da, "Classification": emp.cls, "Line ID": action, "Email": email, "Mobile No": mobile, "Privacy Policy": "Accepted", "Terms of Service": "Accepted" }]);
-      if (error) { console.error("Error inserting log:", error); showCustomAlert("Error saving log.", "error"); return; }
+      if (error) { console.error("Error inserting log:", error); showCustomAlert("เกิดข้อผิดพลาดในการบันทึก Log", "error"); return; }
       if (emp.id !== "New") await window.supabaseClient.from('EmployeeList').update({ lineid: action, email: email, mobile: mobile }).eq('hcp_mdm_id', emp.id);
     }
 
@@ -939,10 +969,10 @@
       if (isNewDoctorMode) {
         const n = document.getElementById("inputNewName").value.trim(); const h = document.getElementById("inputNewHospital").value.trim(); const s = document.getElementById("inputNewSpec").value.trim(); const p = document.getElementById("inputNewProfession").value.trim();
         if (!n || !h || s === "-" || p === "-") {
-          if (lockAlertBox) { lockAlertBox.style.display = "block"; lockAlertBox.className = "alert small fw-bold mb-3 alert-danger"; lockAlertBox.style.backgroundColor = "#f8d7da"; lockAlertBox.style.color = "#721c24"; if (!n) lockAlertBox.innerText = "❌ HCP Name is required!"; else if (!h) lockAlertBox.innerText = "❌ Organization/Hospital is required!"; else if (s === "-") lockAlertBox.innerText = "❌ Specialty is required!"; else if (p === "-") lockAlertBox.innerText = "❌ Profession is required!"; }
+          if (lockAlertBox) { lockAlertBox.style.display = "block"; lockAlertBox.className = "alert small fw-bold mb-3 alert-danger"; lockAlertBox.style.backgroundColor = "#f8d7da"; lockAlertBox.style.color = "#721c24"; if (!n) lockAlertBox.innerText = "❌ จำเป็นต้องกรอก ชื่อแพทย์ ก่อนครับ!"; else if (!h) lockAlertBox.innerText = "❌ จำเป็นต้องเลือก ชื่อองค์กร/สถานที่ทำงาน ก่อนครับ!"; else if (s === "-") lockAlertBox.innerText = "❌ จำเป็นต้องเลือก ความเชี่ยวชาญ ก่อนครับ!"; else if (p === "-") lockAlertBox.innerText = "❌ จำเป็นต้องเลือก อาชีพ ก่อนครับ!"; }
           return;
         }
-        fEmp = { id: "New", name: n, hospital: h, spec: s, profession: p, da: "-", cls: "-", pjp: "Manual Entry" };
+        fEmp = { id: "New", name: n, hospital: h, spec: s, profession: p, da: "-", cls: "-", pjp: "แพทย์คีย์สด" };
       } else {
         if(!activeEmployee) return; fEmp = activeEmployee;
       }
@@ -950,35 +980,27 @@
       btn.disabled = true; 
 
       if (navigator.onLine) {
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Saving log data...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> กำลังบันทึกข้อมูล...';
         await submitRegistrationToBackend(fEmp, "Yes", fEmail, fMobile);
-        btn.innerHTML = "🎉 Saved Successfully!";
+        btn.innerHTML = "🎉 บันทึกข้อมูลสำเร็จ!";
         if (typeof confetti !== "undefined") confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
         
         if (fEmp.id !== "New") {
           let tE = employeeData.find(e => e.id === fEmp.id); if (tE) { tE.lineId = "Yes"; tE.email = fEmail !== "" ? fEmail : tE.email; tE.mobile = fMobile !== "" ? fMobile : tE.mobile; }
           let tH = hcpData.find(e => e.id === fEmp.id); if (tH) { tH.lineId = "Yes"; tH.email = fEmail !== "" ? fEmail : tH.email; tH.mobile = fMobile !== "" ? fMobile : tH.mobile; }
         }
-        setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ Confirm & Save Log"; }, 1500);
+        setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ ยืนยันการออกคิวอาร์ (Save Log)"; }, 1500);
       } else {
         let q = JSON.parse(localStorage.getItem('offlineLogs') || '[]'); q.push({ emp: fEmp, action: "Yes", email: fEmail, mobile: fMobile }); localStorage.setItem('offlineLogs', JSON.stringify(q)); updateOfflineStat();
-        btn.innerHTML = "💾 Saved offline successfully!";
+        btn.innerHTML = "💾 บันทึกออฟไลน์สำเร็จ!";
         if (fEmp.id !== "New") { let tE = employeeData.find(e => e.id === fEmp.id); if (tE) { tE.lineId = "Yes"; tE.email = fEmail !== "" ? fEmail : tE.email; tE.mobile = fMobile !== "" ? fMobile : tE.mobile; } }
-        setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ Confirm & Save Log"; }, 1200);
+        setTimeout(() => { goBackToList(); applyFilters(); btn.innerHTML = "✅ ยืนยันการออกคิวอาร์ (Save Log)"; }, 1200);
       }
-    }
-
-    function switchTab(viewName) {
-      document.getElementById("registerView").style.display = "none"; document.getElementById("historyView").style.display = "none"; document.getElementById("batchView").style.display = "none";
-      document.getElementById("tabRegister").className = "nav-link"; document.getElementById("tabHistory").className = "nav-link"; document.getElementById("tabBatch").className = "nav-link";
-      if(viewName === 'register') { document.getElementById("registerView").style.display = "flex"; document.getElementById("tabRegister").className = "nav-link active"; goBackToList(); } 
-      else if(viewName === 'history') { document.getElementById("historyView").style.display = "flex"; document.getElementById("tabHistory").className = "nav-link active"; fetchLogsData(); } 
-      else if (viewName === 'batch') { document.getElementById("batchView").style.display = "block"; document.getElementById("tabBatch").className = "nav-link active"; }
     }
 
     async function fetchLogsData() {
       const tb = document.getElementById("historyTableBody"); const pi = document.getElementById("histPageInfo"); const ul = document.getElementById("histPaginationUl");
-      tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>';
+      tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white" style="padding: 10vh 0;"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>';
       pi.innerHTML = ""; ul.innerHTML = "";
       
       try {
@@ -990,7 +1012,7 @@
         }
 
         if (allLogs.length === 0) {
-          tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No registration logs found.</h5></td></tr>';
+          tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No registration logs found.</h5></td></tr>';
           globalHistoryLogs = []; resetDashboardStats(); return;
         }
         
@@ -1001,7 +1023,7 @@
         });
 
         buildRecorderDropdown(globalHistoryLogs); histSortCol = 0; histSortAsc = false; applyLogRecorderFilter();
-      } catch (error) { tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-danger bg-white"><i class="fa-solid fa-triangle-exclamation fs-2 mb-3 d-block"></i>Error loading logs</td></tr>'; }
+      } catch (error) { tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-danger bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-triangle-exclamation fs-2 mb-3 d-block"></i>Error loading logs</td></tr>'; }
     }
 
     function buildRecorderDropdown(logs) {
@@ -1053,7 +1075,7 @@
       const tb = document.getElementById("historyTableBody"); const pi = document.getElementById("histPageInfo"); const ul = document.getElementById("histPaginationUl");
       tb.innerHTML = "";
       if (filteredHistData.length === 0) {
-        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No logs match the selected criteria.</h5></td></tr>';
+        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No logs match the selected criteria.</h5></td></tr>';
         pi.innerText = ""; ul.innerHTML = ""; return;
       }
       const t = filteredHistData.length; const tp = Math.ceil(t / histRowsPerPage); if (histCurrentPage > tp) histCurrentPage = tp || 1;
@@ -1071,7 +1093,7 @@
 
       pd.forEach(row => {
           let ev = String(row.email || "").trim().toLowerCase(); let ic = (ev==="yes"||(ev!=="none"&&ev!=="no"&&ev!=="")) ? '<i class="fa-solid fa-check text-success fs-5"></i>' : '<span class="text-muted opacity-25 fw-bold">—</span>';
-          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
+          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
       });
     }
 
