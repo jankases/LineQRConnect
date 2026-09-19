@@ -58,8 +58,8 @@
       background: transparent; border-radius: 50px; padding: 8px 20px; 
       font-size: 14px; transition: 0.2s; border: none;
     }
-    .nav-pills .nav-link:hover { background: #f1f5f9; color: #0d6efd; }
-    .nav-pills .nav-link.active { background-color: #0d6efd !important; color: white !important; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); }
+    .nav-pills .nav-link:hover { background: #f1f5f9; color: #0066cc; }
+    .nav-pills .nav-link.active { background-color: #0066cc !important; color: white !important; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2); }
 
     .user-profile-btn { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
     .btn-action-outline { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 0.2s; }
@@ -127,21 +127,23 @@
     }
 
     .sortable-header { cursor: pointer; user-select: none; transition: color 0.2s; }
-    .sortable-header:hover { color: #0d6efd !important; }
+    .sortable-header:hover { color: #0066cc !important; }
     .sort-icon { font-size: 0.85em; opacity: 0.3; margin-left: 4px; }
-    .sortable-header.active .sort-icon { opacity: 1; color: #0d6efd; }
+    .sortable-header.active .sort-icon { opacity: 1; color: #0066cc; }
 
     /* 🌟 Search & Inputs */
     .search-input-pill { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 50px; padding: 6px 16px; transition: border-color 0.2s; display: flex; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .search-input-pill:focus-within { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1); }
+    .search-input-pill:focus-within { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1); }
     .search-input-pill input { border: none; outline: none; box-shadow: none; font-size: 14px; width: 100%; margin-left: 8px; }
     .btn-filter-pill { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; display: flex; align-items: center; }
     .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0066cc; }
 
+    .status-check { color: #10b981; font-size: 1.1rem; font-weight: 800; }
+    .status-dash { color: #cbd5e1; font-size: 1rem; font-weight: 800; }
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
 
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
-    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12); }
+    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 
     .dropdown-multiselect { position: relative; width: 100%; }
@@ -152,14 +154,17 @@
     .multiselect-item:hover { background-color: #f1f5f9; }
     .multiselect-item input { margin-right: 8px; cursor: pointer; }
 
-    .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
-    .consent-box.active { background-color: #eff6ff; border-color: #0d6efd; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15); }
-    .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
+    /* 🌟 Consent Box (Legal Info) - รูปแบบดั้งเดิมตามภาพ */
+    .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
+    .consent-box:hover { border-color: #94a3b8; }
+    .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 1px #0066cc; }
+    .consent-checkbox { width: 22px !important; height: 22px !important; margin-top: 2px !important; margin-right: 12px; cursor: pointer; flex-shrink: 0; }
+    .consent-text { font-size: 13.5px; color: #334155; margin: 0; line-height: 1.5; flex-grow: 1; }
 
     .pagination { justify-content: flex-end; margin-bottom: 0; }
     .page-link { color: #475569; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 10px; font-size: 13px; }
-    .page-link:hover { background-color: #f1f5f9; color: #0d6efd; }
-    .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
+    .page-link:hover { background-color: #f1f5f9; color: #0066cc; }
+    .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(0, 102, 204, 0.2); }
     .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
@@ -185,14 +190,12 @@
       .qr-row-container { flex-direction: column; }
     }
     
-    /* 🌟 ตั้งค่า Print ให้เป็นแนวนอนและแผ่นเดียว */
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background-color: #fff !important; overflow: visible !important; height: auto !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       body * { visibility: hidden; }
       #qrView, #qrView * { visibility: visible; }
       
-      /* บังคับให้หน้า QR เป็นหน้าแรกและหน้าเดียวเต็มๆ */
       #qrView { 
         position: absolute; left: 0; top: 0; right: 0; 
         width: 100%; max-width: 100% !important; 
@@ -202,7 +205,6 @@
       
       .app-header, .btn, .nav-container-box, .overview-scroll-container, #actionBottomBar, #lockAlert { display: none !important; }
       
-      /* บังคับ 3 คอลัมน์ให้เรียงแนวนอนในหน้ากระดาษ */
       .qr-row-container { 
         display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; 
         gap: 15px !important; width: 100% !important; align-items: stretch !important;
@@ -216,7 +218,6 @@
         overflow: visible !important; page-break-inside: avoid !important; height: 100% !important;
       }
       
-      /* ปรับขนาดเนื้อหาเพื่อไม่ให้ล้นลงแผ่นที่ 2 */
       .header-title-print { font-size: 1.5rem !important; }
       #targetName { font-size: 1.6rem !important; }
       #targetThName { font-size: 1.1rem !important; }
@@ -394,7 +395,7 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (3 Columns Layout for Desktop/iPad) -->
+        <!-- 🌟 QR View (3 Columns Layout with Exact Consent Styling) -->
         <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1400px; padding-bottom: 10px;">
           
           <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
@@ -476,28 +477,31 @@
                </div>
             </div>
 
-            <!-- Column 2: Consent -->
+            <!-- Column 2: Consent (Styled to match requested image exactly) -->
             <div class="col-lg-4 col-md-6 col-12 d-flex flex-column" style="min-height: 0;">
                <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
-                  <div class="text-start">
+                  <div class="text-start mb-3">
                     <div class="d-flex align-items-center mb-3">
-                      <i class="fa-solid fa-gavel text-muted fs-5 me-2"></i>
-                      <h6 class="fw-bold mb-0 text-dark">ข้อมูลด้านกฎหมาย</h6>
+                      <i class="fa-solid fa-gavel fs-5 me-2" style="color: #0066cc;"></i>
+                      <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลด้านกฎหมาย</h6>
                     </div>
                     <p class="text-secondary small mb-3">หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก</p>
                     
+                    <!-- Consent 1 -->
                     <label class="consent-box shadow-sm" id="boxPrivacy">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
-                      <span class="consent-text fw-medium fst-italic" style="font-size: 14px;">
-                        <span class="text-danger fw-bold fst-normal">*</span> ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
-                        <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold text-primary text-decoration-none" onclick="event.stopPropagation()">อ่านนโยบายเพิ่มเติมคลิก</a>
+                      <span class="consent-text fw-medium fst-italic" style="font-size: 13.5px;">
+                        <span class="text-danger fw-bold fst-normal">*</span>ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
+                        <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
                       </span>
                     </label>
 
+                    <!-- Consent 2 -->
                     <label class="consent-box shadow-sm" id="boxTerms">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkTerms" onchange="toggleConsentStyle('boxTerms', this); checkConsentState(); regenerateAutomatedQR(); checkEmailReminder();">
-                      <span class="consent-text fw-medium fst-italic" style="font-size: 14px;">
-                        ฉันยินยอมให้โรชประมวลผลข้อมูลส่วนบุคคลเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาด
+                      <span class="consent-text fw-medium fst-italic" style="font-size: 13.5px;">
+                        ฉันยินยอมให้โรชและบริษัทในเครือประมวลผลข้อมูลส่วนบุคคลของฉันเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาดตามที่ระบุในข้อกำหนดและนโยบายของโรช 
+                        <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;" onclick="event.stopPropagation()">https://www.roche.co.th/en/privacy-and-communication-terms/</a>
                       </span>
                     </label>
                   </div>
