@@ -109,7 +109,7 @@
     .overview-card.purple .overview-value { color: #8b5cf6; }
     .overview-pct { font-size: 14px; font-weight: 700; opacity: 0.75; }
 
-    /* 🌟 Clean Table Styles & Headers (สีเทาอ่อน) */
+    /* 🌟 Clean Table Styles & Headers */
     .table-container-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
     #employeeListTableWrapper, #historyTableWrapper { flex: 1; overflow-y: auto; position: relative; scrollbar-width: thin; }
     
@@ -138,8 +138,6 @@
     .btn-filter-pill { background: #ffffff; border: 1px solid #cbd5e1; color: #475569; border-radius: 50px; padding: 8px 16px; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; display: flex; align-items: center; }
     .btn-filter-pill:hover { background: #f8fafc; border-color: #94a3b8; color: #0066cc; }
 
-    .status-check { color: #10b981; font-size: 1.1rem; font-weight: 800; }
-    .status-dash { color: #cbd5e1; font-size: 1rem; font-weight: 800; }
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
 
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
@@ -155,13 +153,13 @@
     .multiselect-item input { margin-right: 8px; cursor: pointer; }
 
     .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
-    .consent-box.active { background-color: #eff6ff; border-color: #0d6efd; box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15); }
+    .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15); }
     .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
 
     .pagination { justify-content: flex-end; margin-bottom: 0; }
     .page-link { color: #475569; border-radius: 6px; margin: 0 2px; border: 1px solid #e2e8f0; font-weight: 600; padding: 4px 10px; font-size: 13px; }
-    .page-link:hover { background-color: #f1f5f9; color: #0d6efd; }
-    .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
+    .page-link:hover { background-color: #f1f5f9; color: #0066cc; }
+    .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.2); }
     .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
@@ -180,10 +178,9 @@
       .app-header { flex-direction: column; gap: 12px; padding: 12px; }
       .nav-container-box { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
       .nav-pills { flex-wrap: nowrap; width: max-content; margin: 0 auto; }
-      .content-wrapper { padding: 12px 8px; }
+      .content-wrapper { padding: 12px 8px; overflow-y: visible; }
       .table-register-view, .table-logs-view { width: 100%; min-width: 800px; }
       
-      /* ให้มือถือ scroll ภายในหน้าทั้งหมดได้เป็นปกติ */
       .view-section { overflow-y: auto; display: block; }
       .qr-row-container { flex-direction: column; }
     }
@@ -368,8 +365,8 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (2 Columns Layout with Internal Scroll) -->
-        <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1200px; padding-bottom: 10px;">
+        <!-- 🌟 QR View (3 Columns Layout for Desktop/iPad) -->
+        <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1400px; padding-bottom: 10px;">
           
           <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
             <button class="btn btn-light bg-white border shadow-sm rounded-pill px-3 py-2 fw-bold text-secondary" onclick="goBackToList()"><i class="fa-solid fa-arrow-left me-2"></i> กลับหน้าหลัก (Back)</button>
@@ -377,16 +374,16 @@
             <div class="d-none d-md-block" style="width: 140px;"></div>
           </div>
 
-          <div class="row g-4 flex-grow-1 qr-row-container" style="min-height: 0;">
+          <div class="row g-3 flex-grow-1 qr-row-container" style="min-height: 0;">
             
-            <!-- Left Column: Profile & Contact -->
-            <div class="col-lg-6 col-md-12 d-flex flex-column" style="min-height: 0;">
+            <!-- Column 1: Profile & Contact -->
+            <div class="col-lg-4 col-md-6 col-12 d-flex flex-column" style="min-height: 0;">
                <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
                   
                   <div class="text-center mb-4 pb-3 border-bottom">
-                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.8rem; color:#0066cc;"></h3>
-                    <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.2rem;"></h4>
-                    <p id="targetId" class="text-muted mb-3" style="font-size: 1rem;"></p>
+                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.6rem; color:#0066cc;"></h3>
+                    <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.1rem;"></h4>
+                    <p id="targetId" class="text-muted mb-3" style="font-size: 0.95rem;"></p>
                     <div id="targetBadges" class="mb-2 d-flex flex-wrap justify-content-center"></div>
                   </div>
 
@@ -395,16 +392,16 @@
                      <p class="text-muted small mb-2">โหมดบันทึกและสร้างรหัสลงทะเบียนแพทย์ท่านใหม่</p>
                      <div class="px-2 mb-3 text-start">
                        <label class="form-label fw-bold text-primary d-block mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
-                       <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="font-size: 1.2rem; color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
+                       <input type="text" id="inputNewName" class="form-control text-center fw-bold shadow-none" style="color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
                      </div>
                   </div>
 
                   <div class="text-start flex-grow-1">
                      <div class="d-flex align-items-center mb-3">
-                       <i class="fa-solid fa-address-book text-muted fs-4 me-2"></i>
-                       <h5 class="fw-bold mb-0 text-dark">ข้อมูลติดต่อ</h5>
+                       <i class="fa-solid fa-address-book text-muted fs-5 me-2"></i>
+                       <h6 class="fw-bold mb-0 text-dark">ข้อมูลติดต่อ</h6>
                      </div>
-                     <p class="text-secondary mb-3" style="font-size: 13.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+                     <p class="text-secondary mb-3" style="font-size: 13px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
                      
                      <div class="mb-3">
                        <label class="form-label fw-bold text-dark">หมายเลขโทรศัพท์</label>
@@ -417,20 +414,25 @@
                          <i class="fa-solid fa-circle-info me-1"></i> ข้อแนะนำ: อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE
                        </div>
                        <div id="emailReminderText" class="text-danger mt-2 small fw-bold" style="display: none;">
-                         <i class="fa-solid fa-triangle-exclamation me-1"></i> เนื่องจากท่านเลือกยินยอมรับข้อมูลข่าวสาร โปรดระบุอีเมล
+                         <i class="fa-solid fa-triangle-exclamation me-1"></i> โปรดระบุอีเมล เนื่องจากท่านยอมรับข้อตกลง
                        </div>
                      </div>
                   </div>
 
+                  <!-- New Doctor Fields -->
                   <div id="newDoctorFields" class="mt-4 pt-4 border-top text-start" style="display: none;">
                     <div class="d-flex align-items-center mb-3">
-                      <i class="fa-solid fa-user-md text-muted fs-4 me-2"></i>
-                      <h5 class="fw-bold mb-0 text-dark">ข้อมูลอาชีพ</h5>
+                      <i class="fa-solid fa-user-md text-muted fs-5 me-2"></i>
+                      <h6 class="fw-bold mb-0 text-dark">ข้อมูลอาชีพ</h6>
                     </div>
                     <div class="mb-3">
                       <label class="form-label fw-bold text-dark">อาชีพ <span class="text-danger">*</span></label>
                       <select id="inputNewProfession" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
-                        <option value="-">-- เลือกอาชีพ --</option><option value="Doctor">Doctor / แพทย์</option><option value="Nurse">Nurse / พยาบาล</option><option value="Pharmacist">Pharmacist / เภสัชกร</option><option value="Other">Other Contact / อื่นๆ</option>
+                        <option value="-">-- เลือกอาชีพ --</option>
+                        <option value="Doctor">Doctor / แพทย์</option>
+                        <option value="Nurse">Nurse / พยาบาล</option>
+                        <option value="Pharmacist">Pharmacist / เภสัชกร</option>
+                        <option value="Other">Other Contact / อื่นๆ</option>
                       </select>
                     </div>
                     <div class="mb-3">
@@ -438,28 +440,26 @@
                       <select id="inputNewSpec" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
                     </div>
                     <div class="mb-3">
-                      <label class="form-label fw-bold text-dark">ชื่อองค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
-                      <select id="inputNewHospital" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="">กรอกชื่อองค์กร/สถานที่ทำงาน</option></select>
+                      <label class="form-label fw-bold text-dark">องค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
+                      <select id="inputNewHospital" class="form-select shadow-none" onchange="regenerateAutomatedQR()"><option value="">เลือกสถานที่ทำงาน</option></select>
                     </div>
                   </div>
-
                </div>
             </div>
 
-            <!-- Right Column: Consent & QR Code -->
-            <div class="col-lg-6 col-md-12 d-flex flex-column" style="min-height: 0;">
-               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar d-flex flex-column" style="overflow-y: auto;">
-                  
-                  <div class="text-start mb-3">
+            <!-- Column 2: Consent -->
+            <div class="col-lg-4 col-md-6 col-12 d-flex flex-column" style="min-height: 0;">
+               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
+                  <div class="text-start">
                     <div class="d-flex align-items-center mb-3">
-                      <i class="fa-solid fa-gavel text-muted fs-4 me-2"></i>
-                      <h5 class="fw-bold mb-0 text-dark">ข้อมูลด้านกฎหมาย</h5>
+                      <i class="fa-solid fa-gavel text-muted fs-5 me-2"></i>
+                      <h6 class="fw-bold mb-0 text-dark">ข้อมูลด้านกฎหมาย</h6>
                     </div>
                     <p class="text-secondary small mb-3">หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก</p>
                     
                     <label class="consent-box shadow-sm" id="boxPrivacy">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
-                      <span class="consent-text fw-medium fst-italic" style="font-size: 14.5px;">
+                      <span class="consent-text fw-medium fst-italic" style="font-size: 14px;">
                         <span class="text-danger fw-bold fst-normal">*</span> ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
                         <a href="https://www.roche.co.th/en/privacy-and-communication-terms/" target="_blank" class="fw-bold text-primary text-decoration-none" onclick="event.stopPropagation()">อ่านนโยบายเพิ่มเติมคลิก</a>
                       </span>
@@ -467,30 +467,37 @@
 
                     <label class="consent-box shadow-sm" id="boxTerms">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkTerms" onchange="toggleConsentStyle('boxTerms', this); checkConsentState(); regenerateAutomatedQR(); checkEmailReminder();">
-                      <span class="consent-text fw-medium fst-italic" style="font-size: 14.5px;">
+                      <span class="consent-text fw-medium fst-italic" style="font-size: 14px;">
                         ฉันยินยอมให้โรชประมวลผลข้อมูลส่วนบุคคลเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาด
                       </span>
                     </label>
                   </div>
+               </div>
+            </div>
 
-                  <div id="lockAlert" class="alert alert-info small fw-bold mb-0 text-center flex-shrink-0">
-                    <i class="fa-solid fa-lock me-2"></i> กรุณาติ๊กยอมรับข้อกำหนดของโรช เพื่อแสดง QR Code ครับ
+            <!-- Column 3: QR Code Display -->
+            <div class="col-lg-4 col-md-12 col-12 d-flex flex-column" style="min-height: 0;">
+               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 d-flex flex-column justify-content-center text-center custom-scrollbar" style="background-color: #f8fafc; overflow-y: auto;">
+                  
+                  <div id="lockAlert" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+                    <i class="fa-solid fa-lock mb-3 opacity-50" style="font-size: 3.5rem;"></i>
+                    <p class="small fw-bold mb-0">กรุณาติ๊กยอมรับข้อกำหนดของโรช<br>เพื่อแสดง QR Code ครับ</p>
                   </div>
 
-                  <div id="qrContentBlock" style="display: none; flex-grow: 1; min-height: 0;">
-                    <div class="bg-light p-3 border rounded-4 text-center d-flex flex-column align-items-center justify-content-center h-100">
-                      <!-- 🌟 ปรับขนาดรูป QR ให้ไม่ดันหน้าจอ -->
+                  <div id="qrContentBlock" class="d-none flex-column align-items-center justify-content-center h-100">
+                    <div class="bg-white p-3 border rounded-4 shadow-sm w-100">
                       <div id="qrcodeContainer"></div>
-                      <p class="text-success fw-bold mt-2 mb-1" style="font-size:13.5px;">📲 สแกนรหัสเพื่อเพิ่มเพื่อน Roche Thailand</p>
-                      <p id="qrExpiryText" class="text-danger small fw-bold mb-0"></p>
-                      <button id="btnCopyLink" class="btn btn-white border bg-white btn-sm mt-3 fw-bold text-dark w-100 rounded-pill py-2 shadow-sm" onclick="copyQrLink()"><i class="fa-solid fa-link me-1 text-primary"></i> คัดลอกลิงก์ส่งให้แพทย์</button>
+                      <p class="text-success fw-bold mt-3 mb-1" style="font-size:13.5px;">📲 สแกนเพื่อเพิ่มเพื่อน Roche Thailand</p>
+                      <p id="qrExpiryText" class="text-danger small fw-bold mb-0" style="font-size: 12px;"></p>
                     </div>
+                    <button id="btnCopyLink" class="btn btn-white border bg-white btn-sm mt-3 fw-bold text-dark w-100 rounded-pill py-2 shadow-sm" onclick="copyQrLink()"><i class="fa-solid fa-link me-1 text-primary"></i> คัดลอกลิงก์ส่งให้แพทย์</button>
                   </div>
 
                </div>
             </div>
           </div>
 
+          <!-- Bottom Action Bar -->
           <div id="actionBottomBar" class="card mt-3 p-3 border-0 shadow-sm rounded-4 flex-row justify-content-end align-items-center gap-2 flex-shrink-0">
              <button class="btn btn-light border px-4 py-2 fw-bold text-secondary rounded-3" onclick="goBackToList()">ยกเลิก (Cancel)</button>
              <button id="btnConfirm" class="btn btn-primary px-4 px-md-5 py-2 fw-bold shadow-sm rounded-3" style="background-color:#0066cc !important; border:none;" onclick="submitRegistration()">✅ ยืนยันการออกคิวอาร์ (Save Log)</button>
@@ -741,6 +748,7 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
+    // 🌟 ฟังก์ชันเปลี่ยนแท็บที่แก้ไขแล้ว ไม่ซ้อนทับกันแน่นอน
     function switchTab(viewName) {
       document.getElementById("registerView").style.display = "none"; 
       document.getElementById("historyView").style.display = "none"; 
@@ -1071,15 +1079,24 @@
     }
 
     function checkConsentState() {
-      const isAgreed = document.getElementById("chkPrivacy").checked; let isValid = true; let msg = "📋 กรุณาติ๊กกล่องด้านบนเพื่อยอมรับข้อกำหนดและนโยบายของโรช ก่อนแสดง QR Code ครับ";
+      const isAgreed = document.getElementById("chkPrivacy").checked; let isValid = true; let msg = "กรุณาติ๊กยอมรับข้อกำหนดของโรช<br>เพื่อแสดง QR Code ครับ";
       if (isNewDoctorMode) {
         const h = document.getElementById("inputNewHospital").value; const s = document.getElementById("inputNewSpec").value; const p = document.getElementById("inputNewProfession").value;
-        if (!h || s === "-" || p === "-") { isValid = false; msg = "⚠️ กรุณาเลือกข้อมูล ชื่อองค์กร/สถานที่ทำงาน, ความเชี่ยวชาญ และ อาชีพ ให้ครบถ้วน รวมถึงยอมรับ Consent เพื่อเปิดแสดง QR Code"; }
+        if (!h || s === "-" || p === "-") { isValid = false; msg = "กรุณากรอกข้อมูลองค์กร ความเชี่ยวชาญ และอาชีพ<br>ให้ครบถ้วนก่อนครับ"; }
       }
+      
+      /* 🌟 แก้ไข Logic การแสดงผล QR Code ไม่ให้กระตุกหรือล้น */
       if (isAgreed && isValid) {
-        document.getElementById("lockAlert").style.display = "none"; document.getElementById("qrContentBlock").style.display = "flex";
+        document.getElementById("lockAlert").classList.remove("d-flex");
+        document.getElementById("lockAlert").style.display = "none"; 
+        document.getElementById("qrContentBlock").classList.remove("d-none");
+        document.getElementById("qrContentBlock").classList.add("d-flex"); 
       } else {
-        document.getElementById("qrContentBlock").style.display = "none"; document.getElementById("lockAlert").style.display = "block"; document.getElementById("lockAlert").className = "alert alert-info small fw-bold mb-0 text-center flex-shrink-0"; document.getElementById("lockAlert").style.backgroundColor = ""; document.getElementById("lockAlert").style.color = ""; document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock me-2"></i> ${msg}`;
+        document.getElementById("qrContentBlock").classList.remove("d-flex");
+        document.getElementById("qrContentBlock").classList.add("d-none");
+        document.getElementById("lockAlert").classList.add("d-flex");
+        document.getElementById("lockAlert").style.display = "flex"; 
+        document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock fs-1 mb-3 opacity-50"></i><p class="small fw-bold mb-0">${msg}</p>`;
       }
     }
 
@@ -1103,7 +1120,7 @@
 
     async function submitRegistration() {
       let fEmp = {}; const fEmail = document.getElementById("inputEmail").value.trim(); const fMobile = document.getElementById("inputMobile").value.trim();
-      const btn = document.getElementById("btnConfirm"); const lockAlertBox = document.getElementById("lockAlert");
+      const btn = document.getElementById("btnConfirm"); 
       
       if (isNewDoctorMode) {
         const n = document.getElementById("inputNewName").value.trim(); const h = document.getElementById("inputNewHospital").value.trim(); const s = document.getElementById("inputNewSpec").value.trim(); const p = document.getElementById("inputNewProfession").value.trim();
@@ -1231,7 +1248,7 @@
 
       pd.forEach(row => {
           let ev = String(row.email || "").trim().toLowerCase(); let ic = (ev==="yes"||(ev!=="none"&&ev!=="no"&&ev!=="")) ? '<i class="fa-solid fa-check text-success fs-5"></i>' : '<span class="text-muted opacity-25 fw-bold">—</span>';
-          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
+          tb.innerHTML += `<tr><td class="ps-4"><span class="text-secondary fw-medium" style="font-size:13.5px;">${row.timestamp}</span></td><td><span class="text-muted fw-bold" style="font-size:12px;">${row.who}</span></td><td class="fw-bold" style="color:#1e293b;">${row.name}</td><td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${row.hospital}</span></td><td class="text-center">${ic}</td></tr>`;
       });
     }
 
