@@ -139,12 +139,59 @@
     .page-item.active .page-link { background-color: #0066cc; border-color: #0066cc; color: white; }
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
+    
+    .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; background-color: #ffffff; color: #1e293b; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
+    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
+    .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+
+    .form-control-sm, .form-select-sm { padding: 4px 10px !important; font-size: 13.5px !important; border-radius: 6px !important; min-height: 32px; }
+    
+    .dropdown-multiselect { position: relative; width: 100%; }
+    .dropdown-multiselect-btn { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; width: 100%; text-align: left; font-weight: 500; color: #1e293b; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .dropdown-multiselect-btn.btn-sm-custom { padding: 4px 10px !important; font-size: 13.5px !important; border-radius: 6px !important; min-height: 32px; border: 1px solid #cbd5e1; }
+    .dropdown-multiselect-btn::after { content: ""; display: inline-block; margin-left: 0.255em; vertical-align: 0.255em; border-top: 0.3em solid; border-right: 0.3em solid transparent; border-bottom: 0; border-left: 0.3em solid transparent; }
+    .dropdown-multiselect-menu { position: absolute; top: 100%; left: 0; width: 100%; max-height: 240px; overflow-y: auto; background: white; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); z-index: 1000; padding: 6px; display: none; }
+    .dropdown-multiselect-menu.show { display: block; }
+    .multiselect-item { display: flex; align-items: center; padding: 6px 10px; border-radius: 6px; font-weight: 500; color: #1e293b; }
+    .multiselect-item:hover { background-color: #f1f5f9; }
+    .multiselect-item input { margin-right: 8px; width: 18px; height: 18px; cursor: pointer; }
+    .multiselect-item label { margin: 0; cursor: pointer; width: 100%; font-size: 14px; }
+
+    .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px 15px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
+    .consent-box:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+    .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.15); }
+    .consent-checkbox { width: 28px !important; height: 28px !important; margin-top: 2px !important; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
+    .consent-text { font-size: 16px; color: #334155; margin: 0; line-height: 1.5; flex-grow: 1; }
+
+    #qrcodeContainer { display: flex; justify-content: center; margin: 10px auto; padding: 10px; background: white; border-radius: 10px; }
+    #qrcodeContainer img { max-width: 100%; height: auto; }
 
     @media (max-width: 991.98px) {
       .app-header { flex-direction: column; gap: 12px; padding: 12px; }
-      .nav-container-box { width: 100%; overflow-x: auto; padding-bottom: 4px; }
-      .nav-pills { flex-wrap: nowrap; width: max-content; }
+      .nav-container-box { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
+      .nav-pills { flex-wrap: nowrap; width: max-content; margin: 0 auto; }
       .content-wrapper { padding: 12px 8px; }
+      
+      .table-register-view, .table-logs-view { width: 100%; min-width: 600px; }
+      #qrView { width: 100% !important; max-width: 100% !important; padding: 0px !important; margin: 0px !important; border: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; display: none; }
+      #qrView .card { width: 100% !important; max-width: 100% !important; padding: 15px 12px !important; border-radius: 0px !important; margin-bottom: 0px !important; border: none !important; border-top: 1px solid #e2e8f0 !important; border-bottom: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+    }
+    
+    @media print {
+      @page { size: A4 portrait; margin: 1.5cm; }
+      body { background-color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; overflow: visible; height: auto; }
+      body * { visibility: hidden; }
+      #qrView, #qrView * { visibility: visible; }
+      #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; display: block !important; }
+      #qrView .card, .consent-card, #lockAlert, .btn, button, .btn-print-screen, .nav-container-box, #newDoctorTitleBlock { display: none !important; }
+      #targetName { font-size: 32pt !important; color: #06C755 !important; margin-top: 20px !important; }
+      #targetThName { font-size: 20pt !important; color: #555 !important; }
+      .header-title-print { font-size: 26pt !important; color: #06C755 !important; }
+      #qrContentBlock { display: block !important; margin-top: 40px !important; text-align: center !important; }
+      .bg-light.border.rounded { border: none !important; background: transparent !important; }
+      #qrExpiryText { font-size: 14pt !important; margin-top: 15px !important; }
+      #btnCopyLink { display: none !important; }
+      .app-header { display: none !important; }
     }
   </style>
 </head>
@@ -185,8 +232,9 @@
       <div id="registerView" style="display: flex;">
         <div id="listView">
           
+          <!-- 🌟 ย้าย Filters กลับขึ้นมาด้านบนสุด -->
           <div class="card p-3 mb-3 border-0 shadow-sm">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
               
               <div class="search-input-wrapper d-flex flex-grow-1" style="max-width: 500px;">
                 <span class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -196,17 +244,14 @@
               </div>
               
               <div class="d-flex gap-2">
-                <button class="btn btn-action-outline" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFiltersWrapper">
-                  <i class="fa-solid fa-sliders me-1"></i> Advanced Filters
-                </button>
                 <button class="btn btn-action-outline" onclick="refreshEmployeeData()" type="button" title="Refresh">
                   <i class="fa-solid fa-arrows-rotate" id="refreshIcon"></i>
                 </button>
               </div>
             </div>
           
-            <div class="collapse mt-3 pt-3 border-top" id="advancedFiltersWrapper">
-              <!-- Advanced Filters Code Remains Same but styled implicitly by global inputs -->
+            <!-- 🌟 Advanced Filters (Expanded by default or styled cleanly) -->
+            <div class="pt-2 border-top" id="advancedFiltersWrapper">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-primary small">Filters</span>
                 <a href="#" class="text-danger small text-decoration-none fw-bold" onclick="clearAllFilters(); return false;">Clear All</a>
@@ -223,7 +268,11 @@
                     <div class="dropdown-multiselect-menu" id="classMultiselectMenu"></div>
                   </div>
                 </div>
-                <div class="col-md-2 col-6"><label class="form-label text-secondary small">LINE / Email</label><select id="filterLineStatus" class="form-select form-select-sm mb-1" onchange="applyFilters()"><option value="">LINE: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select><select id="filterEmailStatus" class="form-select form-select-sm" onchange="applyFilters()"><option value="">Email: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select></div>
+                <div class="col-md-2 col-6">
+                  <label class="form-label text-secondary small">LINE / Email</label>
+                  <select id="filterLineStatus" class="form-select form-select-sm mb-1" onchange="applyFilters()"><option value="">LINE: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select>
+                  <select id="filterEmailStatus" class="form-select form-select-sm" onchange="applyFilters()"><option value="">Email: All</option><option value="allocated">Allocated</option><option value="empty">Empty</option></select>
+                </div>
               </div>
             </div>
           </div>
@@ -245,7 +294,7 @@
                     <th style="width: 80px;" class="text-center">LINE</th>
                     <th style="width: 80px;" class="text-center">Email</th>
                     <th style="width: 80px;" class="text-center">Mobile</th>
-                    <th style="width: 70px;" class="text-center"></th>
+                    <th style="width: 70px;" class="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody id="employeeTableBody"></tbody>
@@ -265,11 +314,11 @@
         </div>
 
         <div id="qrView" class="reg-box mx-auto" style="max-width: 650px; position: relative;">
-          <!-- Registration form content remains the same, skipping to keep clean -->
+          <!-- Registration form content -->
           <div class="p-4 p-sm-5 text-center">
             
             <div class="text-start mb-4 pb-3 border-bottom">
-              <h2 class="fw-bold mb-1" style="color: #1e293b; font-size: 1.8rem; letter-spacing: -0.5px;">Verify Information</h2>
+              <h2 class="fw-bold mb-1 header-title-print" style="color: #1e293b; font-size: 1.8rem; letter-spacing: -0.5px;">Verify Information</h2>
               <p class="text-secondary mt-1 mb-0" style="font-size: 14px;">Fields marked with <span class="text-danger fw-bold">*</span> are required.</p>
             </div>
 
@@ -351,20 +400,21 @@
         </div>
       </div>
 
-      <!-- ================= HISTORY VIEW (Minimalist) ================= -->
+      <!-- ================= HISTORY VIEW (Full Height Empty State) ================= -->
       <div id="historyView" style="display: none;">
         
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 flex-shrink-0">
           <div class="search-input-wrapper d-flex align-items-center px-3 py-1 border rounded-pill shadow-sm bg-white" style="width: max-content;">
             <i class="fa-solid fa-filter text-muted me-2"></i>
             <span class="text-secondary small fw-bold me-2">Recorded By:</span>
+            <!-- 🌟 ปรับให้ Dropdown แนบเนียน ไม่มีขอบ -->
             <select id="filterLogRecorder" class="border-0 bg-transparent text-dark fw-bold outline-none shadow-none" style="outline: none; cursor:pointer;" onchange="applyLogRecorderFilter()">
               <option value="">All Users</option>
             </select>
           </div>
         </div>
         
-        <!-- 🌟 Clean Stat Cards -->
+        <!-- Clean Stat Cards -->
         <div class="row g-3 mb-4 flex-shrink-0">
           <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card border-left-info">
@@ -406,7 +456,7 @@
 
         <div class="table-responsive d-flex flex-column flex-grow-1" style="min-height: 0;">
           <div id="historyTableWrapper">
-            <table class="table table-hover align-middle table-logs-view mb-0">
+            <table class="table table-hover align-middle table-logs-view mb-0 h-100">
               <thead class="roche-logs-header">
                 <tr>
                   <th class="sortable-header" onclick="sortHistTable(0)">Date <i class="fa-solid fa-sort sort-icon" id="icon-hist-0"></i></th>
@@ -416,8 +466,9 @@
                   <th style="width: 60px;" class="text-center">Email</th>
                 </tr>
               </thead>
-              <tbody id="historyTableBody">
-                <tr><td colspan="5" class="text-center py-5 border-0 text-muted"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>
+              <!-- 🌟 ปรับ tbody ให้ขยายเต็มพื้นที่เมื่อไม่มีข้อมูล -->
+              <tbody id="historyTableBody" style="height: 100%;">
+                <tr style="height: 100%;"><td colspan="5" class="text-center border-0 text-muted"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>
               </tbody>
             </table>
           </div>
@@ -434,24 +485,25 @@
         </div>
       </div>
 
-      <!-- ================= BATCH VIEW ================= -->
+      <!-- ================= BATCH VIEW (Full width) ================= -->
       <div id="batchView" style="display: none; overflow-y: auto;">
-        <div class="card p-5 border-0 shadow-sm text-center mx-auto mt-4" style="max-width: 700px;">
+        <!-- 🌟 ขยายกล่องให้เต็มและอยู่ตรงกลาง -->
+        <div class="card p-5 border-0 shadow-sm text-center w-100" style="max-width: 800px; margin: 0 auto;">
           <div class="mb-4 text-primary" style="font-size: 3rem;"><i class="fa-solid fa-file-excel"></i></div>
           <h3 class="fw-bold mb-3 text-dark">Batch QR Generation</h3>
-          <p class="text-secondary mb-4">
+          <p class="text-secondary mb-4 px-md-5">
             Upload the Excel registration sheet. The system will search for HCP names, generate QR Codes, and auto-fill missing status columns.
           </p>
           
-          <div class="p-4 bg-light rounded-4 border border-primary border-opacity-10 mb-4">
-            <input type="file" id="excelFileInput" accept=".xlsx" class="form-control mb-3 shadow-sm">
+          <div class="p-4 bg-light rounded-4 border border-primary border-opacity-10 mb-4 mx-auto w-100" style="max-width: 600px;">
+            <input type="file" id="excelFileInput" accept=".xlsx" class="form-control mb-3 shadow-sm py-2">
             <button class="btn btn-primary w-100 py-2 fw-bold rounded-3 shadow-sm" id="btnProcessExcel" onclick="processExcelFile()">
-              Process Excel File
+              <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Process Excel File
             </button>
             <div id="batchStatusLog" class="mt-3 text-primary fw-bold" style="display:none;">Processing... Please wait ⏳</div>
           </div>
           
-          <div class="text-start bg-white p-3 rounded border small text-secondary">
+          <div class="text-start bg-white p-3 rounded border small text-secondary mx-auto w-100" style="max-width: 600px;">
             <b>💡 Note:</b> The system reads names from <b>Column B</b> and places QR Codes in <b>Column F</b> (Row 8 onwards).
           </div>
         </div>
@@ -460,7 +512,7 @@
     </div>
   </div>
 
-  <!-- 🌟 Modals (Change Password, Alert, Confirm) remain identical in logic, omitted unchanged JS to save space -->
+  <!-- 🌟 Modals -->
   <div class="modal fade" id="changePassModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
@@ -947,7 +999,7 @@
 
     async function fetchLogsData() {
       const tb = document.getElementById("historyTableBody"); const pi = document.getElementById("histPageInfo"); const ul = document.getElementById("histPaginationUl");
-      tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center text-muted border-0 bg-white" style="padding: 10vh 0;"><div class="spinner-border text-primary mb-3"></div><div class="fw-bold mt-2">Loading logs...</div></td></tr>';
+      tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted" style="padding: 10vh 0;"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>';
       pi.innerHTML = ""; ul.innerHTML = "";
       
       try {
@@ -959,7 +1011,7 @@
         }
 
         if (allLogs.length === 0) {
-          tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center text-muted border-0 bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No registration logs found.</h5></td></tr>';
+          tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No registration logs found.</h5></td></tr>';
           globalHistoryLogs = []; resetDashboardStats(); return;
         }
         
@@ -970,7 +1022,7 @@
         });
 
         buildRecorderDropdown(globalHistoryLogs); histSortCol = 0; histSortAsc = false; applyLogRecorderFilter();
-      } catch (error) { tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center text-danger border-0 bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-triangle-exclamation fs-2 mb-3 d-block"></i>Error loading logs</td></tr>'; }
+      } catch (error) { tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-danger" style="padding: 10vh 0;"><i class="fa-solid fa-triangle-exclamation fs-2 mb-3 d-block"></i>Error loading logs</td></tr>'; }
     }
 
     function buildRecorderDropdown(logs) {
@@ -1022,7 +1074,7 @@
       const tb = document.getElementById("historyTableBody"); const pi = document.getElementById("histPageInfo"); const ul = document.getElementById("histPaginationUl");
       tb.innerHTML = "";
       if (filteredHistData.length === 0) {
-        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center text-muted border-0 bg-white" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No logs match the selected criteria.</h5></td></tr>';
+        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="5" class="text-center border-0 text-muted" style="padding: 10vh 0;"><i class="fa-solid fa-folder-open mb-3 opacity-50" style="font-size: 4rem;"></i><h5 class="fw-bold">No logs match the selected criteria.</h5></td></tr>';
         pi.innerText = ""; ul.innerHTML = ""; return;
       }
       const t = filteredHistData.length; const tp = Math.ceil(t / histRowsPerPage); if (histCurrentPage > tp) histCurrentPage = tp || 1;
