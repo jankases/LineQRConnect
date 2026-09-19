@@ -188,6 +188,7 @@
       .qr-row-container { flex-direction: column; }
     }
     
+    /* 🌟 ตั้งค่า Print ให้เป็นแนวนอนและแผ่นเดียว */
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background-color: #fff !important; overflow: visible !important; height: auto !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -393,7 +394,7 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (3 Columns Layout for Desktop/iPad) -->
+        <!-- 🌟 QR View (3 Columns Layout with Unified Blue Headers) -->
         <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1400px; padding-bottom: 10px;">
           
           <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
@@ -540,8 +541,61 @@
         </div>
       </div>
 
-      <!-- ================= 🌟 BATCH VIEW 🌟 ================= -->
-      <!-- ปรับให้ใช้ Layout แบบ 2 Columns เหมือนหน้าแรก -->
+      <!-- ================= HISTORY VIEW ================= -->
+      <div id="historyView" class="view-section" style="display: none;">
+        
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 flex-shrink-0">
+          <div class="search-input-wrapper d-flex align-items-center px-3 py-1 border rounded-pill shadow-sm bg-white" style="width: max-content;">
+            <i class="fa-solid fa-filter text-muted me-2"></i>
+            <span class="text-secondary small fw-bold me-2">Recorded By:</span>
+            <select id="filterLogRecorder" class="border-0 bg-transparent text-dark fw-bold outline-none shadow-none" style="outline: none; cursor:pointer;" onchange="applyLogRecorderFilter()">
+              <option value="">All Users</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="row g-3 mb-4 flex-shrink-0">
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-info"><div class="stat-title"><i class="fa-regular fa-calendar-check text-info"></i> Today</div><div class="stat-value-hist" id="statToday">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-success"><div class="stat-title"><i class="fa-solid fa-calendar-days text-success"></i> Month</div><div class="stat-value-hist" id="statMonth">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-solid fa-rotate text-primary"></i> <span id="cycleLabel">Cycle</span></div><div class="stat-value-hist" id="statCycle">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-primary"><div class="stat-title"><i class="fa-regular fa-calendar text-primary"></i> Year</div><div class="stat-value-hist" id="statYear">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card" style="border-left: 4px solid #475569 !important;"><div class="stat-title"><i class="fa-solid fa-layer-group text-secondary"></i> Total</div><div class="stat-value-hist" id="statTotal">0</div></div></div>
+          <div class="col-6 col-md-4 col-lg-2"><div class="stat-card border-left-warning"><div class="stat-title"><i class="fa-solid fa-wifi text-warning"></i> Offline</div><div class="stat-value-hist text-warning" id="statOffline">0</div></div></div>
+        </div>
+
+        <div class="table-container-card">
+          <div id="historyTableWrapper">
+            <table class="table table-hover align-middle table-logs-view mb-0 h-100" style="width: 100%;">
+              <thead class="roche-logs-header">
+                <tr>
+                  <th class="sortable-header ps-4" onclick="sortHistTable(0)">Date <i class="fa-solid fa-sort sort-icon" id="icon-hist-0"></i></th>
+                  <th class="sortable-header" onclick="sortHistTable(1)">Admin <i class="fa-solid fa-sort sort-icon" id="icon-hist-1"></i></th>
+                  <th class="sortable-header" onclick="sortHistTable(2)">Doctor <i class="fa-solid fa-sort sort-icon" id="icon-hist-2"></i></th>
+                  <th class="sortable-header" onclick="sortHistTable(3)">Hospital <i class="fa-solid fa-sort sort-icon" id="icon-hist-3"></i></th>
+                  <!-- 🌟 เพิ่มคอลัมน์ Mobile ในหน้า Logs ให้ตรงกับหน้า Register -->
+                  <th style="width: 60px;" class="text-center">Email</th>
+                  <th style="width: 60px;" class="text-center pe-4">Mobile</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody" style="height: 100%;">
+                <tr style="height: 100%;"><td colspan="6" class="text-center py-5 border-0 text-muted bg-white"><div class="spinner-border text-primary mb-3"></div><br>Loading logs...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center p-3 border-top bg-white flex-shrink-0">
+            <div class="d-flex align-items-center">
+              <select id="histRowsSelect" class="form-select form-select-sm shadow-none border-light fw-bold" style="width: 70px; border-radius: 6px;" onchange="changeHistRowsPerPage()">
+                <option value="10">10</option><option value="15">15</option><option value="30">30</option><option value="50">50</option><option value="100" selected>100</option>
+              </select>
+              <span id="histPageInfo" class="text-muted small ms-3"></span>
+            </div>
+            <ul class="pagination pagination-sm mb-0" id="histPaginationUl"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= BATCH VIEW ================= -->
       <div id="batchView" class="view-section mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1400px; padding-bottom: 10px;">
         
         <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
@@ -551,14 +605,11 @@
 
         <div class="row g-4 flex-grow-1" style="min-height: 0;">
           
-          <!-- ฝั่งซ้าย: อัปโหลดและ Process -->
           <div class="col-lg-5 col-md-12 d-flex flex-column" style="min-height: 0;">
             <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar text-center" style="overflow-y: auto;">
-              
               <div class="mb-3" style="font-size: 3.5rem; color: #0066cc;">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
               </div>
-              
               <h4 class="fw-bold mb-3 text-dark">อัปโหลดรายชื่อ (Excel)</h4>
               <p class="text-secondary mb-4" style="font-size: 14.5px;">
                 ระบบจะค้นหารายชื่อจากฐานข้อมูล สร้าง QR Code ประจำตัวแพทย์ และกรอกข้อมูลสถานะให้โดยอัตโนมัติ
@@ -578,7 +629,6 @@
             </div>
           </div>
 
-          <!-- ฝั่งขวา: คู่มือการใช้งาน (Manual) -->
           <div class="col-lg-7 col-md-12 d-flex flex-column" style="min-height: 0;">
             <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar d-flex flex-column align-items-center justify-content-center" style="background-color: #f8fafc; overflow-y: auto;">
               <h5 class="fw-bold text-secondary mb-3 text-center" style="font-size: 16px;">
@@ -752,28 +802,38 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
+    // 🌟 แก้ไขฟังก์ชันสลับแท็บโดยเช็คว่าแต่ละ Element มีอยู่จริงหรือไม่ก่อนซ่อน 
+    // เพื่อป้องกัน Error ถ่ายทอด (Cannot read properties of null)
     function switchTab(viewName) {
-      document.getElementById("registerView").style.display = "none"; 
-      document.getElementById("historyView").style.display = "none"; 
-      document.getElementById("batchView").style.display = "none";
+      const regView = document.getElementById("registerView");
+      const histView = document.getElementById("historyView");
+      const batchView = document.getElementById("batchView");
+
+      if (regView) regView.style.display = "none";
+      if (histView) histView.style.display = "none";
+      if (batchView) batchView.style.display = "none";
       
-      document.getElementById("tabRegister").className = "nav-link"; 
-      document.getElementById("tabHistory").className = "nav-link"; 
-      document.getElementById("tabBatch").className = "nav-link";
+      const tabReg = document.getElementById("tabRegister");
+      const tabHist = document.getElementById("tabHistory");
+      const tabBatch = document.getElementById("tabBatch");
+
+      if (tabReg) tabReg.className = "nav-link"; 
+      if (tabHist) tabHist.className = "nav-link"; 
+      if (tabBatch) tabBatch.className = "nav-link";
       
       if(viewName === 'register') { 
-        document.getElementById("registerView").style.display = "flex"; 
-        document.getElementById("tabRegister").className = "nav-link active"; 
+        if (regView) regView.style.display = "flex"; 
+        if (tabReg) tabReg.className = "nav-link active"; 
         goBackToList(); 
       } 
       else if(viewName === 'history') { 
-        document.getElementById("historyView").style.display = "flex"; 
-        document.getElementById("tabHistory").className = "nav-link active"; 
+        if (histView) histView.style.display = "flex"; 
+        if (tabHist) tabHist.className = "nav-link active"; 
         fetchLogsData(); 
       } 
       else if (viewName === 'batch') { 
-        document.getElementById("batchView").style.display = "flex"; 
-        document.getElementById("tabBatch").className = "nav-link active"; 
+        if (batchView) batchView.style.display = "flex"; 
+        if (tabBatch) tabBatch.className = "nav-link active"; 
       }
     }
 
@@ -794,7 +854,13 @@
       } else showCustomAlert("Browser doesn't support voice search.", "warning");
     }
 
-    function goBackToList() { document.getElementById("qrView").style.display = "none"; document.getElementById("listView").style.display = "flex"; }
+    function goBackToList() { 
+      const qrView = document.getElementById("qrView");
+      const listView = document.getElementById("listView");
+      if (qrView) qrView.style.display = "none"; 
+      if (listView) listView.style.display = "flex"; 
+    }
+    
     function updateOfflineStat() { const q = JSON.parse(localStorage.getItem('offlineLogs') || '[]'); if (document.getElementById('statOffline')) document.getElementById('statOffline').innerText = q.length; }
     
     function updateOnlineStatus() {
@@ -1014,7 +1080,7 @@
         row.innerHTML = `<td class="fw-bold ps-4" style="color: #1e293b; font-size:13.5px;">${highlightText(emp.name, kw)}</td>
                          <td class="text-secondary" style="font-size:13px;">${highlightText(emp.thName, kw)}</td>
                          <td><span class="badge badge-specialty"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ${emp.spec}</span></td>
-                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
+                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
                          <td class="text-center">${getStatusUI(emp.lineId)}</td>
                          <td class="text-center">${getStatusUI(emp.email)}</td>
                          <td class="text-center">${getStatusUI(emp.mobile)}</td>
@@ -1034,7 +1100,12 @@
       document.getElementById("newDoctorFields").style.display = "block";
       document.getElementById("inputNewName").value = tName; document.getElementById("inputNewHospital").value = ""; document.getElementById("inputNewSpec").value = "-"; document.getElementById("inputNewProfession").value = "-"; document.getElementById("inputEmail").value = ""; document.getElementById("inputMobile").value = "";
       document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
-      document.getElementById("listView").style.display = "none"; document.getElementById("qrView").style.display = "flex";
+      
+      const listView = document.getElementById("listView");
+      const qrView = document.getElementById("qrView");
+      if (listView) listView.style.display = "none"; 
+      if (qrView) qrView.style.display = "flex";
+      
       regenerateAutomatedQR(); checkConsentState(); checkEmailReminder();
     }
 
@@ -1049,7 +1120,13 @@
       document.getElementById("newDoctorFields").style.display = "none";
       document.getElementById("inputEmail").value = getCleanInput(emp.email); document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
       document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
-      regenerateAutomatedQR(); document.getElementById("listView").style.display = "none"; document.getElementById("qrView").style.display = "flex"; checkConsentState(); checkEmailReminder(); 
+      
+      const listView = document.getElementById("listView");
+      const qrView = document.getElementById("qrView");
+      if (listView) listView.style.display = "none"; 
+      if (qrView) qrView.style.display = "flex";
+      
+      regenerateAutomatedQR(); checkConsentState(); checkEmailReminder(); 
     }
 
     function regenerateAutomatedQR() {
