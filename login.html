@@ -63,47 +63,8 @@
           <input type="password" class="form-control login-input" id="loginPassword" placeholder="••••••••" required>
         </div>
       </div>
-      <button type="submit" class="btn btn-login-submit w-100 mb-4" id="btnLoginBtn">Log In</button>
-      <div class="pt-2 border-top text-center">
-        <a href="#" class="text-decoration-none small fw-bold" style="color: #0066cc;" onclick="toggleView('forgot'); return false;">
-          <i class="fa-solid fa-file-signature me-1"></i> Forgot Password?
-        </a>
-      </div>
-    </form>
-
-    <!-- 2. FORM: FORGOT PASSWORD -->
-    <form id="forgotForm" class="d-none" onsubmit="handleForgotPassword(event)">
-      <div class="mb-4">
-        <label class="login-label">Enter your Email</label>
-        <div class="input-group login-input-group">
-          <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-          <input type="email" class="form-control login-input" id="forgotEmail" placeholder="name@roche.com" required>
-        </div>
-        <div class="form-text mt-2 text-start" style="font-size: 12px; color: #64748b;">
-          We will send a password reset link to your email.
-        </div>
-      </div>
-      <button type="submit" class="btn btn-warning w-100 mb-3 fw-bold text-dark border-0 rounded-3 py-2" id="btnForgotBtn">Send Reset Link</button>
-      <div class="pt-2 border-top">
-        <a href="#" class="text-decoration-none small fw-bold" style="color: #0066cc;" onclick="toggleView('login'); return false;">
-          <i class="fa-solid fa-arrow-left me-1"></i> Back to Log In
-        </a>
-      </div>
-    </form>
-
-    <!-- 3. FORM: RESET PASSWORD -->
-    <form id="resetForm" class="d-none" onsubmit="handleResetPassword(event)">
-      <div class="mb-4">
-        <label class="login-label">New Password</label>
-        <div class="input-group login-input-group mb-2">
-          <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-          <input type="password" class="form-control login-input" id="newPassword" placeholder="New Password" minlength="6" required>
-        </div>
-        <div class="form-text text-start" style="font-size: 12px; color: #64748b;">
-          Password must be at least 6 characters long.
-        </div>
-      </div>
-      <button type="submit" class="btn btn-login-submit w-100 mb-3" id="btnResetBtn">Save New Password</button>
+      <!-- ซ่อนส่วนลืมรหัสผ่านไปแล้ว -->
+      <button type="submit" class="btn btn-login-submit w-100" id="btnLoginBtn">Log In</button>
     </form>
 
   </div>
@@ -171,45 +132,13 @@
   }
 
   window.onload = () => {
-    if (window.location.hash.includes("type=recovery")) {
-      toggleView('reset');
-    } else {
-      if(sb) {
-        sb.auth.getSession().then(({ data }) => {
-          if (data && data.session) window.location.href = 'index.html';
-        });
-      }
+    // โค้ดส่วน Recovery ตัดทิ้ง เหลือแค่เช็ค Session
+    if(sb) {
+      sb.auth.getSession().then(({ data }) => {
+        if (data && data.session) window.location.href = 'index.html';
+      });
     }
   };
-
-  function toggleView(view) {
-    document.getElementById('loginForm').classList.add('d-none');
-    document.getElementById('forgotForm').classList.add('d-none');
-    document.getElementById('resetForm').classList.add('d-none');
-
-    const title = document.getElementById('mainTitle');
-    const subtitle = document.getElementById('subTitle');
-    const icon = document.getElementById('brandIcon');
-
-    if (view === 'login') {
-      document.getElementById('loginForm').classList.remove('d-none');
-      title.innerText = "LINE QR Connect"; subtitle.innerText = "Please log in with your company email";
-      icon.innerHTML = '<i class="fa-brands fa-line fs-1"></i>'; icon.style.background = "#06C755";
-    } else if (view === 'forgot') {
-      document.getElementById('forgotForm').classList.remove('d-none');
-      title.innerText = "Forgot Password"; subtitle.innerText = "Request a password reset link";
-      icon.innerHTML = '<i class="fa-solid fa-envelope-open-text fs-2"></i>'; icon.style.background = "#f59e0b";
-      
-      const currentEmail = document.getElementById('loginEmail').value.trim();
-      if(currentEmail) {
-        document.getElementById('forgotEmail').value = currentEmail;
-      }
-    } else if (view === 'reset') {
-      document.getElementById('resetForm').classList.remove('d-none');
-      title.innerText = "Reset Password"; subtitle.innerText = "Create your new secure password";
-      icon.innerHTML = '<i class="fa-solid fa-shield-halved fs-2"></i>'; icon.style.background = "#10b981";
-    }
-  }
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -236,46 +165,6 @@
       btn.disabled = false; btn.innerHTML = 'Log In';
     } else {
       window.location.href = 'index.html';
-    }
-  }
-
-  async function handleForgotPassword(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnForgotBtn');
-    const email = document.getElementById('forgotEmail').value.trim();
-
-    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...';
-
-    const { data, error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
-    });
-
-    if (error) {
-      showCustomAlert("Error: " + error.message, "error");
-    } else {
-      showCustomAlert("Password reset link sent!\nPlease check your inbox.", "success", () => {
-        toggleView('login');
-      });
-    }
-    btn.disabled = false; btn.innerHTML = 'Send Reset Link';
-  }
-
-  async function handleResetPassword(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnResetBtn');
-    const newPassword = document.getElementById('newPassword').value.trim();
-
-    btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Saving...';
-
-    const { data, error } = await sb.auth.updateUser({ password: newPassword });
-
-    if (error) {
-      showCustomAlert("Failed to reset password:\n" + error.message, "error");
-      btn.disabled = false; btn.innerHTML = 'Save New Password';
-    } else {
-      showCustomAlert("Password reset successfully!\nLogging you in...", "success", () => {
-        window.location.href = 'index.html';
-      });
     }
   }
 </script>
