@@ -141,7 +141,7 @@
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
 
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
-    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12); }
+    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 
     .dropdown-multiselect { position: relative; width: 100%; }
@@ -405,7 +405,7 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (3 Columns Layout with Unified Blue Headers) -->
+        <!-- 🌟 QR View (3 Columns Layout with Compact Form) -->
         <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1400px; padding-bottom: 10px;">
           
           <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
@@ -416,88 +416,87 @@
 
           <div class="row g-3 flex-grow-1 qr-row-container" style="min-height: 0;">
             
-            <!-- Column 1: Profile & Contact -->
+            <!-- Column 1: Profile, Contact & New Doctor Fields -->
             <div class="col-lg-4 col-md-6 col-12 qr-col">
-               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
+               <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
                   
-                  <div class="text-center mb-4 pb-3 border-bottom">
-                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.5rem; color:#0066cc;"></h3>
-                    <h4 id="targetThName" class="text-secondary mb-2 mt-1" style="font-size: 1.05rem;"></h4>
-                    <p id="targetId" class="text-muted mb-3" style="font-size: 0.9rem;"></p>
-                    <div id="targetBadges" class="mb-2 d-flex flex-wrap justify-content-center"></div>
+                  <!-- Normal Profile Block -->
+                  <div id="normalProfileBlock" class="text-center mb-3 pb-2 border-bottom">
+                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.4rem; color:#0066cc;"></h3>
+                    <h4 id="targetThName" class="text-secondary mb-1 mt-1" style="font-size: 1rem;"></h4>
+                    <p id="targetId" class="text-muted mb-2" style="font-size: 0.85rem;"></p>
+                    <div id="targetBadges" class="d-flex flex-wrap justify-content-center"></div>
                   </div>
 
-                  <div id="newDoctorTitleBlock" style="display: none; margin-bottom: 15px;" class="text-center">
-                     <span class="badge bg-warning text-dark fw-bold mb-2 px-3 py-2 rounded-pill">New Doctor Registration</span>
-                     <p class="text-muted small mb-2">โหมดบันทึกและสร้างรหัสลงทะเบียนแพทย์ท่านใหม่</p>
-                     <div class="px-2 mb-3 text-start">
-                       <label class="form-label fw-bold text-primary small d-block mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
-                       <input type="text" id="inputNewName" class="form-control form-control-sm text-center fw-bold shadow-none" style="color:#0066cc;" oninput="regenerateAutomatedQR()" placeholder="กรอกชื่อคุณหมอ...">
+                  <!-- 🌟 New Doctor Title & Input (Compact) -->
+                  <div id="newDoctorTitleBlock" style="display: none; margin-bottom: 12px;" class="text-center border-bottom pb-3">
+                     <div class="d-flex align-items-center justify-content-center mb-2">
+                       <span class="badge bg-warning text-dark fw-bold me-2 px-2 py-1 rounded-pill" style="font-size: 11px;">New HCP</span>
+                       <span class="fw-bold text-primary" style="font-size: 13px;">ลงทะเบียนแพทย์ใหม่</span>
                      </div>
+                     <input type="text" id="inputNewName" class="form-control form-control-sm text-center fw-bold shadow-none" style="color:#0066cc; font-size: 15px;" oninput="regenerateAutomatedQR()" placeholder="ชื่อ-นามสกุล (HCP Name) *">
                   </div>
 
-                  <div class="text-start flex-grow-1">
-                     <div class="d-flex align-items-center mb-3">
-                       <i class="fa-solid fa-address-book fs-5 me-2" style="color: #0066cc;"></i>
-                       <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลติดต่อ</h6>
+                  <!-- 🌟 Contact Info (Compact) -->
+                  <div class="text-start">
+                     <div class="d-flex align-items-center mb-2">
+                       <i class="fa-solid fa-address-book fs-6 me-2" style="color: #0066cc;"></i>
+                       <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 14px;">ข้อมูลติดต่อ</h6>
                      </div>
-                     <p class="text-secondary mb-3" style="font-size: 12.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
                      
-                     <div class="mb-2">
-                       <label class="form-label fw-bold text-dark small mb-1">หมายเลขโทรศัพท์</label>
-                       <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์">
-                     </div>
-                     <div class="mb-2">
-                       <label class="form-label fw-bold text-dark small mb-1">อีเมล <span class="text-danger">*</span></label>
-                       <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล">
-                       <div id="emailSuggestionText" class="text-primary mt-2" style="display: none; font-size: 12px;">
-                         <i class="fa-solid fa-circle-info me-1"></i> ข้อแนะนำ: อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE
+                     <div class="row g-2 mb-2">
+                       <div class="col-12">
+                         <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="หมายเลขโทรศัพท์ (Mobile)">
                        </div>
-                       <div id="emailReminderText" class="text-danger mt-2 fw-bold" style="display: none; font-size: 12px;">
-                         <i class="fa-solid fa-triangle-exclamation me-1"></i> โปรดระบุอีเมล เนื่องจากท่านยอมรับข้อตกลง
+                       <div class="col-12">
+                         <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="อีเมล (Email) *">
+                         <div id="emailSuggestionText" class="text-primary mt-1" style="display: none; font-size: 11px;">
+                           <i class="fa-solid fa-circle-info me-1"></i> อีเมลจำเป็นสำหรับการลงทะเบียน LINE
+                         </div>
+                         <div id="emailReminderText" class="text-danger mt-1 fw-bold" style="display: none; font-size: 11px;">
+                           <i class="fa-solid fa-triangle-exclamation me-1"></i> โปรดระบุอีเมล เนื่องจากท่านยอมรับข้อตกลง
+                         </div>
                        </div>
                      </div>
                   </div>
-               </div>
-            </div>
 
-            <!-- Column 2: Profession & Consent -->
-            <div class="col-lg-4 col-md-6 col-12 qr-col">
-               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
-                  
-                  <!-- 🌟 ย้าย ข้อมูลอาชีพ มาที่คอลัมน์นี้ -->
-                  <div id="newDoctorFields" class="text-start mb-3" style="display: none;">
+                  <!-- 🌟 New Doctor Fields (Profession) - Moved back to Col 1 & Compact -->
+                  <div id="newDoctorFields" class="mt-2 pt-2 border-top text-start" style="display: none;">
                     <div class="d-flex align-items-center mb-2">
-                      <i class="fa-solid fa-user-md fs-5 me-2" style="color: #0066cc;"></i>
-                      <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลอาชีพ</h6>
+                      <i class="fa-solid fa-user-md fs-6 me-2" style="color: #0066cc;"></i>
+                      <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 14px;">ข้อมูลอาชีพ</h6>
                     </div>
                     
                     <div class="row g-2 mb-2">
                       <div class="col-6">
-                        <label class="form-label fw-bold text-dark small mb-1">อาชีพ <span class="text-danger">*</span></label>
-                        <select id="inputNewProfession" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()">
-                          <option value="-">- เลือกอาชีพ -</option>
-                          <option value="Doctor">Doctor / แพทย์</option>
-                          <option value="Nurse">Nurse / พยาบาล</option>
-                          <option value="Pharmacist">Pharmacist</option>
-                          <option value="Other">Other Contact</option>
+                        <select id="inputNewProfession" class="form-select form-select-sm shadow-none" style="font-size: 12.5px;" onchange="regenerateAutomatedQR()">
+                          <option value="-">- เลือกอาชีพ * -</option>
+                          <option value="Doctor">แพทย์ (Doctor)</option>
+                          <option value="Nurse">พยาบาล (Nurse)</option>
+                          <option value="Pharmacist">เภสัชกร (Pharmacist)</option>
+                          <option value="Other">อื่นๆ (Other)</option>
                         </select>
                       </div>
                       <div class="col-6">
-                        <label class="form-label fw-bold text-dark small mb-1">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
-                        <select id="inputNewSpec" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()"><option value="-">-</option></select>
+                        <select id="inputNewSpec" class="form-select form-select-sm shadow-none" style="font-size: 12.5px;" onchange="regenerateAutomatedQR()">
+                          <option value="-">- ความเชี่ยวชาญ * -</option>
+                        </select>
                       </div>
                     </div>
 
-                    <div class="mb-2">
-                      <label class="form-label fw-bold text-dark small mb-1">องค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
-                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none" onchange="regenerateAutomatedQR()"><option value="">เลือกสถานที่ทำงาน</option></select>
+                    <div class="mb-1">
+                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none" style="font-size: 12.5px;" onchange="regenerateAutomatedQR()">
+                        <option value="">- องค์กร/สถานที่ทำงาน * -</option>
+                      </select>
                     </div>
-                    
-                    <hr class="mt-4 mb-2 border-secondary-subtle">
                   </div>
+               </div>
+            </div>
 
-                  <div class="text-start mb-1">
+            <!-- Column 2: Consent -->
+            <div class="col-lg-4 col-md-6 col-12 qr-col">
+               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card custom-scrollbar">
+                  <div class="text-start mb-3">
                     <div class="d-flex align-items-center mb-3">
                       <i class="fa-solid fa-gavel fs-5 me-2" style="color: #0066cc;"></i>
                       <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลด้านกฎหมาย</h6>
@@ -529,7 +528,7 @@
                   
                   <div id="lockAlert" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
                     <i class="fa-solid fa-lock mb-3 opacity-50" style="font-size: 3.5rem;"></i>
-                    <p class="small fw-bold mb-0" id="lockAlertText">กรุณาติ๊กยอมรับข้อกำหนดของโรช<br>เพื่อแสดง QR Code ครับ</p>
+                    <p class="small fw-bold mb-0 text-center" id="lockAlertText">กรุณาติ๊กยอมรับข้อกำหนดของโรช<br>เพื่อแสดง QR Code ครับ</p>
                   </div>
 
                   <div id="qrContentBlock" class="d-none flex-column align-items-center justify-content-center h-100">
@@ -1095,7 +1094,7 @@
         row.innerHTML = `<td class="fw-bold ps-4" style="color: #1e293b; font-size:13.5px;">${highlightText(emp.name, kw)}</td>
                          <td class="text-secondary" style="font-size:13px;">${highlightText(emp.thName, kw)}</td>
                          <td><span class="badge badge-specialty"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ${emp.spec}</span></td>
-                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
+                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
                          <td class="text-center">${getStatusUI(emp.lineId)}</td>
                          <td class="text-center">${getStatusUI(emp.email)}</td>
                          <td class="text-center">${getStatusUI(emp.mobile)}</td>
@@ -1110,11 +1109,22 @@
     function openNewDoctorForm(tName) {
       isNewDoctorMode = true; activeEmployee = null; 
       document.getElementById("btnConfirm").disabled = false;
-      document.getElementById("targetName").style.display = "none"; document.getElementById("targetThName").style.display = "none";
-      document.getElementById("newDoctorTitleBlock").style.display = "block"; document.getElementById("targetId").innerText = ""; document.getElementById("targetBadges").innerHTML = "";
+      
+      // 🌟 สลับการแสดงผลในการ์ดที่ 1 ให้โชว์เฉพาะฟอร์มกรอกชื่อและฟอร์มอาชีพ
+      document.getElementById("normalProfileBlock").style.display = "none"; 
+      document.getElementById("newDoctorTitleBlock").style.display = "block";
       document.getElementById("newDoctorFields").style.display = "block";
-      document.getElementById("inputNewName").value = tName; document.getElementById("inputNewHospital").value = ""; document.getElementById("inputNewSpec").value = "-"; document.getElementById("inputNewProfession").value = "-"; document.getElementById("inputEmail").value = ""; document.getElementById("inputMobile").value = "";
-      document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
+      
+      document.getElementById("inputNewName").value = tName; 
+      document.getElementById("inputNewHospital").value = ""; 
+      document.getElementById("inputNewSpec").value = "-"; 
+      document.getElementById("inputNewProfession").value = "-"; 
+      document.getElementById("inputEmail").value = ""; 
+      document.getElementById("inputMobile").value = "";
+      
+      document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; 
+      toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); 
+      toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
       
       const listView = document.getElementById("listView");
       const qrView = document.getElementById("qrView");
@@ -1127,14 +1137,24 @@
     function openRegistrationForm(emp) {
       isNewDoctorMode = false; activeEmployee = emp;
       document.getElementById("btnConfirm").disabled = false;
-      document.getElementById("targetName").style.display = "block"; document.getElementById("newDoctorTitleBlock").style.display = "none";
+      
+      // 🌟 สลับการแสดงผลในการ์ดที่ 1 กลับเป็นแบบปกติ
+      document.getElementById("normalProfileBlock").style.display = "block"; 
+      document.getElementById("newDoctorTitleBlock").style.display = "none";
+      document.getElementById("newDoctorFields").style.display = "none";
+      
       document.getElementById("targetName").innerText = emp.name;
-      document.getElementById("targetThName").innerText = emp.thName || ""; document.getElementById("targetThName").style.display = emp.thName ? "block" : "none";
+      document.getElementById("targetThName").innerText = emp.thName || ""; 
+      document.getElementById("targetThName").style.display = emp.thName ? "block" : "none";
       document.getElementById("targetId").innerText = "HCO: " + emp.hospital;
       document.getElementById("targetBadges").innerHTML = `<span class="badge bg-light text-secondary border px-3 py-2 shadow-sm rounded-pill" style="font-size: 0.9rem; font-weight: 500;"><i class="fa-solid fa-stethoscope text-primary me-2"></i> ${emp.spec}</span>`;
-      document.getElementById("newDoctorFields").style.display = "none";
-      document.getElementById("inputEmail").value = getCleanInput(emp.email); document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
-      document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
+      
+      document.getElementById("inputEmail").value = getCleanInput(emp.email); 
+      document.getElementById("inputMobile").value = getCleanInput(emp.mobile);
+      
+      document.getElementById("chkPrivacy").checked = false; document.getElementById("chkTerms").checked = false; 
+      toggleConsentStyle('boxPrivacy', document.getElementById('chkPrivacy')); 
+      toggleConsentStyle('boxTerms', document.getElementById('chkTerms'));
       
       const listView = document.getElementById("listView");
       const qrView = document.getElementById("qrView");
