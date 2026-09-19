@@ -68,7 +68,7 @@
     .btn-action-danger:hover { background: #fef2f2; border-color: #ef4444; color: #dc2626; }
 
     /* 🌟 Flexbox สำหรับป้องกันการล้นหน้าจอ */
-    .content-wrapper { flex: 1; display: flex; flex-direction: column; padding: 20px 24px; min-height: 0; overflow-y: auto; }
+    .content-wrapper { flex: 1; display: flex; flex-direction: column; padding: 20px 24px; min-height: 0; }
     .main-container { flex: 1; display: flex; flex-direction: column; max-width: 100%; width: 100%; min-height: 0; margin: 0; padding: 0; }
 
     .view-section { display: flex; flex-direction: column; flex: 1; min-height: 0; }
@@ -76,6 +76,12 @@
     
     .card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
     
+    /* 🌟 Scrollbar ภายใน Card */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
     /* 🌟 Overview Stat Cards */
     .overview-scroll-container { display: flex; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; }
     .overview-scroll-container::-webkit-scrollbar { display: none; }
@@ -103,7 +109,7 @@
     .overview-card.purple .overview-value { color: #8b5cf6; }
     .overview-pct { font-size: 14px; font-weight: 700; opacity: 0.75; }
 
-    /* 🌟 Clean Table Styles & Headers */
+    /* 🌟 Clean Table Styles & Headers (สีเทาอ่อน) */
     .table-container-card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
     #employeeListTableWrapper, #historyTableWrapper { flex: 1; overflow-y: auto; position: relative; scrollbar-width: thin; }
     
@@ -159,7 +165,7 @@
     .page-item.disabled .page-link { color: #94a3b8; border-color: transparent; background: transparent;}
 
     .highlight-text { background-color: #fef08a; color: #92400e; font-weight: bold; border-radius: 3px; padding: 0 2px; }
-    #qrcodeContainer { display: flex; justify-content: center; margin: 10px auto; padding: 10px; background: white; border-radius: 10px; }
+    #qrcodeContainer { display: flex; justify-content: center; margin: 0 auto; padding: 10px; background: white; border-radius: 10px; }
     #qrcodeContainer img { max-width: 100%; height: auto; }
 
     #networkStatusBanner { display: none; position: fixed; top: 0; left: 0; width: 100%; color: white; font-weight: bold; text-align: center; padding: 10px 15px; z-index: 9999; font-size: 14.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: background-color 0.3s ease; }
@@ -169,14 +175,17 @@
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .stat-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
     .stat-value-hist { font-size: 24px; font-weight: 800; color: #1e293b; line-height: 1; }
-    
+
     @media (max-width: 991.98px) {
       .app-header { flex-direction: column; gap: 12px; padding: 12px; }
       .nav-container-box { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
       .nav-pills { flex-wrap: nowrap; width: max-content; margin: 0 auto; }
-      .content-wrapper { padding: 12px 8px; overflow-y: visible; }
+      .content-wrapper { padding: 12px 8px; }
       .table-register-view, .table-logs-view { width: 100%; min-width: 800px; }
-      #qrView { margin-top: 10px !important; }
+      
+      /* ให้มือถือ scroll ภายในหน้าทั้งหมดได้เป็นปกติ */
+      .view-section { overflow-y: auto; display: block; }
+      .qr-row-container { flex-direction: column; }
     }
     
     @media print {
@@ -184,7 +193,7 @@
       body { background-color: #fff !important; overflow: visible; height: auto; }
       body * { visibility: hidden; }
       #qrView, #qrView * { visibility: visible; }
-      #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
+      #qrView { position: absolute; left: 0; top: 0; right: 0; width: 100%; max-width: 100%; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; text-align: center; display: block !important; }
       .app-header, .btn, .nav-container-box, .overview-scroll-container, #actionBottomBar { display: none !important; }
     }
   </style>
@@ -359,20 +368,20 @@
           </div>
         </div>
 
-        <!-- 🌟 QR View (2 Columns Layout) -->
-        <div id="qrView" style="display: none; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; padding-bottom: 20px;">
+        <!-- 🌟 QR View (2 Columns Layout with Internal Scroll) -->
+        <div id="qrView" class="mx-auto w-100" style="display: none; flex-direction: column; flex: 1; min-height: 0; max-width: 1200px; padding-bottom: 10px;">
           
-          <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
             <button class="btn btn-light bg-white border shadow-sm rounded-pill px-3 py-2 fw-bold text-secondary" onclick="goBackToList()"><i class="fa-solid fa-arrow-left me-2"></i> กลับหน้าหลัก (Back)</button>
             <h4 class="fw-bold text-primary mb-0 d-none d-md-block" style="font-style: italic;">ยืนยันข้อมูลบุคลากรทางการแพทย์</h4>
             <div class="d-none d-md-block" style="width: 140px;"></div>
           </div>
 
-          <div class="row g-4 flex-grow-1">
+          <div class="row g-4 flex-grow-1 qr-row-container" style="min-height: 0;">
             
-            <!-- Left Column: Doctor Profile & Contact -->
-            <div class="col-lg-6 col-md-12 d-flex flex-column">
-               <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 flex-grow-1">
+            <!-- Left Column: Profile & Contact -->
+            <div class="col-lg-6 col-md-12 d-flex flex-column" style="min-height: 0;">
+               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar" style="overflow-y: auto;">
                   
                   <div class="text-center mb-4 pb-3 border-bottom">
                     <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.8rem; color:#0066cc;"></h3>
@@ -395,7 +404,7 @@
                        <i class="fa-solid fa-address-book text-muted fs-4 me-2"></i>
                        <h5 class="fw-bold mb-0 text-dark">ข้อมูลติดต่อ</h5>
                      </div>
-                     <p class="text-secondary mb-4" style="font-size: 13.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+                     <p class="text-secondary mb-3" style="font-size: 13.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
                      
                      <div class="mb-3">
                        <label class="form-label fw-bold text-dark">หมายเลขโทรศัพท์</label>
@@ -413,7 +422,6 @@
                      </div>
                   </div>
 
-                  <!-- New Doctor Fields -->
                   <div id="newDoctorFields" class="mt-4 pt-4 border-top text-start" style="display: none;">
                     <div class="d-flex align-items-center mb-3">
                       <i class="fa-solid fa-user-md text-muted fs-4 me-2"></i>
@@ -422,11 +430,7 @@
                     <div class="mb-3">
                       <label class="form-label fw-bold text-dark">อาชีพ <span class="text-danger">*</span></label>
                       <select id="inputNewProfession" class="form-select shadow-none" onchange="regenerateAutomatedQR()">
-                        <option value="-">-- เลือกอาชีพ --</option>
-                        <option value="Doctor">Doctor / แพทย์</option>
-                        <option value="Nurse">Nurse / พยาบาล</option>
-                        <option value="Pharmacist">Pharmacist / เภสัชกร</option>
-                        <option value="Other">Other Contact / อื่นๆ</option>
+                        <option value="-">-- เลือกอาชีพ --</option><option value="Doctor">Doctor / แพทย์</option><option value="Nurse">Nurse / พยาบาล</option><option value="Pharmacist">Pharmacist / เภสัชกร</option><option value="Other">Other Contact / อื่นๆ</option>
                       </select>
                     </div>
                     <div class="mb-3">
@@ -443,10 +447,10 @@
             </div>
 
             <!-- Right Column: Consent & QR Code -->
-            <div class="col-lg-6 col-md-12 d-flex flex-column">
-               <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 flex-grow-1 d-flex flex-column">
+            <div class="col-lg-6 col-md-12 d-flex flex-column" style="min-height: 0;">
+               <div class="card p-4 border-0 shadow-sm rounded-4 flex-grow-1 custom-scrollbar d-flex flex-column" style="overflow-y: auto;">
                   
-                  <div class="text-start mb-4">
+                  <div class="text-start mb-3">
                     <div class="d-flex align-items-center mb-3">
                       <i class="fa-solid fa-gavel text-muted fs-4 me-2"></i>
                       <h5 class="fw-bold mb-0 text-dark">ข้อมูลด้านกฎหมาย</h5>
@@ -469,14 +473,15 @@
                     </label>
                   </div>
 
-                  <div id="lockAlert" class="alert alert-info small fw-bold mb-0 text-center">
+                  <div id="lockAlert" class="alert alert-info small fw-bold mb-0 text-center flex-shrink-0">
                     <i class="fa-solid fa-lock me-2"></i> กรุณาติ๊กยอมรับข้อกำหนดของโรช เพื่อแสดง QR Code ครับ
                   </div>
 
-                  <div id="qrContentBlock" style="display: none; flex-grow: 1;">
-                    <div class="bg-light p-4 border rounded-4 text-center d-flex flex-column align-items-center justify-content-center h-100 min-vh-25">
+                  <div id="qrContentBlock" style="display: none; flex-grow: 1; min-height: 0;">
+                    <div class="bg-light p-3 border rounded-4 text-center d-flex flex-column align-items-center justify-content-center h-100">
+                      <!-- 🌟 ปรับขนาดรูป QR ให้ไม่ดันหน้าจอ -->
                       <div id="qrcodeContainer"></div>
-                      <p class="text-success fw-bold mt-3 mb-1" style="font-size:14px;">📲 สแกนรหัสเพื่อเพิ่มเพื่อน Roche Thailand</p>
+                      <p class="text-success fw-bold mt-2 mb-1" style="font-size:13.5px;">📲 สแกนรหัสเพื่อเพิ่มเพื่อน Roche Thailand</p>
                       <p id="qrExpiryText" class="text-danger small fw-bold mb-0"></p>
                       <button id="btnCopyLink" class="btn btn-white border bg-white btn-sm mt-3 fw-bold text-dark w-100 rounded-pill py-2 shadow-sm" onclick="copyQrLink()"><i class="fa-solid fa-link me-1 text-primary"></i> คัดลอกลิงก์ส่งให้แพทย์</button>
                     </div>
@@ -486,8 +491,7 @@
             </div>
           </div>
 
-          <!-- Bottom Action Bar -->
-          <div id="actionBottomBar" class="card mt-3 p-3 border-0 shadow-sm rounded-4 flex-row justify-content-end align-items-center gap-2">
+          <div id="actionBottomBar" class="card mt-3 p-3 border-0 shadow-sm rounded-4 flex-row justify-content-end align-items-center gap-2 flex-shrink-0">
              <button class="btn btn-light border px-4 py-2 fw-bold text-secondary rounded-3" onclick="goBackToList()">ยกเลิก (Cancel)</button>
              <button id="btnConfirm" class="btn btn-primary px-4 px-md-5 py-2 fw-bold shadow-sm rounded-3" style="background-color:#0066cc !important; border:none;" onclick="submitRegistration()">✅ ยืนยันการออกคิวอาร์ (Save Log)</button>
           </div>
@@ -737,7 +741,6 @@
     let empCurrentPage = 1; let empRowsPerPage = 100; let empSortCol = ''; let empSortAsc = true;
     let globalHistoryLogs = []; let filteredHistData = []; let histCurrentPage = 1; let histRowsPerPage = 100; let histSortCol = 0; let histSortAsc = false; 
 
-    // 🌟 ฟังก์ชันเปลี่ยนแท็บที่แก้ไขแล้ว ไม่ซ้อนทับกันแน่นอน
     function switchTab(viewName) {
       document.getElementById("registerView").style.display = "none"; 
       document.getElementById("historyView").style.display = "none"; 
@@ -1000,7 +1003,7 @@
         row.innerHTML = `<td class="fw-bold ps-4" style="color: #1e293b; font-size:13.5px;">${highlightText(emp.name, kw)}</td>
                          <td class="text-secondary" style="font-size:13px;">${highlightText(emp.thName, kw)}</td>
                          <td><span class="badge badge-specialty"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ${emp.spec}</span></td>
-                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
+                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
                          <td class="text-center">${getStatusUI(emp.lineId)}</td>
                          <td class="text-center">${getStatusUI(emp.email)}</td>
                          <td class="text-center">${getStatusUI(emp.mobile)}</td>
@@ -1053,7 +1056,9 @@
       
       currentGeneratedUrl = `${baseLineUrl}?hcpmdmid=${encodeURIComponent(id)}&hcpName=${encodeURIComponent(name)}&thName=${encodeURIComponent(thName)}&hospital=${encodeURIComponent(hospital)}&specialty=${encodeURIComponent(spec)}&profession=${encodeURIComponent(profession)}&email=${encodeURIComponent(email)}&mobileNo=${encodeURIComponent(mobile)}&privacyPolicy=${encodeURIComponent(pS)}&marketingConsent=${encodeURIComponent(mS)}&expire=${encodeURIComponent(exS)}&dkshid=${encodeURIComponent(dkshid)}&hcpuciid=${encodeURIComponent(hcpuciid)}`;
       document.getElementById("qrcodeContainer").innerHTML = ""; 
-      new QRCode(document.getElementById("qrcodeContainer"), { text: currentGeneratedUrl, width: 250, height: 250, colorDark : "#0066cc", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M });
+      
+      /* 🌟 ปรับขนาด QR Code ให้เล็กลง เพื่อไม่ดันหน้าจอ */
+      new QRCode(document.getElementById("qrcodeContainer"), { text: currentGeneratedUrl, width: 220, height: 220, colorDark : "#0066cc", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M });
       checkConsentState();
     }
 
@@ -1074,7 +1079,7 @@
       if (isAgreed && isValid) {
         document.getElementById("lockAlert").style.display = "none"; document.getElementById("qrContentBlock").style.display = "flex";
       } else {
-        document.getElementById("qrContentBlock").style.display = "none"; document.getElementById("lockAlert").style.display = "block"; document.getElementById("lockAlert").className = "alert alert-info small fw-bold mb-0 text-center"; document.getElementById("lockAlert").style.backgroundColor = ""; document.getElementById("lockAlert").style.color = ""; document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock me-2"></i> ${msg}`;
+        document.getElementById("qrContentBlock").style.display = "none"; document.getElementById("lockAlert").style.display = "block"; document.getElementById("lockAlert").className = "alert alert-info small fw-bold mb-0 text-center flex-shrink-0"; document.getElementById("lockAlert").style.backgroundColor = ""; document.getElementById("lockAlert").style.color = ""; document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock me-2"></i> ${msg}`;
       }
     }
 
