@@ -80,9 +80,6 @@
     .hide-scroll { scrollbar-width: none; -ms-overflow-style: none; overflow-y: auto; }
     .hide-scroll::-webkit-scrollbar { display: none; }
 
-    /* 🌟 Label แบบกระชับ (แนวนอน) */
-    .lbl-compact { width: 95px; flex-shrink: 0; font-size: 12.5px; margin-bottom: 0; line-height: 1.2; }
-
     /* 🌟 Overview Stat Cards */
     .overview-scroll-container { display: flex; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; }
     .overview-scroll-container::-webkit-scrollbar { display: none; }
@@ -142,7 +139,7 @@
     .badge-specialty { background-color: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 50px; }
 
     .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 8px 12px; font-weight: 500; font-size: 14px; transition: all 0.3s ease; }
-    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
+    .form-control:focus, .form-select:focus { border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12); }
     .form-label { color: #64748b; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
 
     .dropdown-multiselect { position: relative; width: 100%; }
@@ -154,7 +151,7 @@
     .multiselect-item input { margin-right: 8px; cursor: pointer; }
 
     /* 🌟 Consent Box (Legal Info) */
-    .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
+    .consent-box { background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin-bottom: 0; cursor: pointer; display: flex; align-items: flex-start; transition: all 0.2s ease; width: 100%; text-align: left; }
     .consent-box:hover { border-color: #94a3b8; }
     .consent-box.active { background-color: #eff6ff; border-color: #0066cc; box-shadow: 0 0 0 1px #0066cc; }
     .consent-checkbox { width: 22px !important; height: 22px !important; margin-top: 2px !important; margin-right: 12px; cursor: pointer; flex-shrink: 0; }
@@ -376,7 +373,8 @@
 
           <div class="table-container-card" id="mainTableArea" style="display: none;">
             <div id="employeeListTableWrapper">
-              <table class="table table-hover align-middle table-register-view mb-0" style="width: 100%;">
+              <!-- 🌟 แก้ให้กล่อง Not Found อยู่ตรงกลางเป๊ะ 100% -->
+              <table class="table table-hover align-middle table-register-view mb-0 w-100 h-100">
                 <thead class="roche-table-header">
                   <tr>
                     <th class="sortable-header ps-4" onclick="sortEmpTable('name')">HCP Name <i class="fa-solid fa-sort sort-icon" id="icon-emp-name"></i></th>
@@ -417,98 +415,102 @@
 
           <div class="row g-3 flex-grow-1 qr-row-container" style="min-height: 0;">
             
-            <!-- Column 1: Profile, Contact & New Doctor Info -->
+            <!-- Column 1: Profile & Contact & Profession -->
             <div class="col-lg-4 col-md-6 col-12 qr-col">
-               <div class="card p-3 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column">
+               <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column justify-content-center">
                   
-                  <!-- Normal Profile Block -->
-                  <div id="normalProfileBlock" class="text-center mb-3 pb-2 border-bottom flex-shrink-0">
-                    <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.5rem; color:#0066cc;"></h3>
-                    <h4 id="targetThName" class="text-secondary mb-1 mt-1" style="font-size: 1.05rem;"></h4>
-                    <p id="targetId" class="text-muted mb-2" style="font-size: 0.9rem;"></p>
-                    <div id="targetBadges" class="d-flex flex-wrap justify-content-center"></div>
-                  </div>
+                  <div class="d-flex flex-column flex-grow-1 justify-content-evenly">
+                    <!-- Normal Profile Block -->
+                    <div id="normalProfileBlock" class="text-center mb-2 pb-2 border-bottom">
+                      <h3 id="targetName" class="fw-bold mb-0" style="font-size: 1.5rem; color:#0066cc;"></h3>
+                      <h4 id="targetThName" class="text-secondary mb-1 mt-1" style="font-size: 1.05rem;"></h4>
+                      <p id="targetId" class="text-muted mb-2" style="font-size: 0.9rem;"></p>
+                      <div id="targetBadges" class="d-flex flex-wrap justify-content-center"></div>
+                    </div>
 
-                  <!-- 🌟 New Doctor Title (Compact Horizontal) -->
-                  <div id="newDoctorTitleBlock" style="display: none; margin-bottom: 12px;" class="border-bottom pb-2 flex-shrink-0">
-                     <div class="d-flex align-items-center justify-content-center mb-2">
-                       <span class="badge bg-warning text-dark fw-bold me-2 px-2 py-1 rounded-pill" style="font-size: 11px;">New HCP</span>
-                       <span class="fw-bold text-primary" style="font-size: 13px;">ลงทะเบียนแพทย์ใหม่</span>
-                     </div>
-                     <div class="d-flex align-items-center">
-                       <label class="fw-bold text-dark lbl-compact">ชื่อแพทย์ <span class="text-danger">*</span></label>
-                       <input type="text" id="inputNewName" class="form-control form-control-sm text-primary fw-bold shadow-none" oninput="regenerateAutomatedQR()" placeholder="ชื่อ-นามสกุล">
-                     </div>
-                  </div>
+                    <!-- 🌟 New Doctor Title (Compact) -->
+                    <div id="newDoctorTitleBlock" style="display: none;" class="mb-2 pb-2 border-bottom text-start">
+                       <div class="d-flex align-items-center mb-2">
+                         <span class="badge bg-warning text-dark fw-bold me-2 px-2 py-1 rounded-pill" style="font-size: 11px;">New HCP</span>
+                         <span class="fw-bold text-primary" style="font-size: 13px;">ลงทะเบียนแพทย์ใหม่</span>
+                       </div>
+                       <div class="mb-1">
+                         <label class="form-label fw-bold text-dark small mb-1">ชื่อแพทย์ (HCP Name) <span class="text-danger">*</span></label>
+                         <input type="text" id="inputNewName" class="form-control form-control-sm text-primary fw-bold shadow-none" oninput="regenerateAutomatedQR()" placeholder="ระบุชื่อ-นามสกุล">
+                       </div>
+                    </div>
 
-                  <!-- 🌟 Contact Info (Compact Horizontal) -->
-                  <div class="text-start flex-shrink-0">
-                     <div class="d-flex align-items-center mb-2">
-                       <i class="fa-solid fa-address-book fs-6 me-2" style="color: #0066cc;"></i>
-                       <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 13.5px;">ข้อมูลติดต่อ</h6>
-                     </div>
-                     
-                     <div class="d-flex align-items-center mb-2">
-                       <label class="fw-bold text-dark lbl-compact">เบอร์โทร</label>
-                       <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="08X-XXX-XXXX">
-                     </div>
-                     <div class="d-flex align-items-start mb-2">
-                       <label class="fw-bold text-dark lbl-compact mt-1">อีเมล <span class="text-danger">*</span></label>
-                       <div class="flex-grow-1">
-                         <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="example@email.com">
-                         <div id="emailSuggestionText" class="text-primary mt-1" style="display: none; font-size: 11px;">
-                           <i class="fa-solid fa-circle-info"></i> จำเป็นสำหรับการลงทะเบียน
+                    <!-- 🌟 Contact Info (Compact Label on top) -->
+                    <div class="text-start mb-2">
+                       <div class="d-flex align-items-center mb-2">
+                         <i class="fa-solid fa-address-book fs-6 me-2" style="color: #0066cc;"></i>
+                         <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 13.5px;">ข้อมูลติดต่อ</h6>
+                       </div>
+                       <p class="text-secondary mb-2" style="font-size: 11.5px; font-style: italic;">โรชอาจติดต่อท่านโดยใช้ข้อมูลดังต่อไปนี้</p>
+                       
+                       <div class="mb-2">
+                         <label class="form-label fw-bold text-dark small mb-1">เบอร์โทรศัพท์</label>
+                         <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="กรอกหมายเลขโทรศัพท์ (Mobile)">
+                       </div>
+                       <div class="mb-1">
+                         <label class="form-label fw-bold text-dark small mb-1">อีเมล <span class="text-danger">*</span></label>
+                         <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="กรอกอีเมล (Email)">
+                         <div id="emailSuggestionText" class="text-primary mt-1" style="display: none; font-size: 11.5px;">
+                           <i class="fa-solid fa-circle-info"></i> อีเมลเป็นข้อมูลจำเป็นในการลงทะเบียน LINE
                          </div>
-                         <div id="emailReminderText" class="text-danger mt-1 fw-bold" style="display: none; font-size: 11px;">
-                           <i class="fa-solid fa-triangle-exclamation"></i> โปรดระบุอีเมล
+                         <div id="emailReminderText" class="text-danger mt-1 fw-bold" style="display: none; font-size: 11.5px;">
+                           <i class="fa-solid fa-triangle-exclamation"></i> โปรดระบุอีเมล เนื่องจากท่านยอมรับข้อตกลง
                          </div>
                        </div>
-                     </div>
-                  </div>
-
-                  <!-- 🌟 New Doctor Fields (Profession - Compact Horizontal) -->
-                  <div id="newDoctorFields" class="mt-2 pt-2 border-top text-start flex-shrink-0" style="display: none;">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="fa-solid fa-user-md fs-6 me-2" style="color: #0066cc;"></i>
-                      <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 13.5px;">ข้อมูลอาชีพ</h6>
-                    </div>
-                    
-                    <div class="d-flex align-items-center mb-2">
-                      <label class="fw-bold text-dark lbl-compact">อาชีพ <span class="text-danger">*</span></label>
-                      <select id="inputNewProfession" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()">
-                        <option value="-">- เลือกอาชีพ -</option>
-                        <option value="Doctor">Doctor / แพทย์</option>
-                        <option value="Nurse">Nurse / พยาบาล</option>
-                        <option value="Pharmacist">Pharmacist</option>
-                        <option value="Other">Other Contact</option>
-                      </select>
-                    </div>
-                    
-                    <div class="d-flex align-items-center mb-2">
-                      <label class="fw-bold text-dark lbl-compact">เชี่ยวชาญ <span class="text-danger">*</span></label>
-                      <select id="inputNewSpec" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="-">- เลือก -</option></select>
                     </div>
 
-                    <div class="d-flex align-items-center mb-1">
-                      <label class="fw-bold text-dark lbl-compact">สถานที่ <span class="text-danger">*</span></label>
-                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="">- เลือกสถานที่ทำงาน -</option></select>
+                    <!-- 🌟 New Doctor Fields (Profession - Row split) -->
+                    <div id="newDoctorFields" class="pt-2 border-top text-start" style="display: none;">
+                      <div class="d-flex align-items-center mb-2">
+                        <i class="fa-solid fa-user-md fs-6 me-2" style="color: #0066cc;"></i>
+                        <h6 class="fw-bold mb-0" style="color: #0066cc; font-size: 13.5px;">ข้อมูลอาชีพ</h6>
+                      </div>
+                      
+                      <div class="row g-2 mb-2">
+                        <div class="col-6">
+                          <label class="form-label fw-bold text-dark small mb-1">อาชีพ <span class="text-danger">*</span></label>
+                          <select id="inputNewProfession" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()">
+                            <option value="-">- เลือกอาชีพ -</option>
+                            <option value="Doctor">Doctor / แพทย์</option>
+                            <option value="Nurse">Nurse / พยาบาล</option>
+                            <option value="Pharmacist">Pharmacist</option>
+                            <option value="Other">Other Contact</option>
+                          </select>
+                        </div>
+                        <div class="col-6">
+                          <label class="form-label fw-bold text-dark small mb-1">ความเชี่ยวชาญ <span class="text-danger">*</span></label>
+                          <select id="inputNewSpec" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="-">- เลือก -</option></select>
+                        </div>
+                      </div>
+
+                      <div class="mb-1">
+                        <label class="form-label fw-bold text-dark small mb-1">องค์กร/สถานที่ทำงาน <span class="text-danger">*</span></label>
+                        <select id="inputNewHospital" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="">- เลือกสถานที่ทำงาน -</option></select>
+                      </div>
                     </div>
                   </div>
 
                </div>
             </div>
 
-            <!-- Column 2: Consent -->
+            <!-- Column 2: Consent (Spaced nicely) -->
             <div class="col-lg-4 col-md-6 col-12 qr-col">
-               <div class="card p-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll">
-                  <div class="text-start mb-3">
-                    <div class="d-flex align-items-center mb-3">
+               <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column">
+                  <div class="text-start mb-3 flex-shrink-0">
+                    <div class="d-flex align-items-center mb-2">
                       <i class="fa-solid fa-gavel fs-5 me-2" style="color: #0066cc;"></i>
                       <h6 class="fw-bold mb-0" style="color: #0066cc;">ข้อมูลด้านกฎหมาย</h6>
                     </div>
-                    <p class="text-secondary small mb-3">หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก</p>
-                    
-                    <label class="consent-box shadow-sm" id="boxPrivacy">
+                    <p class="text-secondary small mb-0">หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก</p>
+                  </div>
+                  
+                  <div class="d-flex flex-column flex-grow-1 justify-content-center gap-3">
+                    <label class="consent-box shadow-sm mb-0" id="boxPrivacy">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
                       <span class="consent-text fw-medium fst-italic" style="font-size: 13.5px;">
                         <span class="text-danger fw-bold fst-normal">*</span>ฉันตกลงตามข้อกำหนดและนโยบายของโรช <br>
@@ -516,7 +518,7 @@
                       </span>
                     </label>
 
-                    <label class="consent-box shadow-sm" id="boxTerms">
+                    <label class="consent-box shadow-sm mb-0" id="boxTerms">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkTerms" onchange="toggleConsentStyle('boxTerms', this); checkConsentState(); regenerateAutomatedQR(); checkEmailReminder();">
                       <span class="consent-text fw-medium fst-italic" style="font-size: 13.5px;">
                         ฉันยินยอมให้โรชและบริษัทในเครือประมวลผลข้อมูลส่วนบุคคลของฉันเพื่อการสื่อสารทางด้านการตลาดและไม่ใช่การตลาดตามที่ระบุในข้อกำหนดและนโยบายของโรช 
@@ -1075,7 +1077,9 @@
       tb.innerHTML = ""; const kw = document.getElementById("searchBox").value.trim(); const hw = document.getElementById("filterHospital").value.trim();
       if(filteredEmpData.length === 0) {
         pi.innerHTML = ""; ul.innerHTML = "";
-        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="8" class="text-center text-muted border-0" style="height: 45vh; vertical-align: middle;"><div class="d-flex flex-column justify-content-center align-items-center h-100"><i class="fa-solid fa-folder-open mb-3 d-block" style="font-size: 3.5rem; color: #cbd5e1;"></i><p class="mb-3 fw-bold">ไม่พบรายชื่อในระบบ</p>' + (kw ? `<button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" type="button" onclick="openNewDoctorForm('${kw.replace(/'/g, "\\'")}')"><i class="fa-solid fa-plus me-1"></i> เพิ่มรายชื่อแพทย์ใหม่</button>` : '') + '</div></td></tr>';
+        
+        // 🌟 แก้ไขให้ตรงกลาง 100% ไม่มีหลุดซ้าย
+        tb.innerHTML = '<tr style="background-color: #ffffff;"><td colspan="8" class="text-center text-muted border-0" style="height: 45vh; vertical-align: middle;"><div class="d-flex flex-column justify-content-center align-items-center h-100 w-100 mx-auto"><i class="fa-solid fa-folder-open mb-3 d-block" style="font-size: 3.5rem; color: #cbd5e1;"></i><p class="mb-3 fw-bold">ไม่พบรายชื่อในระบบ</p>' + (kw ? `<button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" type="button" onclick="openNewDoctorForm('${kw.replace(/'/g, "\\'")}')"><i class="fa-solid fa-plus me-1"></i> เพิ่มรายชื่อแพทย์ใหม่</button>` : '') + '</div></td></tr>';
         return;
       }
       const t = filteredEmpData.length; const tp = Math.ceil(t / empRowsPerPage); if (empCurrentPage > tp) empCurrentPage = tp;
@@ -1099,7 +1103,7 @@
         row.innerHTML = `<td class="fw-bold ps-4" style="color: #1e293b; font-size:13.5px;">${highlightText(emp.name, kw)}</td>
                          <td class="text-secondary" style="font-size:13px;">${highlightText(emp.thName, kw)}</td>
                          <td><span class="badge badge-specialty"><i class="fa-solid fa-stethoscope text-primary me-1"></i> ${emp.spec}</span></td>
-                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-regular fa-hospital text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
+                         <td><span class="text-secondary" style="font-size:13px;"><i class="fa-solid fa-building text-primary me-1"></i> ${highlightText(emp.hospital, hw)}</span></td>
                          <td class="text-center">${getStatusUI(emp.lineId)}</td>
                          <td class="text-center">${getStatusUI(emp.email)}</td>
                          <td class="text-center">${getStatusUI(emp.mobile)}</td>
@@ -1212,7 +1216,7 @@
         document.getElementById("qrContentBlock").classList.add("d-none");
         document.getElementById("lockAlert").classList.add("d-flex");
         document.getElementById("lockAlert").style.display = "flex"; 
-        document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock fs-1 mb-3 opacity-50"></i><p class="small fw-bold mb-0">${msg}</p>`;
+        document.getElementById("lockAlert").innerHTML = `<i class="fa-solid fa-lock fs-1 mb-3 opacity-50"></i><p class="small fw-bold mb-0 text-center">${msg}</p>`;
       }
     }
 
@@ -1262,7 +1266,7 @@
       let fEmp = {}; 
       const rawEmail = document.getElementById("inputEmail").value.trim(); 
       const rawMobile = document.getElementById("inputMobile").value.trim();
-      const btn = document.getElementById("btnConfirm"); const lockAlertBox = document.getElementById("lockAlert");
+      const btn = document.getElementById("btnConfirm"); 
       
       if (isNewDoctorMode) {
         const n = document.getElementById("inputNewName").value.trim(); const h = document.getElementById("inputNewHospital").value.trim(); const s = document.getElementById("inputNewSpec").value.trim(); const p = document.getElementById("inputNewProfession").value.trim();
