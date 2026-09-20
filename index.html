@@ -76,13 +76,18 @@
     
     .card { background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #e2e8f0 !important; flex-shrink: 0; }
     
-    /* 🌟 ซ่อน Scrollbar ตามคำขอ */
-    .hide-scroll { scrollbar-width: none; -ms-overflow-style: none; overflow-y: hidden; }
+    /* 🌟 ซ่อน Scrollbar ตามคำขอ (แก้เป็น auto เพื่อให้ปัดหน้าจอ iPad ได้) */
+    .hide-scroll { scrollbar-width: none; -ms-overflow-style: none; overflow-y: auto; }
     .hide-scroll::-webkit-scrollbar { display: none; }
 
     /* 🌟 Label แบบกระชับ (แนวนอน) */
     .flex-row-input { display: flex; align-items: center; margin-bottom: 10px; }
     .lbl-compact { width: 110px; flex-shrink: 0; font-size: 12.5px; margin-bottom: 0; line-height: 1.2; color: #334155; }
+
+    /* 🌟 สลับ Layout สำหรับโหมด Edit (Card 1) ให้กลับเป็นแนวตั้งตามเดิม */
+    .is-edit-mode .flex-row-input { flex-direction: column !important; align-items: flex-start !important; margin-bottom: 12px !important; }
+    .is-edit-mode .lbl-compact { width: 100% !important; margin-bottom: 6px !important; font-size: 13px !important; margin-top: 0 !important; }
+    .is-edit-mode .flex-row-input input, .is-edit-mode .flex-row-input select, .is-edit-mode .flex-row-input .flex-grow-1 { width: 100% !important; }
 
     /* 🌟 Overview Stat Cards */
     .overview-scroll-container { display: flex; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 4px; }
@@ -418,7 +423,7 @@
             
             <!-- 🌟 Column 1: Profile & Contact & Profession -->
             <div class="col-lg-4 col-md-6 col-12 qr-col">
-               <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column justify-content-evenly">
+               <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column justify-content-evenly" id="card1Container">
                   
                   <!-- Normal Profile Block -->
                   <div id="normalProfileBlock" class="text-center pb-2 border-bottom flex-shrink-0">
@@ -446,12 +451,12 @@
                      
                      <div class="flex-row-input">
                        <label class="fw-bold lbl-compact">เบอร์โทร</label>
-                       <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none" maxlength="10" oninput="validateMobileInput(this)" placeholder="08X-XXX-XXXX">
+                       <input type="tel" id="inputMobile" class="form-control form-control-sm shadow-none w-100" maxlength="10" oninput="validateMobileInput(this)" placeholder="08X-XXX-XXXX">
                      </div>
                      <div class="flex-row-input align-items-start mb-0">
                        <label class="fw-bold lbl-compact mt-1">อีเมล <span class="text-danger">*</span></label>
-                       <div class="flex-grow-1">
-                         <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="example@email.com">
+                       <div class="flex-grow-1 w-100">
+                         <input type="email" id="inputEmail" class="form-control form-control-sm shadow-none w-100" oninput="regenerateAutomatedQR(); checkEmailReminder();" placeholder="example@email.com">
                          <div id="emailSuggestionText" class="text-primary mt-1" style="display: none; font-size: 11px;">
                            <i class="fa-solid fa-circle-info"></i> จำเป็นสำหรับการลงทะเบียน
                          </div>
@@ -471,7 +476,7 @@
                     
                     <div class="flex-row-input">
                       <label class="fw-bold lbl-compact">อาชีพ <span class="text-danger">*</span></label>
-                      <select id="inputNewProfession" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()">
+                      <select id="inputNewProfession" class="form-select form-select-sm shadow-none w-100" style="font-size: 13px;" onchange="regenerateAutomatedQR()">
                         <option value="-">- เลือกอาชีพ -</option>
                         <option value="Doctor">Doctor / แพทย์</option>
                         <option value="Nurse">Nurse / พยาบาล</option>
@@ -482,19 +487,19 @@
                     
                     <div class="flex-row-input">
                       <label class="fw-bold lbl-compact">เชี่ยวชาญ <span class="text-danger">*</span></label>
-                      <select id="inputNewSpec" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="-">- เลือก -</option></select>
+                      <select id="inputNewSpec" class="form-select form-select-sm shadow-none w-100" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="-">- เลือก -</option></select>
                     </div>
 
                     <div class="flex-row-input mb-0">
                       <label class="fw-bold lbl-compact">สถานที่ <span class="text-danger">*</span></label>
-                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="">- ระบุสถานที่ทำงาน -</option></select>
+                      <select id="inputNewHospital" class="form-select form-select-sm shadow-none w-100" style="font-size: 13px;" onchange="regenerateAutomatedQR()"><option value="">- ระบุสถานที่ทำงาน -</option></select>
                     </div>
                   </div>
 
                </div>
             </div>
 
-            <!-- 🌟 Column 2: Consent -->
+            <!-- 🌟 Column 2: Consent (ไอเดียที่ 2 - ชิดบน และขยายช่องว่างระหว่างกล่อง) -->
             <div class="col-lg-4 col-md-6 col-12 qr-col">
                <div class="card p-3 p-md-4 border-0 shadow-sm rounded-4 h-100 qr-card hide-scroll d-flex flex-column">
                   <div class="text-start mb-3 flex-shrink-0">
@@ -505,7 +510,7 @@
                     <p class="text-secondary small mb-0">หัวข้อที่มีเครื่องหมาย <span class="text-danger fw-bold">*</span> จำเป็นต้องกรอก</p>
                   </div>
                   
-                  <div class="d-flex flex-column flex-grow-1 justify-content-center gap-3">
+                  <div class="d-flex flex-column flex-grow-1 justify-content-start gap-4 pt-2">
                     <label class="consent-box shadow-sm mb-0" id="boxPrivacy">
                       <input class="form-check-input consent-checkbox" type="checkbox" id="chkPrivacy" onchange="toggleConsentStyle('boxPrivacy', this); checkConsentState(); regenerateAutomatedQR();">
                       <span class="consent-text fw-medium fst-italic" style="font-size: 13.5px;">
@@ -1115,7 +1120,9 @@
       isNewDoctorMode = true; activeEmployee = null; 
       document.getElementById("btnConfirm").disabled = false;
       
-      // สลับหน้าจอมาเป็น New Doctor (ซ่อน Edit Profile เดิม)
+      // ลบคลาส Edit ออก เพื่อใช้ Layout แนวนอนสำหรับ New HCP
+      document.getElementById("card1Container").classList.remove("is-edit-mode");
+      
       document.getElementById("normalProfileBlock").style.display = "none"; 
       document.getElementById("newDoctorTitleBlock").style.display = "block";
       document.getElementById("newDoctorFields").style.display = "block";
@@ -1143,7 +1150,9 @@
       isNewDoctorMode = false; activeEmployee = emp;
       document.getElementById("btnConfirm").disabled = false;
       
-      // สลับการแสดงผลกลับมาเป็นโหมด Edit
+      // เพิ่มคลาส Edit กลับไป เพื่อให้ Label กลับไปอยู่ด้านบน
+      document.getElementById("card1Container").classList.add("is-edit-mode");
+      
       document.getElementById("normalProfileBlock").style.display = "block"; 
       document.getElementById("newDoctorTitleBlock").style.display = "none";
       document.getElementById("newDoctorFields").style.display = "none";
